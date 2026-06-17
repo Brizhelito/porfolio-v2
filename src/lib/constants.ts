@@ -13,6 +13,7 @@ export const NAV_LINKS = [
   { href: '/tools', label: 'Catálogo de Herramientas' },
   { href: '/expedientes', label: 'Expedientes' },
   { href: '/colaboraciones', label: 'Colaboraciones' },
+  { href: '/inspiraciones', label: 'Inspiraciones' },
   { href: '/contacto', label: 'Contacto' },
 ] as const;
 

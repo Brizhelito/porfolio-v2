@@ -1,0 +1,149 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Stamp from '@components/ui/Stamp';
+import StickyNote from '@components/ui/StickyNote';
+import { SOCIAL_LINKS } from '@lib/constants';
+
+const channels = [
+  {
+    id: 'email',
+    label: 'Correo Electrónico',
+    value: 'renymireles@outlook.com',
+    href: SOCIAL_LINKS.email,
+    icon: '✉',
+    priority: 'PRIMARIO',
+    variant: 'green' as const,
+    description: 'Respuesta en 24-48h. Ideal para propuestas formales y documentación técnica.',
+  },
+  {
+    id: 'github',
+    label: 'GitHub',
+    value: '@renymireles',
+    href: SOCIAL_LINKS.github,
+    icon: '◈',
+    priority: 'CÓDIGO',
+    variant: 'blue' as const,
+    description: 'Repositorios públicos, issues, contribuciones open source.',
+  },
+  {
+    id: 'linkedin',
+    label: 'LinkedIn',
+    value: '/in/renymireles',
+    href: SOCIAL_LINKS.linkedin,
+    icon: '▲',
+    priority: 'PROFESIONAL',
+    variant: 'blue' as const,
+    description: 'Trayectoria profesional, recomendaciones, networking.',
+  },
+  {
+    id: 'whatsapp',
+    label: 'WhatsApp',
+    value: '+58 414-000-0000',
+    href: SOCIAL_LINKS.whatsapp,
+    icon: '◉',
+    priority: 'URGENTE',
+    variant: 'red' as const,
+    description: 'Solo para comunicación urgente o coordinaciones en tiempo real.',
+  },
+];
+---
+
+<BaseLayout title="Contacto — Archivo Reny Mireles" description="Canales de contacto para abrir un nuevo expediente de colaboración">
+  <section class="page-enter mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <header class="mb-12">
+      <div class="flex items-center justify-between mb-4">
+        <span class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">
+          VENTANILLA DE RECEPCIÓN
+        </span>
+        <Stamp label="DISPONIBLE" variant="green" size="md" />
+      </div>
+      <h1 class="font-display text-display-lg text-[var(--color-text-primary)]">
+        Abrir Nuevo Expediente
+      </h1>
+      <p class="mt-2 text-body-lg text-[var(--color-text-secondary)] max-w-2xl">
+        Para consultas, propuestas de trabajo, o iniciar una colaboración —
+        elige el canal que mejor se adapte a tu solicitud.
+      </p>
+      <div class="mt-6 h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
+    </header>
+
+    <!-- Channels grid -->
+    <div class="grid gap-6 sm:grid-cols-2">
+      {channels.map((ch) => (
+        <a
+          href={ch.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group relative rounded-paper texture-aged-paper border border-[var(--color-archive-kraft)]/30 p-6 shadow-paper transition-all hover:border-[var(--color-accent-gold)]/40 hover:shadow-paper-hover"
+        >
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">{ch.icon}</span>
+              <div>
+                <h3 class="font-display text-display-xs text-[var(--color-text-primary)]">
+                  {ch.label}
+                </h3>
+                <p class="font-mono text-body-sm text-[var(--color-text-secondary)]">
+                  {ch.value}
+                </p>
+              </div>
+            </div>
+            <Stamp label={ch.priority} variant={ch.variant} size="sm" animate={false} />
+          </div>
+          <p class="text-body-sm text-[var(--color-text-secondary)] mb-3">
+            {ch.description}
+          </p>
+          <span class="font-stamp text-stamp-label text-[var(--color-accent-gold)] opacity-0 transition-opacity group-hover:opacity-100">
+            ACCEDER →
+          </span>
+        </a>
+      ))}
+    </div>
+
+    <!-- Response times -->
+    <div class="mt-12 rounded-paper border border-dashed border-[var(--color-archive-kraft)]/40 p-6">
+      <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-4">
+        TIEMPOS DE RESPUESTA
+      </h2>
+      <div class="grid gap-3 sm:grid-cols-3 text-body-sm">
+        <div class="flex items-center gap-2">
+          <span class="inline-block h-2 w-2 rounded-full bg-green-600" />
+          <span class="text-[var(--color-text-secondary)]">Correo: 24-48h</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="inline-block h-2 w-2 rounded-full bg-blue-600" />
+          <span class="text-[var(--color-text-secondary)]">LinkedIn: 3-5 días</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="inline-block h-2 w-2 rounded-full bg-red-600" />
+          <span class="text-[var(--color-text-secondary)]">WhatsApp: Inmediato (horario)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sticky notes -->
+    <div class="mt-8 flex flex-wrap gap-6">
+      <StickyNote client:visible color="blue" rotation={-2}>
+        <p class="text-[var(--color-text-primary)]">
+          Para propuestas de freelance, incluir: alcance, timeline estimado y presupuesto disponible.
+        </p>
+      </StickyNote>
+      <StickyNote client:visible color="pink" rotation={2}>
+        <p class="text-[var(--color-text-primary)]">
+          Zona horaria: UTC-4 (Venezuela). Disponible para trabajo remoto global.
+        </p>
+      </StickyNote>
+    </div>
+
+    <!-- Location stamp -->
+    <div class="mt-12 text-center">
+      <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">
+        BASE: MARACAIBO, ZULIA, VENEZUELA
+      </p>
+      <p class="font-mono text-caption text-[var(--color-text-secondary)]/60 mt-1">
+        10.6544° N, 71.6365° W
+      </p>
+    </div>
+  </section>
+</BaseLayout>

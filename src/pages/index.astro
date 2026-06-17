@@ -1,17 +1,101 @@
 ---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Seal from '@components/ui/Seal';
+import FileFolder from '@components/ui/FileFolder';
+import CustomCursor from '@components/ui/CustomCursor';
+import { SITE } from '@lib/constants';
+import { getCollection } from 'astro:content';
 
+const expedientes = await getCollection('expedientes');
+const totalRefinements = expedientes.reduce((sum, e) => sum + e.data.refinementCount, 0);
+const featuredExpedientes = expedientes
+  .filter((e) => e.data.status === 'featured' || e.data.status === 'active')
+  .sort((a, b) => b.data.refinementCount - a.data.refinementCount);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout>
+  <!-- Custom Cursor (React Island) -->
+  <CustomCursor client:load />
+
+  <!-- Hero: Archive Cover -->
+  <section class="page-enter relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+    <div class="flex flex-col items-center gap-8 lg:flex-row lg:items-start lg:gap-16">
+      <!-- Left: Seal + Title -->
+      <div class="flex flex-col items-center text-center lg:items-start lg:text-left lg:flex-1">
+        <Seal client:visible size="lg" />
+
+        <h1 class="mt-6 text-display-xl text-[var(--color-text-primary)]">
+          Archivo<br />
+          <span class="text-gold-gradient">Reny Mireles</span>
+        </h1>
+
+        <p class="mt-4 text-body-lg text-[var(--color-text-secondary)] max-w-md">
+          Ingeniería de sistemas distribuidos.<br />
+          Cada expediente documenta pensamiento de ingeniero.
+        </p>
+
+        <!-- Metadata stamps -->
+        <div class="mt-6 flex flex-wrap items-center gap-4 text-caption">
+          <span class="font-mono text-[var(--color-accent-gold)]">
+            {expedientes.length} expedientes abiertos
+          </span>
+          <span class="text-[var(--color-archive-kraft)]">·</span>
+          <span class="font-mono text-[var(--color-text-secondary)]">
+            {totalRefinements} refinamientos totales
+          </span>
+        </div>
+
+        <div class="mt-2">
+          <span class="font-stamp text-stamp-label text-stamp-green">
+            ACTIVO · DISPONIBLE
+          </span>
+        </div>
+
+        <!-- CTA -->
+        <a
+          href="/expedientes"
+          class="gold-underline mt-8 inline-block font-stamp text-stamp-title text-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] transition-colors"
+        >
+          ABRIR EXPEDIENTE PRINCIPAL →
+        </a>
+      </div>
+
+      <!-- Right: Stack of Folders -->
+      <div class="flex flex-col gap-4 w-full max-w-lg lg:flex-1">
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2">
+          EXPEDIENTES RECIENTES
+        </p>
+        {featuredExpedientes.map((exp) => (
+          <a href={`/expedientes/${exp.id}`}>
+            <FileFolder
+              client:visible
+              title={exp.data.title}
+              expedientNumber={exp.data.expedientNumber}
+              status={exp.data.status}
+              refinementCount={exp.data.refinementCount}
+            />
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- Gold separator -->
+    <div class="mt-16 h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
+
+    <!-- Bottom section: Quick links -->
+    <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <a href="/about" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30">
+        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)]">FICHA DE IDENTIFICACIÓN</p>
+        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">Origen, metodología, capacidades</p>
+      </a>
+      <a href="/tools" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30">
+        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)]">CATÁLOGO DE HERRAMIENTAS</p>
+        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">Stack técnico clasificado</p>
+      </a>
+      <a href="/contacto" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30">
+        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)]">SOLICITUD DE CONTACTO</p>
+        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">Abrir un nuevo expediente</p>
+      </a>
+    </div>
+  </section>
+</BaseLayout>

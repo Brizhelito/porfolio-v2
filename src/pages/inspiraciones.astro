@@ -1,0 +1,174 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Stamp from '@components/ui/Stamp';
+
+const categories = [
+  {
+    section: 'INGENIERÍA DE SOFTWARE',
+    entries: [
+      {
+        name: 'Martin Fowler',
+        role: 'Arquitectura de Software',
+        note: 'Refactoring, patrones de empresa, y el concepto de deuda técnica como framework de decisión.',
+      },
+      {
+        name: 'Kent Beck',
+        role: 'Extreme Programming',
+        note: 'Simplicidad, comunicación, feedback. La base de cómo pienso sobre iteración.',
+      },
+      {
+        name: 'Rich Hickey',
+        role: 'Simplicidad como disciplina',
+        note: '"Simple Made Easy" cambió mi forma de evaluar complejidad incidental vs esencial.',
+      },
+      {
+        name: 'Gerard Meszaros',
+        role: 'Testing Patterns',
+        note: 'xUnit Test Patterns — el manual de referencia para tests que comunican intención.',
+      },
+    ],
+  },
+  {
+    section: 'SISTEMAS DISTRIBUIDOS',
+    entries: [
+      {
+        name: 'Leslie Lamport',
+        role: 'Fundamentos de consenso',
+        note: 'Paxos, relojes lógicos, y la base teórica de todo sistema distribuido moderno.',
+      },
+      {
+        name: 'Pat Helland',
+        role: 'Life beyond distributed transactions',
+        note: 'El paper que me hizo entender por qué los sagas patterns son inevitables.',
+      },
+      {
+        name: 'Marc Shapiro',
+        role: 'CRDTs',
+        note: 'Conflict-free Replicated Data Types — la base de Kumoriya sync layer.',
+      },
+    ],
+  },
+  {
+    section: 'DISEÑO DE INTERFACES',
+    entries: [
+      {
+        name: 'Edward Tufte',
+        role: 'Visualización de información',
+        note: 'Data-ink ratio. Cada pixel debe justificar su existencia.',
+      },
+      {
+        name: 'Dieter Rams',
+        role: 'Diseño industrial',
+        note: '"Weniger, aber besser" — menos, pero mejor. Filosofía aplicada a APIs y UIs.',
+      },
+      {
+        name: 'John Maeda',
+        role: 'Leyes de simplicidad',
+        note: 'Organizar, reducir, y saber cuándo el diseño ha alcanzado su forma final.',
+      },
+    ],
+  },
+  {
+    section: 'FILOSOFÍA Y METODOLOGÍA',
+    entries: [
+      {
+        name: 'Kintsugi (金継ぎ)',
+        role: 'Filosofía de la reparación',
+        note: 'Las cicatrices no se ocultan — se celebran con oro. La base conceptual de todo este archivo.',
+      },
+      {
+        name: 'Nassim Taleb',
+        role: 'Antifragilidad',
+        note: 'Lo que se beneficia del caos. Los sistemas (y los ingenieros) deberían ser antifrágiles.',
+      },
+      {
+        name: 'Richard Feynman',
+        role: 'Pensamiento de primer principio',
+        note: '"What I cannot create, I do not understand." La metodología de cada expediente.',
+      },
+    ],
+  },
+  {
+    section: 'HERRAMIENTAS QUE FORMARON ESTILO',
+    entries: [
+      {
+        name: 'Neovim',
+        role: 'Editor',
+        note: 'Modal editing como extensión del pensamiento. Configuración mínima, eficiencia máxima.',
+      },
+      {
+        name: 'Figma',
+        role: 'Diseño colaborativo',
+        note: 'Componentes, tokens, auto-layout. El puente entre diseño y código.',
+      },
+      {
+        name: 'Obsidian',
+        role: 'Segundo cerebro',
+        note: 'Zettelkasten + graph view. Así nacen las conexiones entre expedientes.',
+      },
+    ],
+  },
+];
+---
+
+<BaseLayout title="Inspiraciones — Archivo Reny Mireles" description="Créditos de inspiración — las personas, ideas y herramientas que formaron este archivo">
+  <section class="page-enter mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <header class="mb-16 text-center">
+      <span class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">
+        CRÉDITOS DEL ARCHIVO
+      </span>
+      <h1 class="mt-3 font-display text-display-xl text-[var(--color-text-primary)]">
+        Inspiraciones
+      </h1>
+      <p class="mt-3 text-body-lg text-[var(--color-text-secondary)] max-w-lg mx-auto">
+        Las personas, ideas, herramientas y filosofías que dieron forma
+        a la manera de pensar, construir y documentar de este archivo.
+      </p>
+      <div class="mt-8 h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
+    </header>
+
+    <!-- Movie-credits style sections -->
+    <div class="space-y-16">
+      {categories.map((cat) => (
+        <section>
+          <h2 class="font-stamp text-stamp-title text-[var(--color-accent-gold)] mb-8 text-center">
+            {cat.section}
+          </h2>
+          <div class="space-y-8">
+            {cat.entries.map((entry) => (
+              <div class="group text-center">
+                <p class="font-display text-display-sm text-[var(--color-text-primary)] group-hover:text-[var(--color-accent-gold)] transition-colors">
+                  {entry.name}
+                </p>
+                <p class="mt-1 font-stamp text-stamp-label text-[var(--color-text-secondary)]">
+                  {entry.role}
+                </p>
+                <p class="mt-2 text-body-sm text-[var(--color-text-secondary)] max-w-md mx-auto italic">
+                  "{entry.note}"
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+
+    <!-- Final gold separator -->
+    <div class="my-16 h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
+
+    <!-- Epilogue -->
+    <div class="text-center">
+      <Stamp label="FIN DE CRÉDITOS" variant="red" size="lg" />
+      <p class="mt-6 font-handwritten text-body-lg text-[var(--color-text-secondary)] max-w-sm mx-auto">
+        "Todo archivo es una conversación con quienes vinieron antes."
+      </p>
+      <a
+        href="/"
+        class="gold-underline mt-6 inline-block font-stamp text-stamp-label text-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] transition-colors"
+      >
+        VOLVER AL ARCHIVO →
+      </a>
+    </div>
+  </section>
+</BaseLayout>

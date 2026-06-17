@@ -1,0 +1,144 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import TechnicalCard from '@components/ui/TechnicalCard';
+import Stamp from '@components/ui/Stamp';
+import StickyNote from '@components/ui/StickyNote';
+
+const collaborations = [
+  {
+    id: 'corpozulia-2024',
+    organization: 'Corpozulia',
+    role: 'Consultor de Desarrollo',
+    period: '2024',
+    status: 'green' as const,
+    statusLabel: 'COMPLETADO',
+    description:
+      'Asesoría técnica en la modernización de la plataforma de gestión institucional. Migración de arquitectura legacy a stack moderno con enfoque en rendimiento y mantenibilidad.',
+    contributions: [
+      'Auditoría de arquitectura frontend existente',
+      'Propuesta de migración a componentes modulares',
+      'Capacitación del equipo interno en buenas prácticas',
+      'Documentación técnica y guías de estilo',
+    ],
+    stack: ['TypeScript', 'React', 'Node.js', 'PostgreSQL'],
+    fields: [
+      { label: 'ORGANIZACIÓN', value: 'Corpozulia' },
+      { label: 'ROL', value: 'Consultor de Desarrollo' },
+      { label: 'PERIODO', value: '2024' },
+      { label: 'MODALIDAD', value: 'Remoto / Presencial (Maracaibo)' },
+    ],
+  },
+];
+---
+
+<BaseLayout title="Colaboraciones — Archivo Reny Mireles" description="Registro de colaboraciones profesionales y consultorías">
+  <section class="page-enter mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <header class="mb-12">
+      <div class="flex items-center justify-between mb-4">
+        <span class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">
+          REGISTRO DE COLABORACIONES
+        </span>
+        <Stamp label={`${collaborations.length} REGISTRO`} variant="green" size="md" />
+      </div>
+      <h1 class="font-display text-display-lg text-[var(--color-text-primary)]">
+        Colaboraciones
+      </h1>
+      <p class="mt-2 text-body-lg text-[var(--color-text-secondary)] max-w-2xl">
+        Proyectos colaborativos, consultorías y asesorías técnicas que han dejado
+        cicatrices de oro en el archivo.
+      </p>
+      <div class="mt-6 h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
+    </header>
+
+    <!-- Collaborations list -->
+    <div class="space-y-8">
+      {collaborations.map((collab) => (
+        <article class="relative">
+          <!-- Main card -->
+          <div class="rounded-paper texture-aged-paper border border-[var(--color-archive-kraft)]/30 p-6 shadow-paper">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-2">
+                  <h2 class="font-display text-display-sm text-[var(--color-text-primary)]">
+                    {collab.organization}
+                  </h2>
+                  <Stamp label={collab.statusLabel} variant={collab.status} size="sm" animate={false} />
+                </div>
+                <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)] mb-3">
+                  {collab.role} · {collab.period}
+                </p>
+                <p class="text-body-md text-[var(--color-text-secondary)] mb-4 max-w-xl">
+                  {collab.description}
+                </p>
+
+                <!-- Contributions -->
+                <div class="mb-4">
+                  <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2">
+                    CONTRIBUCIONES CLAVE
+                  </p>
+                  <ul class="space-y-1">
+                    {collab.contributions.map((c) => (
+                      <li class="flex items-start gap-2 text-body-sm text-[var(--color-text-primary)]">
+                        <span class="mt-1 text-[var(--color-accent-gold)]">◆</span>
+                        {c}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <!-- Stack -->
+                <div class="flex flex-wrap gap-2">
+                  {collab.stack.map((tech) => (
+                    <span class="font-mono text-[10px] px-2 py-0.5 rounded border border-[var(--color-archive-kraft)]/20 text-[var(--color-text-secondary)]">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <!-- Side metadata card -->
+              <div class="lg:w-64 shrink-0">
+                <TechnicalCard
+                  client:visible
+                  title="Ficha Técnica"
+                  fields={collab.fields}
+                  stampLabel={collab.statusLabel}
+                  stampVariant={collab.status}
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Sticky note annotation -->
+          <div class="mt-4 ml-8">
+            <StickyNote client:visible color="yellow" rotation={-1.5}>
+              <p class="text-[var(--color-text-primary)]">
+                {collab.id === 'corpozulia-2024'
+                  ? 'El equipo de Corpozulia fue excepcionalmente receptivo. La migración se completó en fases sin downtime.'
+                  : 'Colaboración documentada.'}
+              </p>
+            </StickyNote>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <!-- Open to collabs -->
+    <div class="mt-16 rounded-paper border border-dashed border-[var(--color-accent-gold)]/40 p-8 text-center">
+      <p class="font-stamp text-stamp-title text-[var(--color-accent-gold)] mb-2">
+        ¿INTERESADO EN COLABORAR?
+      </p>
+      <p class="text-body-md text-[var(--color-text-secondary)] max-w-md mx-auto mb-4">
+        Abierto a consultorías, proyectos de ingeniería y colaboraciones técnicas.
+        Cada colaboración es un expediente nuevo en el archivo.
+      </p>
+      <a
+        href="/contacto"
+        class="gold-underline inline-block font-stamp text-stamp-label text-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] transition-colors"
+      >
+        ABRIR SOLICITUD DE CONTACTO →
+      </a>
+    </div>
+  </section>
+</BaseLayout>

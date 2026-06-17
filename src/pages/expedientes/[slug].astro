@@ -1,0 +1,166 @@
+---
+import ExpedientLayout from '@layouts/ExpedientLayout.astro';
+import ExpedientCover from '@components/expedientes/ExpedientCover';
+import TechnicalCard from '@components/ui/TechnicalCard';
+import GoldThread from '@components/ui/GoldThread';
+import Stamp from '@components/ui/Stamp';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const expedientes = await getCollection('expedientes');
+  return expedientes.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'expedientes'>;
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+const stackGroups: Record<string, string[]> = {};
+entry.data.stack.forEach((tech) => {
+  const category = categorize(tech);
+  if (!stackGroups[category]) stackGroups[category] = [];
+  stackGroups[category].push(tech);
+});
+
+function categorize(tech: string): string {
+  const lower = tech.toLowerCase();
+  if (['flutter', 'react', 'next.js', 'astro', 'vue', 'svelte'].some(t => lower.includes(t))) return 'Frontend';
+  if (['go', 'node', 'express', 'fiber', 'fastify', 'nestjs', 'rust'].some(t => lower.includes(t))) return 'Backend';
+  if (['postgres', 'mysql', 'redis', 'sqlite', 'drift', 'mongodb', 'supabase'].some(t => lower.includes(t))) return 'Datos';
+  if (['cloudflare', 'aws', 'gcp', 'vercel', 'docker', 'kubernetes'].some(t => lower.includes(t))) return 'Infraestructura';
+  if (['jest', 'vitest', 'playwright', 'cypress', 'sentry'].some(t => lower.includes(t))) return 'Testing & QA';
+  if (['github', 'ci', 'cd', 'webpack', 'vite'].some(t => lower.includes(t))) return 'DevOps';
+  return 'Otros';
+}
+---
+
+<ExpedientLayout title={entry.data.title} description={entry.data.description}>
+  <!-- Cover -->
+  <ExpedientCover
+    client:visible
+    title={entry.data.title}
+    expedientNumber={entry.data.expedientNumber}
+    classification={entry.data.classification}
+    status={entry.data.status}
+    refinementCount={entry.data.refinementCount}
+  />
+
+  <!-- Quick metadata -->
+  <div class="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
+    {entry.data.metrics?.layers != null && (
+      <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
+        <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.layers}</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">CAPAS</p>
+      </div>
+    )}
+    {entry.data.metrics?.packages != null && (
+      <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
+        <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.packages}</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">PAQUETES</p>
+      </div>
+    )}
+    {entry.data.metrics?.plugins != null && (
+      <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
+        <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.plugins}</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">PLUGINS</p>
+      </div>
+    )}
+    {entry.data.metrics?.tests != null && (
+      <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
+        <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.tests}</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">TESTS</p>
+      </div>
+    )}
+  </div>
+
+  <!-- MDX Content (Lab Notes, Timeline, Decision Trees, etc.) -->
+  <div class="prose-expedient mb-12">
+    <Content />
+  </div>
+
+  <!-- Gold thread separator -->
+  <GoldThread client:visible />
+
+  <!-- Stack técnico clasificado -->
+  <section class="mt-12 mb-10">
+    <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-6">
+      STACK TÉCNICO CLASIFICADO
+    </h2>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {Object.entries(stackGroups).map(([category, techs]) => (
+        <TechnicalCard
+          client:visible
+          title={category}
+          fields={techs.map((t) => ({ label: 'Tecnología', value: t }))}
+          stampLabel={`${techs.length}`}
+          stampVariant="blue"
+        />
+      ))}
+    </div>
+  </section>
+
+  <!-- Links section -->
+  {entry.data.links && (
+    <section class="mb-10">
+      <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-4">
+        ENLACES DEL EXPEDIENTE
+      </h2>
+      <div class="flex flex-wrap gap-3">
+        {entry.data.links.repository && (
+          <a
+            href={entry.data.links.repository}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="gold-underline inline-flex items-center gap-2 rounded-paper border border-[var(--color-archive-kraft)]/20 px-4 py-2 font-stamp text-stamp-label text-[var(--color-text-primary)] transition-all hover:border-[var(--color-accent-gold)]/40 hover:shadow-paper"
+          >
+            <span>Repositorio</span>
+            <span class="text-[var(--color-accent-gold)]">↗</span>
+          </a>
+        )}
+        {entry.data.links.demo && (
+          <a
+            href={entry.data.links.demo}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="gold-underline inline-flex items-center gap-2 rounded-paper border border-[var(--color-archive-kraft)]/20 px-4 py-2 font-stamp text-stamp-label text-[var(--color-text-primary)] transition-all hover:border-[var(--color-accent-gold)]/40 hover:shadow-paper"
+          >
+            <span>Demo en vivo</span>
+            <span class="text-[var(--color-accent-gold)]">↗</span>
+          </a>
+        )}
+        {entry.data.links.website && (
+          <a
+            href={entry.data.links.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="gold-underline inline-flex items-center gap-2 rounded-paper border border-[var(--color-archive-kraft)]/20 px-4 py-2 font-stamp text-stamp-label text-[var(--color-text-primary)] transition-all hover:border-[var(--color-accent-gold)]/40 hover:shadow-paper"
+          >
+            <span>Sitio web</span>
+            <span class="text-[var(--color-accent-gold)]">↗</span>
+          </a>
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- Dates stamp -->
+  <footer class="border-t border-[var(--color-archive-kraft)]/20 pt-6 mt-12">
+    <div class="flex flex-wrap items-center justify-between gap-4 text-caption text-[var(--color-text-secondary)]">
+      <span class="font-mono">
+        Publicado: {entry.data.publishDate.toLocaleDateString('es-VE', { year: 'numeric', month: 'long', day: 'numeric' })}
+      </span>
+      {entry.data.updatedDate && (
+        <span class="font-mono">
+          Última actualización: {entry.data.updatedDate.toLocaleDateString('es-VE', { year: 'numeric', month: 'long', day: 'numeric' })}
+        </span>
+      )}
+      <Stamp label="VERIFICADO" variant="green" size="sm" />
+    </div>
+  </footer>
+</ExpedientLayout>

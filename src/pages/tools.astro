@@ -1,0 +1,43 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const categories = [
+  { name: 'Frontend', tools: ['React', 'Flutter', 'Astro', 'Tailwind CSS', 'TypeScript', 'Next.js'] },
+  { name: 'Mobile', tools: ['Flutter', 'Dart', 'Riverpod', 'Drift/SQLite', 'Firebase'] },
+  { name: 'Backend', tools: ['Go', 'Fiber', 'Node.js', 'Express', 'Python'] },
+  { name: 'Database', tools: ['PostgreSQL', 'Redis', 'SQLite', 'MongoDB', 'Drift'] },
+  { name: 'Edge & Cloud', tools: ['Cloudflare Workers', 'Durable Objects', 'Vercel', 'WebSocket'] },
+  { name: 'DevOps', tools: ['Docker', 'GitHub Actions', 'Sentry', 'Nginx'] },
+  { name: 'Auth & Security', tools: ['WebAuthn', 'Passkeys', 'OAuth2', 'JWT', 'CRDT'] },
+  { name: 'Architecture', tools: ['Plugin-first', 'Microservicios', 'Event-driven', 'CQRS'] },
+];
+---
+
+<BaseLayout title="Catálogo de Herramientas — Archivo Reny Mireles">
+  <section class="page-enter mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <header class="mb-8">
+      <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2">ARCHIVO RENY MIRELES</p>
+      <h1 class="text-display-lg text-[var(--color-text-primary)]">Catálogo de Herramientas</h1>
+      <p class="mt-2 text-body-lg text-[var(--color-text-secondary)]">
+        Clasificadores laterales por categoría. El contexto se detalla en los expedientes.
+      </p>
+    </header>
+
+    <div class="space-y-6">
+      {categories.map((cat) => (
+        <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-5 transition-shadow hover:shadow-paper">
+          <h2 class="font-stamp text-stamp-title text-[var(--color-accent-gold)] mb-3">
+            {cat.name}
+          </h2>
+          <div class="flex flex-wrap gap-2">
+            {cat.tools.map((tool) => (
+              <span class="inline-block rounded-paper border border-[var(--color-archive-kraft)]/30 bg-[var(--color-bg-secondary)]/50 px-3 py-1 font-mono text-body-sm text-[var(--color-text-primary)]">
+                {tool}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

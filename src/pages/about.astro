@@ -1,0 +1,64 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import TechnicalCard from '@components/ui/TechnicalCard';
+import StickyNote from '@components/ui/StickyNote';
+---
+
+<BaseLayout title="Ficha de Identificación — Archivo Reny Mireles">
+  <section class="page-enter mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <header class="mb-8">
+      <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2">ARCHIVO RENY MIRELES</p>
+      <h1 class="text-display-lg text-[var(--color-text-primary)]">Ficha de Identificación</h1>
+    </header>
+
+    <div class="grid gap-6 lg:grid-cols-2">
+      <TechnicalCard
+        title="Reny Mireles"
+        expedientNumber="000"
+        classification="Ingeniero de Sistemas Distribuidos"
+        stampLabel="ACTIVO"
+        stampVariant="green"
+        fields={[
+          { label: 'ORIGEN', value: 'Venezuela' },
+          { label: 'ESPECIALIDAD', value: 'Sistemas distribuidos, edge computing, mobile' },
+          { label: 'METODOLOGÍA', value: 'Iteración documentada, arquitectura plugin-first' },
+          { label: 'IDIOMAS', value: 'Español (nativo), Inglés (profesional)' },
+          { label: 'DISPONIBILIDAD', value: 'Abierto a oportunidades' },
+        ]}
+      />
+
+      <TechnicalCard
+        title="Capacidades Demostradas"
+        classification="Dominios técnicos verificados en expedientes"
+        stampLabel="VERIFICADO"
+        stampVariant="blue"
+        fields={[
+          { label: 'FRONTEND', value: 'React, Flutter, Astro, Tailwind' },
+          { label: 'BACKEND', value: 'Go, Node.js, Fiber, Express' },
+          { label: 'EDGE', value: 'Cloudflare Workers, Durable Objects' },
+          { label: 'DATABASE', value: 'PostgreSQL, Redis, SQLite, MongoDB' },
+          { label: 'DEVOPS', value: 'Docker, GitHub Actions, Sentry' },
+          { label: 'AUTH', value: 'WebAuthn, Passkeys, OAuth2' },
+        ]}
+      />
+    </div>
+
+    <div class="mt-8">
+      <StickyNote rotation={-1}>
+        El contexto de cada herramienta se detalla en los expedientes. Aquí solo se listan capacidades verificadas en producción.
+      </StickyNote>
+    </div>
+
+    <div class="mt-12">
+      <h2 class="font-display text-display-md text-[var(--color-text-primary)] mb-4">Filosofía de Trabajo</h2>
+      <div class="prose-expedient">
+        <ul>
+          <li><strong>Iteración sobre perfección:</strong> Cada refinamiento documentado añade valor medible.</li>
+          <li><strong>Arquitectura plugin-first:</strong> Extensibilidad como principio de diseño, no como afterthought.</li>
+          <li><strong>Documentación silenciosa:</strong> El código se explica solo, las notas de laboratorio capturan el por qué.</li>
+          <li><strong>Performance como feature:</strong> Cada decisión arquitectónica considera el impacto en el usuario final.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
