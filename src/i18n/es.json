@@ -1,0 +1,69 @@
+{
+  "site": {
+    "title": "Archivo Reny Mireles",
+    "description": "Portafolio de ingeniería — Expedientes de trabajo de Reny Mireles"
+  },
+  "nav": {
+    "home": "Inicio",
+    "about": "Ficha de Identificación",
+    "tools": "Catálogo de Herramientas",
+    "expedientes": "Expedientes",
+    "colaboraciones": "Colaboraciones",
+    "inspiraciones": "Inspiraciones",
+    "contacto": "Contacto"
+  },
+  "home": {
+    "hero_title_1": "Archivo",
+    "hero_title_2": "Reny Mireles",
+    "hero_subtitle": "Ingeniería de sistemas distribuidos.",
+    "hero_subtitle_2": "Cada expediente documenta pensamiento de ingeniero.",
+    "expedients_open": "{count} expedientes abiertos",
+    "total_refinements": "{count} refinamientos totales",
+    "status_active": "ACTIVO · DISPONIBLE",
+    "cta_main": "ABRIR EXPEDIENTE PRINCIPAL →",
+    "recent_expedients": "EXPEDIENTES RECIENTES"
+  },
+  "expedientes": {
+    "page_title": "Expedientes Abiertos",
+    "page_description": "Cada expediente documenta el proceso de ingeniería: decisiones, errores, refinamientos y las cicatrices de oro que dejaron.",
+    "featured": "DESTACADOS",
+    "active": "ACTIVOS",
+    "archived": "ARCHIVADOS",
+    "refinements": "{count} refinamientos",
+    "stack_classified": "STACK TÉCNICO CLASIFICADO",
+    "links": "ENLACES DEL EXPEDIENTE",
+    "repository": "Repositorio",
+    "demo": "Demo en vivo",
+    "website": "Sitio web",
+    "published": "Publicado",
+    "updated": "Última actualización",
+    "verified": "VERIFICADO",
+    "layers": "CAPAS",
+    "packages": "PAQUETES",
+    "plugins": "PLUGINS",
+    "tests": "TESTS"
+  },
+  "about": {
+    "page_title": "Ficha de Identificación",
+    "page_description": "Datos técnicos del archivista"
+  },
+  "tools": {
+    "page_title": "Catálogo de Herramientas",
+    "page_description": "Stack técnico clasificado y catalogado"
+  },
+  "contact": {
+    "page_title": "Abrir Nuevo Expediente",
+    "page_description": "Para consultas, propuestas de trabajo, o iniciar una colaboración — elige el canal que mejor se adapte a tu solicitud.",
+    "reception": "VENTANILLA DE RECEPCIÓN",
+    "available": "DISPONIBLE",
+    "response_times": "TIEMPOS DE RESPUESTA",
+    "email_response": "Correo: 24-48h",
+    "linkedin_response": "LinkedIn: 3-5 días",
+    "whatsapp_response": "WhatsApp: Inmediato (horario)",
+    "location": "BASE: MARACAIBO, ZULIA, VENEZUELA"
+  },
+  "common": {
+    "back_to_archive": "VOLVER AL ARCHIVO →",
+    "access": "ACCEDER →"
+  }
+}

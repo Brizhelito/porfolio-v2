@@ -1,0 +1,69 @@
+{
+  "site": {
+    "title": "Reny Mireles Archive",
+    "description": "Engineering portfolio — Work files of Reny Mireles"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "Identity Card",
+    "tools": "Tool Catalog",
+    "expedientes": "Case Files",
+    "colaboraciones": "Collaborations",
+    "inspiraciones": "Inspirations",
+    "contacto": "Contact"
+  },
+  "home": {
+    "hero_title_1": "Archive",
+    "hero_title_2": "Reny Mireles",
+    "hero_subtitle": "Distributed systems engineering.",
+    "hero_subtitle_2": "Each case file documents engineering thinking.",
+    "expedients_open": "{count} open case files",
+    "total_refinements": "{count} total refinements",
+    "status_active": "ACTIVE · AVAILABLE",
+    "cta_main": "OPEN MAIN CASE FILE →",
+    "recent_expedients": "RECENT CASE FILES"
+  },
+  "expedientes": {
+    "page_title": "Open Case Files",
+    "page_description": "Each case file documents the engineering process: decisions, mistakes, refinements and the golden scars they left behind.",
+    "featured": "FEATURED",
+    "active": "ACTIVE",
+    "archived": "ARCHIVED",
+    "refinements": "{count} refinements",
+    "stack_classified": "CLASSIFIED TECH STACK",
+    "links": "CASE FILE LINKS",
+    "repository": "Repository",
+    "demo": "Live Demo",
+    "website": "Website",
+    "published": "Published",
+    "updated": "Last updated",
+    "verified": "VERIFIED",
+    "layers": "LAYERS",
+    "packages": "PACKAGES",
+    "plugins": "PLUGINS",
+    "tests": "TESTS"
+  },
+  "about": {
+    "page_title": "Identity Card",
+    "page_description": "Technical data of the archivist"
+  },
+  "tools": {
+    "page_title": "Tool Catalog",
+    "page_description": "Classified and catalogued technical stack"
+  },
+  "contact": {
+    "page_title": "Open New Case File",
+    "page_description": "For inquiries, job proposals, or starting a collaboration — choose the channel that best fits your request.",
+    "reception": "RECEPTION DESK",
+    "available": "AVAILABLE",
+    "response_times": "RESPONSE TIMES",
+    "email_response": "Email: 24-48h",
+    "linkedin_response": "LinkedIn: 3-5 days",
+    "whatsapp_response": "WhatsApp: Immediate (office hours)",
+    "location": "BASED: MARACAIBO, ZULIA, VENEZUELA"
+  },
+  "common": {
+    "back_to_archive": "BACK TO ARCHIVE →",
+    "access": "ACCESS →"
+  }
+}

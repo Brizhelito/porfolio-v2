@@ -7,6 +7,13 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   site: 'https://renymireles.dev',
+  i18n: {
+    defaultLocale: 'es',
+    locales: ['es', 'en'],
+    routing: {
+      prefixDefaultLocale: false, // /es/ prefix not needed for default
+    },
+  },
   integrations: [
     react(),
     mdx(),
