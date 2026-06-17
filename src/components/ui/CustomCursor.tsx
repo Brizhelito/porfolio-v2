@@ -4,21 +4,32 @@ const TRAIL_INTERVAL = 80;
 const MAX_TRAIL = 20;
 const RING_FOLLOW = 0.12;
 
-type CursorMode = 'default' | 'linking' | 'expediente' | 'input' | 'navbar' | 'reading';
+type CursorMode = 'default' | 'link' | 'button' | 'expediente' | 'input' | 'nav-link' | 'reading';
 
 const SECTION_COLORS: Record<string, string> = {
   '/': '#C9A961',
   '/about': '#2D4A5C',
-  '/tools': '#4A4640',
+  '/tools': '#2D4A5C',
   '/expedientes': '#5C7156',
   '/colaboraciones': '#5C7156',
   '/contacto': '#B23A28',
   '/inspiraciones': '#4A4640',
 };
 
-function sectionColor(path: string): string {
+const MODE_CLASS: Record<CursorMode, string> = {
+  default: '',
+  link: 'is-link',
+  button: 'is-button',
+  expediente: 'is-expediente',
+  input: 'is-input',
+  'nav-link': 'is-nav-link',
+  reading: 'is-reading',
+};
+
+function sectionColorForPath(): string {
+  const path = window.location.pathname;
   const key = Object.keys(SECTION_COLORS).find((p) => path === p || path.startsWith(p + '/'));
-  return key ? SECTION_COLORS[key] : '#C9A961';
+  return SECTION_COLORS[key || '/'] || '#C9A961';
 }
 
 export default function CustomCursor() {
@@ -40,8 +51,8 @@ export default function CustomCursor() {
     const ring = ringRef.current;
     if (!dot || !ring) return;
 
-    // Section color on mount
-    ring.style.setProperty('--ring-color', sectionColor(window.location.pathname));
+    // Section color
+    ring.style.setProperty('--cursor-color', sectionColorForPath());
 
     const spawnTrail = (x: number, y: number) => {
       if (trailCount.current >= MAX_TRAIL) return;
@@ -49,6 +60,7 @@ export default function CustomCursor() {
       p.className = 'cursor-trail-particle';
       p.style.left = x + 'px';
       p.style.top = y + 'px';
+      p.style.background = modeRef.current === 'expediente' ? '#2D4A5C' : 'var(--color-accent-gold, #C9A961)';
       document.body.appendChild(p);
       trailCount.current++;
 
@@ -57,14 +69,8 @@ export default function CustomCursor() {
     };
 
     const setMode = (mode: CursorMode) => {
-      if (mode === modeRef.current) return;
       modeRef.current = mode;
-      ring.className = 'cursor-ring' +
-        (mode === 'linking' ? ' is-linking' : '') +
-        (mode === 'expediente' ? ' is-expediente' : '') +
-        (mode === 'input' ? ' is-input' : '') +
-        (mode === 'navbar' ? ' is-navbar' : '') +
-        (mode === 'reading' ? ' is-reading' : '');
+      ring.className = 'cursor-ring' + (MODE_CLASS[mode] ? ' ' + MODE_CLASS[mode] : '');
     };
 
     const onMouseMove = (e: MouseEvent) => {
@@ -82,38 +88,30 @@ export default function CustomCursor() {
 
     const onMouseOver = (e: MouseEvent) => {
       const t = e.target as HTMLElement;
-
-      // Order matters: most specific first
-      if (t.closest('[data-expediente]')) {
-        setMode('expediente');
-      } else if (t.closest('input, textarea, [contenteditable]')) {
-        setMode('input');
-      } else if (t.closest('nav a, .nav-link')) {
-        setMode('navbar');
-      } else if (t.closest('a, button, [role="button"]')) {
-        setMode('linking');
-      }
+      if (t.closest('input, textarea')) { setMode('input'); return; }
+      if (t.closest('[data-expediente]')) { setMode('expediente'); return; }
+      if (t.closest('nav a')) { setMode('nav-link'); return; }
+      if (t.closest('button, [role="button"]')) { setMode('button'); return; }
+      if (t.closest('a')) { setMode('link'); return; }
     };
 
     const onMouseOut = (e: MouseEvent) => {
       const t = e.target as HTMLElement;
-      if (t.closest('a, button, [role="button"], input, textarea, [contenteditable], [data-expediente]')) {
+      if (t.closest('input, textarea, a, button, [role="button"], [data-expediente], nav a')) {
         setMode('default');
       }
     };
 
-    // Reading mode: slow scroll → ring contracts
+    // Reading mode via scroll speed
     const onScroll = () => {
       const delta = Math.abs(window.scrollY - lastScrollY.current);
       lastScrollY.current = window.scrollY;
 
       if (scrollTimer.current) clearTimeout(scrollTimer.current);
-      if (delta < 3 && modeRef.current === 'default') {
+      if (delta < 3) {
         setMode('reading');
-        scrollTimer.current = window.setTimeout(() => {
-          setMode('default');
-        }, 2000);
-      } else if (delta >= 3 && modeRef.current === 'reading') {
+        scrollTimer.current = window.setTimeout(() => { setMode('default'); }, 2000);
+      } else {
         setMode('default');
       }
     };
