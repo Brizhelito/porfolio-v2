@@ -4,7 +4,7 @@ import ExpedientCover from '@components/expedientes/ExpedientCover';
 import TechnicalCard from '@components/ui/TechnicalCard';
 import GoldThread from '@components/ui/GoldThread';
 import Stamp from '@components/ui/Stamp';
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
 
 export async function getStaticPaths() {
   const expedientes = await getCollection('expedientes');
@@ -19,7 +19,7 @@ interface Props {
 }
 
 const { entry } = Astro.props;
-const { Content } = await entry.render();
+const { Content } = await render(entry);
 
 const stackGroups: Record<string, string[]> = {};
 entry.data.stack.forEach((tech) => {
