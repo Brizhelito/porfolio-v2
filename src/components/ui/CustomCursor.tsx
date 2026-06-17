@@ -49,8 +49,8 @@ export default function CustomCursor() {
     const onMouseMove = (e: MouseEvent) => {
       mouse.current.x = e.clientX;
       mouse.current.y = e.clientY;
-      dot.style.left = (e.clientX - 3) + 'px';
-      dot.style.top = (e.clientY - 3) + 'px';
+      dot.style.left = e.clientX + 'px';
+      dot.style.top = e.clientY + 'px';
 
       const now = Date.now();
       if (now - trailTimer.current > TRAIL_INTERVAL) {
@@ -103,8 +103,8 @@ export default function CustomCursor() {
     const tick = () => {
       ring.current.x += (mouse.current.x - ring.current.x) * RING_FOLLOW;
       ring.current.y += (mouse.current.y - ring.current.y) * RING_FOLLOW;
-      ring.style.left = (ring.current.x - 16) + 'px';
-      ring.style.top = (ring.current.y - 16) + 'px';
+      ring.style.left = ring.current.x + 'px';
+      ring.style.top = ring.current.y + 'px';
       rafId.current = requestAnimationFrame(tick);
     };
     rafId.current = requestAnimationFrame(tick);

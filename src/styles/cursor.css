@@ -10,7 +10,10 @@
   height: 6px;
   background: var(--color-accent-gold, #C9A961);
   border-radius: 50%;
-  will-change: left, top, width, height;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  will-change: transform;
   transition: width 0.2s ease, height 0.2s ease, opacity 0.15s ease;
 }
 
@@ -22,7 +25,10 @@
   height: 32px;
   border: 1.5px solid var(--color-accent-gold, #C9A961);
   border-radius: 50%;
-  will-change: left, top, width, height, opacity;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  will-change: transform;
   transition: width 0.25s ease, height 0.25s ease, border-color 0.2s ease, opacity 0.2s ease;
   opacity: 0.6;
 }
