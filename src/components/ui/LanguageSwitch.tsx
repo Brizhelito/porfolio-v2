@@ -2,19 +2,18 @@ import { useState, useRef, useEffect } from 'react';
 import { gsap, prefersReducedMotion } from '@lib/animations';
 
 interface LanguageSwitchProps {
-  currentLang?: 'es' | 'en';
   className?: string;
 }
 
-export default function LanguageSwitch({ currentLang = 'es', className = '' }: LanguageSwitchProps) {
-  const [activeLang, setActiveLang] = useState(currentLang);
+export default function LanguageSwitch({ className = '' }: LanguageSwitchProps) {
+  const [activeLang, setActiveLang] = useState<'es' | 'en'>('es');
   const [isAnimating, setIsAnimating] = useState(false);
   const stampRef = useRef<HTMLDivElement>(null);
-  const inkRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setActiveLang(currentLang);
-  }, [currentLang]);
+    const saved = localStorage.getItem('lang') as 'es' | 'en' | null;
+    if (saved) setActiveLang(saved);
+  }, []);
 
   const switchLanguage = (lang: 'es' | 'en') => {
     if (lang === activeLang || isAnimating) return;
@@ -30,48 +29,23 @@ export default function LanguageSwitch({ currentLang = 'es', className = '' }: L
           rotate: 0,
           duration: 0.4,
           ease: 'back.out(1.7)',
-        }
-      );
-    }
-
-    // Ink reveal effect
-    if (inkRef.current && !prefersReducedMotion) {
-      gsap.fromTo(inkRef.current,
-        { scaleX: 0, opacity: 0 },
-        {
-          scaleX: 1,
-          opacity: 1,
-          duration: 0.3,
-          delay: 0.15,
-          ease: 'power2.out',
           onComplete: () => {
-            // Navigate after animation
-            const currentPath = window.location.pathname;
-            let newPath: string;
-
-            if (lang === 'en') {
-              newPath = `/en${currentPath}`;
-            } else {
-              newPath = currentPath.replace(/^\/en/, '') || '/';
-            }
-
-            window.location.href = newPath;
+            gsap.to(stampRef.current, {
+              opacity: 0,
+              duration: 0.3,
+              delay: 0.5,
+            });
           }
         }
       );
-    } else {
-      // No animation, direct navigation
-      const currentPath = window.location.pathname;
-      let newPath: string;
-
-      if (lang === 'en') {
-        newPath = `/en${currentPath}`;
-      } else {
-        newPath = currentPath.replace(/^\/en/, '') || '/';
-      }
-
-      window.location.href = newPath;
     }
+
+    // Update state
+    setActiveLang(lang);
+    localStorage.setItem('lang', lang);
+    document.documentElement.setAttribute('lang', lang);
+
+    setTimeout(() => setIsAnimating(false), 600);
   };
 
   return (
@@ -81,19 +55,12 @@ export default function LanguageSwitch({ currentLang = 'es', className = '' }: L
         ref={stampRef}
         className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 z-10"
       >
-        <div className="w-12 h-12 rounded-full border-2 border-[var(--color-accent-gold)] flex items-center justify-center bg-[var(--color-bg-primary)]">
+        <div className="w-12 h-12 rounded-full border-2 border-[var(--color-accent-gold)] flex items-center justify-center bg-[var(--color-bg-primary)] shadow-[var(--shadow-stamp)]">
           <span className="font-stamp text-[10px] tracking-wider text-[var(--color-accent-gold)]">
             {activeLang.toUpperCase()}
           </span>
         </div>
       </div>
-
-      {/* Ink reveal overlay */}
-      <div
-        ref={inkRef}
-        className="absolute inset-0 bg-[var(--color-accent-gold)] pointer-events-none opacity-0 z-5"
-        style={{ transformOrigin: 'left center' }}
-      />
 
       {/* Language buttons */}
       <div className="flex items-center bg-[var(--color-bg-secondary)]/50 rounded-[3px] p-0.5">

@@ -1,10 +1,8 @@
 ---
 import { NAV_LINKS } from '@lib/constants';
-import { getLangFromUrl, useTranslations, type Lang } from '../../i18n/index';
+import LanguageSwitch from '@components/ui/LanguageSwitch';
 
 const currentPath = Astro.url.pathname;
-const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
 ---
 
 <header class="archive-header sticky top-0 z-[var(--z-navigation)]">
@@ -74,32 +72,7 @@ const t = useTranslations(lang);
 
         <!-- Right: Language Switch + Mobile menu -->
         <div class="flex items-center gap-2">
-          <!-- Language Switch -->
-          <div class="lang-switch flex items-center bg-[var(--color-bg-secondary)]/50 rounded-[3px] p-0.5">
-            <a
-              href={currentPath.replace(/^\/en/, '') || '/'}
-              class:list={[
-                'lang-btn px-2 py-1 text-[11px] font-stamp tracking-wider rounded-[2px] transition-all duration-200',
-                lang === 'es'
-                  ? 'bg-[var(--color-accent-gold)] text-[var(--color-archive-white)]'
-                  : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]',
-              ]}
-            >
-              ES
-            </a>
-            <a
-              href={`/en${currentPath}`}
-              class:list={[
-                'lang-btn px-2 py-1 text-[11px] font-stamp tracking-wider rounded-[2px] transition-all duration-200',
-                lang === 'en'
-                  ? 'bg-[var(--color-accent-gold)] text-[var(--color-archive-white)]'
-                  : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]',
-              ]}
-            >
-              EN
-            </a>
-          </div>
-
+          <LanguageSwitch client:load />
           <!-- Mobile hamburger -->
           <button
             id="mobile-menu-btn"
