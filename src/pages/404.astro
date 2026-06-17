@@ -1,0 +1,52 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Stamp from '@components/ui/Stamp';
+---
+
+<BaseLayout title="404 — Expediente No Encontrado" description="Este expediente no existe o ha sido movido">
+  <section class="page-enter mx-auto max-w-2xl px-4 py-24 text-center sm:px-6 lg:px-8">
+    <!-- Large stamp -->
+    <div class="mb-8">
+      <Stamp label="NO ENCONTRADO" variant="red" size="lg" />
+    </div>
+
+    <h1 class="font-display text-display-xl text-[var(--color-text-primary)] mb-4">
+      404
+    </h1>
+
+    <p class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-2">
+      EXPEDIENTE NO ENCONTRADO
+    </p>
+
+    <p class="text-body-lg text-[var(--color-text-secondary)] mb-8 max-w-md mx-auto">
+      Este expediente no existe en el archivo, fue reclasificado,
+      o la referencia fue escrita con tinta invisible.
+    </p>
+
+    <!-- Gold separator -->
+    <div class="my-8 h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
+
+    <div class="space-y-3">
+      <a
+        href="/"
+        class="gold-underline inline-block font-stamp text-stamp-label text-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] transition-colors"
+      >
+        VOLVER AL ARCHIVO PRINCIPAL →
+      </a>
+      <br />
+      <a
+        href="/expedientes"
+        class="font-stamp text-stamp-label text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+      >
+        VER TODOS LOS EXPEDIENTES
+      </a>
+    </div>
+
+    <!-- Archive stamp footer -->
+    <div class="mt-16">
+      <p class="font-mono text-caption text-[var(--color-text-secondary)]/50">
+        REF: 404 · DOCUMENTO PERDIDO · ARCHIVO RENY MIRELES
+      </p>
+    </div>
+  </section>
+</BaseLayout>

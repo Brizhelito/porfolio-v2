@@ -18,6 +18,22 @@ const {
   description = SITE.description,
   ogImage,
 } = Astro.props;
+
+const canonicalUrl = new URL(Astro.url.pathname, SITE.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: SITE.author,
+  url: SITE.url,
+  description: SITE.description,
+  sameAs: [
+    'https://github.com/renymireles',
+    'https://linkedin.com/in/renymireles',
+  ],
+  jobTitle: 'Software Engineer',
+  knowsAbout: ['Distributed Systems', 'Flutter', 'Go', 'TypeScript', 'Cloud Architecture'],
+};
 ---
 
 <!doctype html>
@@ -27,6 +43,13 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="author" content={SITE.author} />
+
+    <!-- Canonical -->
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Hreflang (Phase 1: Spanish only, Phase 2: add English) -->
+    <link rel="alternate" hreflang="es" href={canonicalUrl} />
+    <link rel="alternate" hreflang="x-default" href={canonicalUrl} />
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -40,7 +63,8 @@ const {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={SITE.url} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:locale" content="es_VE" />
     {ogImage && <meta property="og:image" content={ogImage} />}
 
     <!-- Twitter -->
@@ -49,6 +73,9 @@ const {
     <meta name="twitter:description" content={description} />
 
     <title>{title}</title>
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
     <!-- Theme initialization (prevent flash) -->
     <script is:inline>
