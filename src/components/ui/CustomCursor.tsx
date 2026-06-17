@@ -1,224 +1,134 @@
-import { useEffect, useRef, useCallback, useState } from 'react';
-import { gsap, prefersReducedMotion } from '@lib/animations';
-
-type CursorContext = 'normal' | 'link' | 'expediente' | 'reading';
-
-const TRAIL_INTERVAL = 120;
-const TRAIL_LIFETIME = 300;
-const EASE_SPEED = 0.15;
-const RING_EASE_SPEED = 0.08;
+import { useEffect, useRef } from 'react';
+import { gsap } from '@lib/animations';
 
 export default function CustomCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLDivElement>(null);
   const sealRef = useRef<HTMLDivElement>(null);
-  const mousePos = useRef({ x: -100, y: -100 });
-  const dotPos = useRef({ x: -100, y: -100 });
-  const ringPos = useRef({ x: -100, y: -100 });
-  const rafId = useRef<number>(0);
+  const mouse = useRef({ x: -200, y: -200 });
+  const dpos = useRef({ x: -200, y: -200 });
+  const rpos = useRef({ x: -200, y: -200 });
+  const raf = useRef(0);
   const lastTrail = useRef(0);
-  const [mounted, setMounted] = useState(false);
-  const [isFinePointer, setIsFinePointer] = useState(false);
-  const [context, setContext] = useState<CursorContext>('normal');
-  const contextLabel = useRef('');
-  const lastScrollY = useRef(0);
+  const labelText = useRef('');
 
-  // --- Mount + detect pointer type ---
   useEffect(() => {
-    setMounted(true);
-    const fine = window.matchMedia('(pointer: fine)').matches;
-    const wide = window.innerWidth >= 768;
-    setIsFinePointer(fine && wide);
-  }, []);
-
-  // --- Context detection ---
-  const detectContext = useCallback((e: MouseEvent) => {
-    const target = e.target as HTMLElement;
-    if (!target || target === document.body) {
-      setContext('normal');
-      return;
-    }
-
-    const interactive = target.closest('a, button, [role="button"], input, textarea, select, label');
-    if (interactive) {
-      setContext('link');
-      contextLabel.current = interactive.getAttribute('data-cursor-label')
-        || (interactive as HTMLElement).innerText?.slice(0, 12)?.toUpperCase()
-        || 'ABRIR';
-      return;
-    }
-
-    const expediente = target.closest('[data-cursor="expediente"]');
-    if (expediente) {
-      setContext('expediente');
-      return;
-    }
-
-    setContext('normal');
-  }, []);
-
-  // --- Scroll speed for reading context ---
-  useEffect(() => {
-    if (!isFinePointer) return;
-    let ticking = false;
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        const y = window.scrollY;
-        const speed = Math.abs(y - lastScrollY.current);
-        lastScrollY.current = y;
-        if (speed > 3 && context !== 'link' && context !== 'expediente') {
-          setContext('reading');
-        } else if (context === 'reading') {
-          setContext('normal');
-        }
-        ticking = false;
-      });
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [context, isFinePointer]);
-
-  // --- Main animation loop ---
-  useEffect(() => {
-    if (!isFinePointer || prefersReducedMotion) return;
+    const isTouch = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768;
+    if (isTouch) return;
 
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
 
-    let hidden = true;
+    let visible = false;
+    let cursorCtx = 'normal';
 
-    const onMove = (e: MouseEvent) => {
-      mousePos.current = { x: e.clientX, y: e.clientY };
-      if (hidden) {
-        hidden = false;
+    const move = (e: MouseEvent) => {
+      mouse.current = { x: e.clientX, y: e.clientY };
+      if (!visible) {
+        visible = true;
+        dpos.current = { x: e.clientX - 4, y: e.clientY - 4 };
+        rpos.current = { x: e.clientX - 16, y: e.clientY - 16 };
         dot.style.opacity = '1';
         ring.style.opacity = '1';
-        // Snap to initial position to avoid jump
-        dotPos.current = { x: e.clientX, y: e.clientY };
-        ringPos.current = { x: e.clientX, y: e.clientY };
+      }
+      const t = e.target as HTMLElement;
+      const link = t.closest('a, button, [role="button"]');
+      if (link) {
+        cursorCtx = 'link';
+        labelText.current = link.getAttribute('aria-label') || link.textContent?.slice(0, 10).toUpperCase() || 'ABRIR';
+      } else if (t.closest('[data-cursor="expediente"]')) {
+        cursorCtx = 'expediente';
+      } else {
+        cursorCtx = 'normal';
+      }
+      dot.setAttribute('data-ctx', cursorCtx);
+      ring.setAttribute('data-ctx', cursorCtx);
+      if (labelRef.current) {
+        labelRef.current.setAttribute('data-vis', cursorCtx === 'link' ? '1' : '0');
+        labelRef.current.textContent = labelText.current;
+      }
+      if (sealRef.current) {
+        sealRef.current.setAttribute('data-vis', cursorCtx === 'expediente' ? '1' : '0');
       }
     };
 
-    const onLeave = () => {
-      hidden = true;
+    const leave = () => {
+      visible = false;
       dot.style.opacity = '0';
       ring.style.opacity = '0';
       if (labelRef.current) labelRef.current.style.opacity = '0';
       if (sealRef.current) sealRef.current.style.opacity = '0';
     };
 
-    const animate = () => {
-      if (!hidden) {
-        dotPos.current.x += (mousePos.current.x - dotPos.current.x) * EASE_SPEED;
-        dotPos.current.y += (mousePos.current.y - dotPos.current.y) * EASE_SPEED;
-        dot.style.transform = `translate(${dotPos.current.x - 4}px, ${dotPos.current.y - 4}px)`;
+    const loop = () => {
+      dpos.current.x += (mouse.current.x - 4 - dpos.current.x) * 0.18;
+      dpos.current.y += (mouse.current.y - 4 - dpos.current.y) * 0.18;
+      dot.style.transform = `translate(${dpos.current.x}px, ${dpos.current.y}px)`;
 
-        ringPos.current.x += (mousePos.current.x - ringPos.current.x) * RING_EASE_SPEED;
-        ringPos.current.y += (mousePos.current.y - ringPos.current.y) * RING_EASE_SPEED;
-        ring.style.transform = `translate(${ringPos.current.x - 16}px, ${ringPos.current.y - 16}px)`;
-      }
+      rpos.current.x += (mouse.current.x - 16 - rpos.current.x) * 0.09;
+      rpos.current.y += (mouse.current.y - 16 - rpos.current.y) * 0.09;
+      ring.style.transform = `translate(${rpos.current.x}px, ${rpos.current.y}px)`;
 
       if (labelRef.current) {
-        labelRef.current.style.transform = `translate(${mousePos.current.x + 20}px, ${mousePos.current.y - 8}px)`;
+        labelRef.current.style.transform = `translate(${mouse.current.x + 20}px, ${mouse.current.y - 8}px)`;
       }
       if (sealRef.current) {
-        sealRef.current.style.transform = `translate(${mousePos.current.x + 16}px, ${mousePos.current.y - 20}px)`;
+        sealRef.current.style.transform = `translate(${mouse.current.x - 14}px, ${mouse.current.y - 14}px)`;
       }
-
-      rafId.current = requestAnimationFrame(animate);
+      raf.current = requestAnimationFrame(loop);
     };
 
-    const createTrail = () => {
-      if (hidden) return;
+    const trail = setInterval(() => {
+      if (!visible) return;
       const now = Date.now();
-      if (now - lastTrail.current < TRAIL_INTERVAL) return;
+      if (now - lastTrail.current < 150) return;
       lastTrail.current = now;
-
-      const particle = document.createElement('div');
-      particle.className = 'cursor-trail';
-      particle.style.left = `${mousePos.current.x - 1.5}px`;
-      particle.style.top = `${mousePos.current.y - 1.5}px`;
-      particle.style.opacity = '0.35';
-      particle.style.transform = 'scale(1)';
-      document.body.appendChild(particle);
-
-      gsap.to(particle, {
-        opacity: 0,
-        scale: 0.2,
-        duration: TRAIL_LIFETIME / 1000,
-        ease: 'power2.out',
-        onComplete: () => particle.remove(),
+      const p = document.createElement('div');
+      Object.assign(p.style, {
+        position: 'fixed', left: `${mouse.current.x - 1.5}px`, top: `${mouse.current.y - 1.5}px`,
+        width: '3px', height: '3px', borderRadius: '50%', background: '#C9A961',
+        pointerEvents: 'none', zIndex: '9997', opacity: '0.4',
       });
-    };
+      document.body.appendChild(p);
+      gsap.to(p, { opacity: 0, scale: 0.2, duration: 0.3, ease: 'power2.out', onComplete: () => p.remove() });
+    }, 150);
 
-    const trailInterval = setInterval(createTrail, TRAIL_INTERVAL);
-
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseleave', onLeave);
-    rafId.current = requestAnimationFrame(animate);
+    document.addEventListener('mousemove', move);
+    document.addEventListener('mouseleave', leave);
+    raf.current = requestAnimationFrame(loop);
 
     return () => {
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseleave', onLeave);
-      cancelAnimationFrame(rafId.current);
-      clearInterval(trailInterval);
+      document.removeEventListener('mousemove', move);
+      document.removeEventListener('mouseleave', leave);
+      cancelAnimationFrame(raf.current);
+      clearInterval(trail);
     };
-  }, [isFinePointer]);
-
-  // --- Context-specific style updates ---
-  useEffect(() => {
-    const dot = dotRef.current;
-    const ring = ringRef.current;
-    if (!dot || !ring) return;
-
-    dot.setAttribute('data-context', context);
-    ring.setAttribute('data-context', context);
-
-    if (labelRef.current) {
-      labelRef.current.setAttribute('data-visible', context === 'link' ? 'true' : 'false');
-      labelRef.current.textContent = contextLabel.current;
-    }
-    if (sealRef.current) {
-      sealRef.current.setAttribute('data-visible', context === 'expediente' ? 'true' : 'false');
-    }
-  }, [context]);
-
-  // Also listen for context globally
-  useEffect(() => {
-    if (!isFinePointer) return;
-    document.addEventListener('mouseover', detectContext);
-    return () => document.removeEventListener('mouseover', detectContext);
-  }, [isFinePointer, detectContext]);
-
-  if (!mounted || !isFinePointer) return null;
+  }, []);
 
   return (
     <>
-      <div ref={dotRef} className="cursor-dot" />
-      <div ref={ringRef} className="cursor-ring" />
-      <div ref={labelRef} className="cursor-label" data-visible="false" />
-      <div ref={sealRef} className="cursor-seal-mini" data-visible="false">
+      <style>{`
+        .cd{position:fixed;top:0;left:0;width:8px;height:8px;border-radius:50%;background:#C9A961;pointer-events:none;z-index:9999;opacity:0;will-change:transform;transition:width .25s,height .25s,opacity .15s}
+        .cd[data-ctx="link"]{width:6px;height:6px}
+        .cd[data-ctx="expediente"]{width:4px;height:4px}
+        .cr{position:fixed;top:0;left:0;width:32px;height:32px;border-radius:50%;border:1.5px solid #C9A961;pointer-events:none;z-index:9998;opacity:0;will-change:transform;transition:width .35s,height .35s,border-color .3s,opacity .15s}
+        .cr[data-ctx="link"]{width:48px;height:48px;border-color:#D4AF37}
+        .cr[data-ctx="expediente"]{width:40px;height:40px}
+        .cl{position:fixed;pointer-events:none;z-index:10000;font-family:'Special Elite',cursive;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#C9A961;opacity:0;transition:opacity .2s;white-space:nowrap}
+        .cl[data-vis="1"]{opacity:1}
+        .cs{position:fixed;pointer-events:none;z-index:10000;opacity:0;transition:opacity .25s}
+        .cs[data-vis="1"]{opacity:1}
+        @media(pointer:coarse){.cd,.cr,.cl,.cs{display:none!important}}
+      `}</style>
+      <div ref={dotRef} className="cd" />
+      <div ref={ringRef} className="cr" />
+      <div ref={labelRef} className="cl" data-vis="0" />
+      <div ref={sealRef} className="cs" data-vis="0">
         <svg width="28" height="28" viewBox="0 0 100 100">
-          <polygon
-            points="30,5 70,5 95,30 95,70 70,95 30,95 5,70 5,30"
-            fill="none"
-            stroke="var(--color-accent-gold)"
-            strokeWidth="3"
-          />
-          <text
-            x="50" y="58"
-            textAnchor="middle"
-            fontFamily="'IBM Plex Serif', serif"
-            fontSize="26"
-            fontWeight="700"
-            fill="var(--color-accent-gold)"
-          >
-            RM
-          </text>
+          <polygon points="30,5 70,5 95,30 95,70 70,95 30,95 5,70 5,30" fill="none" stroke="#C9A961" strokeWidth="3" />
+          <text x="50" y="58" textAnchor="middle" fontFamily="'IBM Plex Serif',serif" fontSize="26" fontWeight="700" fill="#C9A961">RM</text>
         </svg>
       </div>
     </>
