@@ -73,7 +73,7 @@ const currentPath = Astro.url.pathname;
 
         <!-- Right: Language Switch + Mobile menu -->
         <div class="flex items-center gap-2">
-          <LanguageSwitch client:load />
+          <span id="lang-switch-wrap"><LanguageSwitch client:load /></span>
           <!-- Mobile hamburger -->
           <button
             id="mobile-menu-btn"

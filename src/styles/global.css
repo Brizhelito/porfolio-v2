@@ -98,6 +98,10 @@
     visibility: hidden;
   }
 
+  html.lang-pending #lang-switch-wrap {
+    visibility: hidden;
+  }
+
   body {
     font-family: var(--font-family-body);
     background-color: var(--color-bg-primary);
