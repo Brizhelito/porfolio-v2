@@ -1,137 +1,269 @@
-import { useEffect, useRef } from 'react';
-import { gsap } from '@lib/animations';
+import { useEffect, useRef, useState, useCallback } from 'react';
+
+interface CursorPosition {
+  x: number;
+  y: number;
+}
+
+interface TrailParticle {
+  element: HTMLDivElement;
+  x: number;
+  y: number;
+  createdAt: number;
+}
 
 export default function CustomCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
-  const labelRef = useRef<HTMLDivElement>(null);
-  const sealRef = useRef<HTMLDivElement>(null);
-  const mouse = useRef({ x: -200, y: -200 });
-  const dpos = useRef({ x: -200, y: -200 });
-  const rpos = useRef({ x: -200, y: -200 });
-  const raf = useRef(0);
-  const lastTrail = useRef(0);
-  const labelText = useRef('');
+  const miniSealRef = useRef<HTMLDivElement>(null);
+  const trailContainerRef = useRef<HTMLDivElement>(null);
+
+  const mousePos = useRef<CursorPosition>({ x: 0, y: 0 });
+  const targetPos = useRef<CursorPosition>({ x: 0, y: 0 });
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const [context, setContext] = useState<'normal' | 'link' | 'expediente' | 'reading'>('normal');
+
+  const animationFrameRef = useRef<number>();
+  const trailParticles = useRef<TrailParticle[]>([]);
+  const lastTrailTime = useRef(0);
+  const scrollSpeedRef = useRef(0);
+  const lastScrollY = useRef(0);
+  const lastScrollTime = useRef(Date.now());
+
+  const EASING = 0.15;
+  const TRAIL_INTERVAL = 120;
+  const TRAIL_MAX_PARTICLES = 15;
+  const READING_SCROLL_THRESHOLD = 50;
+
+  const createTrailParticle = useCallback((x: number, y: number) => {
+    if (!trailContainerRef.current) return;
+
+    const particle = document.createElement('div');
+    particle.className = 'cursor-trail';
+    particle.style.left = `${x}px`;
+    particle.style.top = `${y}px`;
+    trailContainerRef.current.appendChild(particle);
+
+    trailParticles.current.push({
+      element: particle,
+      x,
+      y,
+      createdAt: Date.now(),
+    });
+
+    requestAnimationFrame(() => {
+      particle.classList.add('fade');
+    });
+
+    if (trailParticles.current.length > TRAIL_MAX_PARTICLES) {
+      const old = trailParticles.current.shift();
+      if (old) old.element.remove();
+    }
+  }, []);
+
+  const cleanupTrails = useCallback(() => {
+    trailParticles.current.forEach((p) => p.element.remove());
+    trailParticles.current = [];
+  }, []);
+
+  const updateCursorPosition = useCallback(() => {
+    if (!dotRef.current || !ringRef.current) return;
+
+    mousePos.current.x += (targetPos.current.x - mousePos.current.x) * EASING;
+    mousePos.current.y += (targetPos.current.y - mousePos.current.y) * EASING;
+
+    const x = mousePos.current.x;
+    const y = mousePos.current.y;
+
+    dotRef.current.style.transform = `translate(${x - 4}px, ${y - 4}px)`;
+    ringRef.current.style.transform = `translate(${x - 20}px, ${y - 20}px)`;
+    if (miniSealRef.current) {
+      miniSealRef.current.style.transform = `translate(${x - 16}px, ${y - 16}px)`;
+    }
+
+    animationFrameRef.current = requestAnimationFrame(updateCursorPosition);
+  }, []);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    targetPos.current = { x: e.clientX, y: e.clientY };
+
+    if (!isVisible) setIsVisible(true);
+
+    const now = Date.now();
+    if (now - lastTrailTime.current > TRAIL_INTERVAL) {
+      createTrailParticle(e.clientX, e.clientY);
+      lastTrailTime.current = now;
+    }
+  }, [createTrailParticle]);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsVisible(false);
+  }, []);
+
+  const handleScroll = useCallback(() => {
+    const now = Date.now();
+    const scrollY = window.scrollY;
+    const deltaTime = now - lastScrollTime.current;
+    const deltaY = Math.abs(scrollY - lastScrollY.current);
+
+    if (deltaTime > 0) {
+      scrollSpeedRef.current = deltaY / deltaTime;
+    }
+
+    lastScrollY.current = scrollY;
+    lastScrollTime.current = now;
+
+    const isReading = scrollSpeedRef.current < READING_SCROLL_THRESHOLD && deltaY > 0;
+    if (isReading && context !== 'reading') {
+      setContext('reading');
+    } else if (!isReading && context === 'reading') {
+      setContext('normal');
+    }
+  }, [context]);
+
+  const handleMouseOver = useCallback((e: Event) => {
+    const target = e.target as HTMLElement;
+    if (!target) return;
+
+    const isLink = target.matches('a, button, [role="button"], .clickable, input[type="button"], input[type="submit"]');
+    const isExpediente = target.closest('[data-expediente-card], .expediente-card, article[data-expediente]');
+
+    if (isExpediente) {
+      setContext('expediente');
+    } else if (isLink) {
+      setContext('link');
+    } else if (context !== 'reading') {
+      setContext('normal');
+    }
+  }, [context]);
+
+  const handleMouseOut = useCallback((e: Event) => {
+    const target = e.target as HTMLElement;
+    if (!target) return;
+
+    const isLink = target.matches('a, button, [role="button"], .clickable, input[type="button"], input[type="submit"]');
+    const isExpediente = target.closest('[data-expediente-card], .expediente-card, article[data-expediente]');
+
+    if (isLink || isExpediente) {
+      if (context !== 'reading') {
+        setContext('normal');
+      }
+    }
+  }, [context]);
 
   useEffect(() => {
-    const isTouch = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768;
+    const isTouch = window.matchMedia('(pointer: coarse)').matches;
+    setIsTouchDevice(isTouch);
     if (isTouch) return;
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseleave', handleMouseLeave);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    document.addEventListener('mouseover', handleMouseOver);
+    document.addEventListener('mouseout', handleMouseOut);
+
+    animationFrameRef.current = requestAnimationFrame(updateCursorPosition);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseleave', handleMouseLeave);
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('mouseover', handleMouseOver);
+      document.removeEventListener('mouseout', handleMouseOut);
+      cancelAnimationFrame(animationFrameRef.current);
+      cleanupTrails();
+    };
+  }, [
+    handleMouseMove,
+    handleMouseLeave,
+    handleScroll,
+    handleMouseOver,
+    handleMouseOut,
+    updateCursorPosition,
+    cleanupTrails,
+  ]);
+
+  useEffect(() => {
+    if (!dotRef.current || !ringRef.current || !miniSealRef.current) return;
 
     const dot = dotRef.current;
     const ring = ringRef.current;
-    if (!dot || !ring) return;
+    const miniSeal = miniSealRef.current;
 
-    let visible = false;
-    let cursorCtx = 'normal';
+    dot.className = 'cursor-dot';
+    ring.className = 'cursor-ring';
+    miniSeal.className = 'cursor-mini-seal';
+    ring.querySelector('.cursor-ring-label')?.classList.remove('visible');
 
-    const move = (e: MouseEvent) => {
-      mouse.current = { x: e.clientX, y: e.clientY };
-      if (!visible) {
-        visible = true;
-        dpos.current = { x: e.clientX - 4, y: e.clientY - 4 };
-        rpos.current = { x: e.clientX - 16, y: e.clientY - 16 };
+    switch (context) {
+      case 'link':
+        dot.classList.add('link-hover');
+        ring.classList.add('link-hover', 'has-label');
+        break;
+      case 'expediente':
+        miniSeal.classList.add('expediente-hover', 'visible');
+        ring.style.opacity = '0';
+        dot.style.opacity = '0.5';
+        break;
+      case 'reading':
+        dot.classList.add('reading');
+        ring.classList.add('reading');
+        break;
+      default:
+        ring.style.opacity = '0.6';
         dot.style.opacity = '1';
-        ring.style.opacity = '1';
-      }
-      const t = e.target as HTMLElement;
-      const link = t.closest('a, button, [role="button"]');
-      if (link) {
-        cursorCtx = 'link';
-        labelText.current = link.getAttribute('aria-label') || link.textContent?.slice(0, 10).toUpperCase() || 'ABRIR';
-      } else if (t.closest('[data-cursor="expediente"]')) {
-        cursorCtx = 'expediente';
-      } else {
-        cursorCtx = 'normal';
-      }
-      dot.setAttribute('data-ctx', cursorCtx);
-      ring.setAttribute('data-ctx', cursorCtx);
-      if (labelRef.current) {
-        labelRef.current.setAttribute('data-vis', cursorCtx === 'link' ? '1' : '0');
-        labelRef.current.textContent = labelText.current;
-      }
-      if (sealRef.current) {
-        sealRef.current.setAttribute('data-vis', cursorCtx === 'expediente' ? '1' : '0');
-      }
-    };
+    }
+  }, [context]);
 
-    const leave = () => {
-      visible = false;
-      dot.style.opacity = '0';
-      ring.style.opacity = '0';
-      if (labelRef.current) labelRef.current.style.opacity = '0';
-      if (sealRef.current) sealRef.current.style.opacity = '0';
-    };
-
-    const loop = () => {
-      dpos.current.x += (mouse.current.x - 4 - dpos.current.x) * 0.18;
-      dpos.current.y += (mouse.current.y - 4 - dpos.current.y) * 0.18;
-      dot.style.transform = `translate(${dpos.current.x}px, ${dpos.current.y}px)`;
-
-      rpos.current.x += (mouse.current.x - 16 - rpos.current.x) * 0.09;
-      rpos.current.y += (mouse.current.y - 16 - rpos.current.y) * 0.09;
-      ring.style.transform = `translate(${rpos.current.x}px, ${rpos.current.y}px)`;
-
-      if (labelRef.current) {
-        labelRef.current.style.transform = `translate(${mouse.current.x + 20}px, ${mouse.current.y - 8}px)`;
-      }
-      if (sealRef.current) {
-        sealRef.current.style.transform = `translate(${mouse.current.x - 14}px, ${mouse.current.y - 14}px)`;
-      }
-      raf.current = requestAnimationFrame(loop);
-    };
-
-    const trail = setInterval(() => {
-      if (!visible) return;
-      const now = Date.now();
-      if (now - lastTrail.current < 150) return;
-      lastTrail.current = now;
-      const p = document.createElement('div');
-      Object.assign(p.style, {
-        position: 'fixed', left: `${mouse.current.x - 1.5}px`, top: `${mouse.current.y - 1.5}px`,
-        width: '3px', height: '3px', borderRadius: '50%', background: '#C9A961',
-        pointerEvents: 'none', zIndex: '9997', opacity: '0.4',
-      });
-      document.body.appendChild(p);
-      gsap.to(p, { opacity: 0, scale: 0.2, duration: 0.3, ease: 'power2.out', onComplete: () => p.remove() });
-    }, 150);
-
-    document.addEventListener('mousemove', move);
-    document.addEventListener('mouseleave', leave);
-    raf.current = requestAnimationFrame(loop);
-
-    return () => {
-      document.removeEventListener('mousemove', move);
-      document.removeEventListener('mouseleave', leave);
-      cancelAnimationFrame(raf.current);
-      clearInterval(trail);
-    };
-  }, []);
+  if (isTouchDevice) return null;
 
   return (
     <>
-      <style>{`
-        .cd{position:fixed;top:0;left:0;width:8px;height:8px;border-radius:50%;background:#C9A961;pointer-events:none;z-index:9999;opacity:0;will-change:transform;transition:width .25s,height .25s,opacity .15s}
-        .cd[data-ctx="link"]{width:6px;height:6px}
-        .cd[data-ctx="expediente"]{width:4px;height:4px}
-        .cr{position:fixed;top:0;left:0;width:32px;height:32px;border-radius:50%;border:1.5px solid #C9A961;pointer-events:none;z-index:9998;opacity:0;will-change:transform;transition:width .35s,height .35s,border-color .3s,opacity .15s}
-        .cr[data-ctx="link"]{width:48px;height:48px;border-color:#D4AF37}
-        .cr[data-ctx="expediente"]{width:40px;height:40px}
-        .cl{position:fixed;pointer-events:none;z-index:10000;font-family:'Special Elite',cursive;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:#C9A961;opacity:0;transition:opacity .2s;white-space:nowrap}
-        .cl[data-vis="1"]{opacity:1}
-        .cs{position:fixed;pointer-events:none;z-index:10000;opacity:0;transition:opacity .25s}
-        .cs[data-vis="1"]{opacity:1}
-        @media(pointer:coarse){.cd,.cr,.cl,.cs{display:none!important}}
-        @media(pointer:fine) and (min-width:768px){body,a,button,[role="button"]{cursor:none!important}}
-      `}</style>
-      <div ref={dotRef} className="cd" />
-      <div ref={ringRef} className="cr" />
-      <div ref={labelRef} className="cl" data-vis="0" />
-      <div ref={sealRef} className="cs" data-vis="0">
-        <svg width="28" height="28" viewBox="0 0 100 100">
-          <polygon points="30,5 70,5 95,30 95,70 70,95 30,95 5,70 5,30" fill="none" stroke="#C9A961" strokeWidth="3" />
-          <text x="50" y="58" textAnchor="middle" fontFamily="'IBM Plex Serif',serif" fontSize="26" fontWeight="700" fill="#C9A961">RM</text>
-        </svg>
+      <div className="custom-cursor" aria-hidden="true">
+        <div ref={trailContainerRef} className="fixed inset-0 pointer-events-none" />
+
+        <div
+          ref={ringRef}
+          className="cursor-ring"
+          style={{ willChange: 'transform, width, height, opacity' }}
+        >
+          <span className="cursor-ring-label">ABRIR</span>
+        </div>
+
+        <div
+          ref={miniSealRef}
+          className="cursor-mini-seal"
+          style={{ willChange: 'transform, opacity' }}
+        >
+          <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <polygon
+              points="30,5 70,5 95,30 95,70 70,95 30,95 5,70 5,30"
+              fill="none"
+              stroke="var(--color-accent-gold, #C9A961)"
+              strokeWidth="2"
+            />
+            <circle cx="50" cy="50" r="35" fill="none" stroke="var(--color-accent-gold, #C9A961)" strokeWidth="1" opacity="0.6" />
+            <text x="50" y="58" textAnchor="middle" fontFamily="serif" fontSize="14" fontWeight="700" fill="var(--color-accent-gold, #C9A961)">
+              RM
+            </text>
+          </svg>
+        </div>
+
+        <div
+          ref={dotRef}
+          className="cursor-dot"
+          style={{ willChange: 'transform, width, height' }}
+        />
       </div>
+
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        @media (pointer: fine) and (min-width: 768px) {
+          body { cursor: none !important; }
+          a, button, [role="button"], input, textarea, select, .clickable { cursor: none !important; }
+        }
+      `}} />
     </>
   );
 }

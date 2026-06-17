@@ -2,6 +2,7 @@
 import Header from '@components/layout/Header.astro';
 import Footer from '@components/layout/Footer.astro';
 import Seal from '@components/ui/Seal';
+import CustomCursor from '@components/ui/CustomCursor';
 import { SITE, GOOGLE_FONTS_URL } from '@lib/constants';
 import '@styles/global.css';
 import '@styles/typography.css';
@@ -98,5 +99,6 @@ const jsonLd = {
     </main>
     <Footer />
     <Seal client:load />
+    <CustomCursor client:load />
   </body>
 </html>

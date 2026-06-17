@@ -1,147 +1,179 @@
 /* ============================================
-   Custom Cursor — El Archivo del Kintsugi
+   Custom Cursor Styles
    ============================================ */
 
-/* Hide default cursor on fine pointer devices */
 @media (pointer: fine) and (min-width: 768px) {
-  body {
+  :root {
+    --cursor-dot-size: 8px;
+    --cursor-ring-size: 40px;
+    --cursor-ring-border: 1.5px;
+    --cursor-trail-size: 6px;
+    --cursor-trail-duration: 300ms;
+    --cursor-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  * {
     cursor: none !important;
   }
-  a, button, [role="button"], input, textarea, select, label {
+
+  a,
+  button,
+  [role="button"],
+  input,
+  textarea,
+  select,
+  .clickable {
     cursor: none !important;
   }
-}
 
-/* Main dot — the pen nib */
-.cursor-dot {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 8px;
-  height: 8px;
-  background: var(--color-accent-gold);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: var(--z-cursor);
-  will-change: transform;
-  opacity: 0;
-  transition: width 0.25s ease, height 0.25s ease, opacity 0.15s ease;
-}
+  /* Cursor wrapper */
+  .custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: var(--z-cursor, 9999);
+    touch-action: none;
+  }
 
-/* Outer ring — smooth follow */
-.cursor-ring {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 32px;
-  height: 32px;
-  border: 1.5px solid var(--color-accent-gold);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: calc(var(--z-cursor) - 1);
-  will-change: transform;
-  opacity: 0;
-  transition: width 0.35s ease, height 0.35s ease, border-color 0.3s ease, opacity 0.15s ease;
-}
+  /* Main dot - the "pen tip" */
+  .cursor-dot {
+    position: absolute;
+    width: var(--cursor-dot-size);
+    height: var(--cursor-dot-size);
+    border-radius: 50%;
+    background: var(--color-accent-gold, #C9A961);
+    transform: translate(-50%, -50%);
+    will-change: transform, width, height;
+    transition: width var(--cursor-trail-duration) var(--cursor-easing),
+      height var(--cursor-trail-duration) var(--cursor-easing),
+      background-color 200ms ease;
+    z-index: 10;
+    box-shadow:
+      0 0 8px var(--color-accent-gold, #C9A961),
+      0 0 16px rgba(201, 169, 97, 0.4);
+  }
 
-/* Trail particle */
-.cursor-trail {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 3px;
-  height: 3px;
-  background: var(--color-accent-gold);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: calc(var(--z-cursor) - 2);
-  opacity: 0;
-  transition: opacity 0.3s ease-out;
-}
+  /* Outer ring - follows with easing */
+  .cursor-ring {
+    position: absolute;
+    width: var(--cursor-ring-size);
+    height: var(--cursor-ring-size);
+    border-radius: 50%;
+    border: var(--cursor-ring-border) solid var(--color-accent-gold, #C9A961);
+    transform: translate(-50%, -50%);
+    will-change: transform, width, height, border-color, opacity;
+    transition: width 400ms var(--cursor-easing),
+      height 400ms var(--cursor-easing),
+      border-color 200ms ease,
+      opacity 200ms ease;
+    opacity: 0.6;
+    z-index: 5;
+    pointer-events: none;
+  }
 
-/* Context: Hover link — ring expands */
-.cursor-dot[data-context="link"] {
-  width: 6px;
-  height: 6px;
-}
+  /* Ring label "ABRIR" */
+  .cursor-ring-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-family-stamp, 'Special Elite', cursive);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--color-accent-gold, #C9A961);
+    opacity: 0;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+    text-transform: uppercase;
+  }
 
-.cursor-ring[data-context="link"] {
-  width: 48px;
-  height: 48px;
-  border-color: var(--color-accent-gold-bright);
-}
+  .cursor-ring.has-label .cursor-ring-label {
+    opacity: 1;
+  }
 
-/* Context: Hover expediente — mini seal */
-.cursor-dot[data-context="expediente"] {
-  width: 4px;
-  height: 4px;
-  background: var(--color-accent-gold-bright);
-}
+  /* Mini seal for expediente hover */
+  .cursor-mini-seal {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    transform: translate(-50%, -50%) scale(0);
+    will-change: transform, opacity;
+    transition: transform 300ms var(--cursor-easing), opacity 200ms ease;
+    opacity: 0;
+    z-index: 8;
+    pointer-events: none;
+  }
 
-.cursor-ring[data-context="expediente"] {
-  width: 40px;
-  height: 40px;
-  border-color: var(--color-accent-gold);
-  border-width: 2px;
-}
+  .cursor-mini-seal.visible {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
 
-/* Context: Reading (slow scroll) — dot shrinks */
-.cursor-dot[data-context="reading"] {
-  width: 5px;
-  height: 5px;
-}
+  /* Trail particles */
+  .cursor-trail {
+    position: fixed;
+    width: var(--cursor-trail-size);
+    height: var(--cursor-trail-size);
+    border-radius: 50%;
+    background: var(--color-accent-gold, #C9A961);
+    transform: translate(-50%, -50%) scale(1);
+    will-change: transform, opacity;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0.5;
+    transition: opacity var(--cursor-trail-duration) ease-out,
+      transform var(--cursor-trail-duration) ease-out;
+  }
 
-.cursor-ring[data-context="reading"] {
-  width: 24px;
-  height: 24px;
-  opacity: 0.4;
-}
+  .cursor-trail.fade {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
 
-/* Link label — appears on hover */
-.cursor-label {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: calc(var(--z-cursor) + 1);
-  font-family: var(--font-family-stamp);
-  font-size: 9px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--color-accent-gold);
-  opacity: 0;
-  transform: translate(-50%, -50%);
-  transition: opacity 0.2s ease;
-  white-space: nowrap;
-}
+  /* Context: Reading (slow scroll) - dot contracts */
+  .cursor-dot.reading {
+    width: 4px;
+    height: 4px;
+    box-shadow: 0 0 4px var(--color-accent-gold, #C9A961);
+  }
 
-.cursor-label[data-visible="true"] {
-  opacity: 1;
-}
+  .cursor-ring.reading {
+    width: 24px;
+    height: 24px;
+    opacity: 0.3;
+  }
 
-/* Seal label — appears on expediente hover */
-.cursor-seal-mini {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: calc(var(--z-cursor) + 1);
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(0.8);
-  transition: opacity 0.25s ease, transform 0.25s ease;
-}
+  /* Context: Hover link - ring expands + label */
+  .cursor-ring.link-hover {
+    width: 60px;
+    height: 60px;
+    border-color: var(--color-accent-gold-bright, #D4AF37);
+    opacity: 1;
+  }
 
-.cursor-seal-mini[data-visible="true"] {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
+  .cursor-dot.link-hover {
+    width: 10px;
+    height: 10px;
+  }
 
-/* Hide cursor on touch devices */
-@media (pointer: coarse) {
-  .cursor-dot,
-  .cursor-ring,
-  .cursor-label,
-  .cursor-seal-mini {
-    display: none !important;
+  /* Context: Hover expediente - mini seal appears */
+  .cursor-mini-seal.expediente-hover {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .cursor-dot,
+    .cursor-ring,
+    .cursor-trail,
+    .cursor-mini-seal {
+      transition: none !important;
+      animation: none !important;
+    }
   }
 }
