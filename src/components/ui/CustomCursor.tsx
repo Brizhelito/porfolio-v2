@@ -1,10 +1,10 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
   const trailRefs = useRef<HTMLDivElement[]>([]);
   const mousePos = useRef({ x: 0, y: 0 });
-  const isTouchDevice = useRef(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   const createTrailParticle = useCallback((x: number, y: number) => {
     const particle = document.createElement('div');
@@ -34,9 +34,9 @@ export default function CustomCursor() {
   }, []);
 
   useEffect(() => {
-    // Detect touch device
-    isTouchDevice.current = window.matchMedia('(pointer: coarse)').matches;
-    if (isTouchDevice.current) return;
+    const isTouch = window.matchMedia('(pointer: coarse)').matches;
+    setIsTouchDevice(isTouch);
+    if (isTouch) return;
 
     const cursor = cursorRef.current;
     if (!cursor) return;
@@ -45,10 +45,12 @@ export default function CustomCursor() {
 
     const handleMouseMove = (e: MouseEvent) => {
       mousePos.current = { x: e.clientX, y: e.clientY };
-
       cursor.style.transform = `translate(${e.clientX - 12}px, ${e.clientY - 12}px)`;
 
-      // Create trail particles at intervals
+      if (cursor.style.opacity !== '1') {
+        cursor.style.opacity = '1';
+      }
+
       const now = Date.now();
       if (now - lastTrailTime > 50) {
         createTrailParticle(e.clientX, e.clientY);
@@ -56,27 +58,21 @@ export default function CustomCursor() {
       }
     };
 
-    const handleMouseEnter = () => {
-      cursor.style.opacity = '1';
-    };
-
     const handleMouseLeave = () => {
       cursor.style.opacity = '0';
     };
 
     document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseenter', handleMouseEnter);
     document.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseenter', handleMouseEnter);
       document.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, [createTrailParticle]);
 
   // Don't render on touch devices
-  if (isTouchDevice.current) return null;
+  if (isTouchDevice) return null;
 
   return (
     <>
@@ -93,12 +89,13 @@ export default function CustomCursor() {
           </text>
         </svg>
       </div>
-      <style>{`
+      <style dangerouslySetInnerHTML={{
+        __html: `
         @media (pointer: fine) and (min-width: 768px) {
           body { cursor: none !important; }
           a, button, [role="button"] { cursor: none !important; }
         }
-      `}</style>
+      `}} />
     </>
   );
 }

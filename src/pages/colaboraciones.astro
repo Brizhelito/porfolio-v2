@@ -36,15 +36,15 @@ const collaborations = [
     <!-- Header -->
     <header class="mb-12">
       <div class="flex items-center justify-between mb-4">
-        <span class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">
+        <span class="font-stamp text-stamp-label text-[var(--color-text-secondary)]" data-i18n="collaborations.header">
           REGISTRO DE COLABORACIONES
         </span>
         <Stamp label={`${collaborations.length} REGISTRO`} variant="green" size="md" />
       </div>
-      <h1 class="font-display text-display-lg text-[var(--color-text-primary)]">
+      <h1 class="font-display text-display-lg text-[var(--color-text-primary)]" data-i18n="collaborations.title">
         Colaboraciones
       </h1>
-      <p class="mt-2 text-body-lg text-[var(--color-text-secondary)] max-w-2xl">
+      <p class="mt-2 text-body-lg text-[var(--color-text-secondary)] max-w-2xl" data-i18n="collaborations.subtitle">
         Proyectos colaborativos, consultorías y asesorías técnicas que han dejado
         cicatrices de oro en el archivo.
       </p>
@@ -74,7 +74,7 @@ const collaborations = [
 
                 <!-- Contributions -->
                 <div class="mb-4">
-                  <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2">
+                  <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2" data-i18n="collaborations.keyContributions">
                     CONTRIBUCIONES CLAVE
                   </p>
                   <ul class="space-y-1">
@@ -126,16 +126,17 @@ const collaborations = [
 
     <!-- Open to collabs -->
     <div class="mt-16 rounded-paper border border-dashed border-[var(--color-accent-gold)]/40 p-8 text-center">
-      <p class="font-stamp text-stamp-title text-[var(--color-accent-gold)] mb-2">
+      <p class="font-stamp text-stamp-title text-[var(--color-accent-gold)] mb-2" data-i18n="collaborations.interested">
         ¿INTERESADO EN COLABORAR?
       </p>
-      <p class="text-body-md text-[var(--color-text-secondary)] max-w-md mx-auto mb-4">
+      <p class="text-body-md text-[var(--color-text-secondary)] max-w-md mx-auto mb-4" data-i18n="collaborations.interestedText">
         Abierto a consultorías, proyectos de ingeniería y colaboraciones técnicas.
         Cada colaboración es un expediente nuevo en el archivo.
       </p>
       <a
         href="/contacto"
         class="gold-underline inline-block font-stamp text-stamp-label text-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] transition-colors"
+        data-i18n="collaborations.openRequest"
       >
         ABRIR SOLICITUD DE CONTACTO →
       </a>

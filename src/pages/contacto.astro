@@ -53,15 +53,15 @@ const channels = [
     <!-- Header -->
     <header class="mb-12">
       <div class="flex items-center justify-between mb-4">
-        <span class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">
+        <span class="font-stamp text-stamp-label text-[var(--color-text-secondary)]" data-i18n="contact.header">
           VENTANILLA DE RECEPCIÓN
         </span>
         <Stamp label="DISPONIBLE" variant="green" size="md" />
       </div>
-      <h1 class="font-display text-display-lg text-[var(--color-text-primary)]">
+      <h1 class="font-display text-display-lg text-[var(--color-text-primary)]" data-i18n="contact.title">
         Abrir Nuevo Expediente
       </h1>
-      <p class="mt-2 text-body-lg text-[var(--color-text-secondary)] max-w-2xl">
+      <p class="mt-2 text-body-lg text-[var(--color-text-secondary)] max-w-2xl" data-i18n="contact.subtitle">
         Para consultas, propuestas de trabajo, o iniciar una colaboración —
         elige el canal que mejor se adapte a tu solicitud.
       </p>
@@ -103,7 +103,7 @@ const channels = [
 
     <!-- Response times -->
     <div class="mt-12 rounded-paper border border-dashed border-[var(--color-archive-kraft)]/40 p-6">
-      <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-4">
+      <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-4" data-i18n="contact.responseTimes">
         TIEMPOS DE RESPUESTA
       </h2>
       <div class="grid gap-3 sm:grid-cols-3 text-body-sm">
@@ -125,12 +125,12 @@ const channels = [
     <!-- Sticky notes -->
     <div class="mt-8 flex flex-wrap gap-6">
       <StickyNote client:visible color="blue" rotation={-2}>
-        <p class="text-[var(--color-text-primary)]">
+        <p class="text-[var(--color-text-primary)]" data-i18n="contact.freelanceTip">
           Para propuestas de freelance, incluir: alcance, timeline estimado y presupuesto disponible.
         </p>
       </StickyNote>
       <StickyNote client:visible color="pink" rotation={2}>
-        <p class="text-[var(--color-text-primary)]">
+        <p class="text-[var(--color-text-primary)]" data-i18n="contact.timezoneTip">
           Zona horaria: UTC-4 (Venezuela). Disponible para trabajo remoto global.
         </p>
       </StickyNote>
@@ -138,7 +138,7 @@ const channels = [
 
     <!-- Location stamp -->
     <div class="mt-12 text-center">
-      <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">
+      <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]" data-i18n="contact.location">
         BASE: MARACAIBO, ZULIA, VENEZUELA
       </p>
       <p class="font-mono text-caption text-[var(--color-text-secondary)]/60 mt-1">

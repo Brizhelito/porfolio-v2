@@ -8,13 +8,13 @@ export const SITE = {
 };
 
 export const NAV_LINKS = [
-  { href: '/', label: 'Inicio', icon: 'archive' },
-  { href: '/about', label: 'Ficha de Identificación' },
-  { href: '/tools', label: 'Catálogo de Herramientas' },
-  { href: '/expedientes', label: 'Expedientes' },
-  { href: '/colaboraciones', label: 'Colaboraciones' },
-  { href: '/inspiraciones', label: 'Inspiraciones' },
-  { href: '/contacto', label: 'Contacto' },
+  { href: '/', label: 'Inicio', i18n: 'nav.home' },
+  { href: '/about', label: 'Ficha', i18n: 'nav.about' },
+  { href: '/tools', label: 'Catálogo', i18n: 'nav.tools' },
+  { href: '/expedientes', label: 'Expedientes', i18n: 'nav.expedients' },
+  { href: '/colaboraciones', label: 'Colaboraciones', i18n: 'nav.collaborations' },
+  { href: '/inspiraciones', label: 'Inspiraciones', i18n: 'nav.inspirations' },
+  { href: '/contacto', label: 'Contacto', i18n: 'nav.contact' },
 ] as const;
 
 export const SOCIAL_LINKS = {

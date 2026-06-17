@@ -1,5 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { gsap, prefersReducedMotion } from '@lib/animations';
+import { registerDictionary, translateDocument } from '../../i18n/translate';
+import esDict from '../../i18n/es.json';
+import enDict from '../../i18n/en.json';
+
+// Register dictionaries once
+registerDictionary('es', esDict);
+registerDictionary('en', enDict);
 
 interface LanguageSwitchProps {
   className?: string;
@@ -12,7 +19,10 @@ export default function LanguageSwitch({ className = '' }: LanguageSwitchProps) 
 
   useEffect(() => {
     const saved = localStorage.getItem('lang') as 'es' | 'en' | null;
-    if (saved) setActiveLang(saved);
+    if (saved && saved !== 'es') {
+      setActiveLang(saved);
+      translateDocument(saved);
+    }
   }, []);
 
   const switchLanguage = (lang: 'es' | 'en') => {
@@ -40,29 +50,29 @@ export default function LanguageSwitch({ className = '' }: LanguageSwitchProps) 
       );
     }
 
-    // Update state
-    setActiveLang(lang);
-    localStorage.setItem('lang', lang);
-    document.documentElement.setAttribute('lang', lang);
-
-    setTimeout(() => setIsAnimating(false), 600);
+    // Apply translations
+    setTimeout(() => {
+      translateDocument(lang);
+      setActiveLang(lang);
+      localStorage.setItem('lang', lang);
+      document.documentElement.setAttribute('lang', lang);
+      setIsAnimating(false);
+    }, 200);
   };
 
   return (
     <div className={`relative inline-flex items-center ${className}`}>
-      {/* Stamp overlay for animation */}
       <div
         ref={stampRef}
         className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 z-10"
       >
-        <div className="w-12 h-12 rounded-full border-2 border-[var(--color-accent-gold)] flex items-center justify-center bg-[var(--color-bg-primary)] shadow-[var(--shadow-stamp)]">
+        <div className="w-12 h-12 rounded-full border-2 border-[var(--color-accent-gold)] flex items-center justify-center bg-[var(--color-bg-primary)] shadow-stamp">
           <span className="font-stamp text-[10px] tracking-wider text-[var(--color-accent-gold)]">
             {activeLang.toUpperCase()}
           </span>
         </div>
       </div>
 
-      {/* Language buttons */}
       <div className="flex items-center bg-[var(--color-bg-secondary)]/50 rounded-[3px] p-0.5">
         <button
           onClick={() => switchLanguage('es')}

@@ -56,25 +56,25 @@ function categorize(tech: string): string {
     {entry.data.metrics?.layers != null && (
       <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
         <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.layers}</p>
-        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">CAPAS</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]" data-i18n="expedients.metrics">CAPAS</p>
       </div>
     )}
     {entry.data.metrics?.packages != null && (
       <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
         <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.packages}</p>
-        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">PAQUETES</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]" data-i18n="expedients.metrics">PAQUETES</p>
       </div>
     )}
     {entry.data.metrics?.plugins != null && (
       <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
         <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.plugins}</p>
-        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">PLUGINS</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]" data-i18n="expedients.metrics">PLUGINS</p>
       </div>
     )}
     {entry.data.metrics?.tests != null && (
       <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
         <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.tests}</p>
-        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">TESTS</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]" data-i18n="expedients.metrics">TESTS</p>
       </div>
     )}
   </div>
@@ -89,7 +89,7 @@ function categorize(tech: string): string {
 
   <!-- Stack técnico clasificado -->
   <section class="mt-12 mb-10">
-    <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-6">
+    <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-6" data-i18n="expedients.technicalStack">
       STACK TÉCNICO CLASIFICADO
     </h2>
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -108,7 +108,7 @@ function categorize(tech: string): string {
   <!-- Links section -->
   {entry.data.links && (
     <section class="mb-10">
-      <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-4">
+      <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-4" data-i18n="expedients.links">
         ENLACES DEL EXPEDIENTE
       </h2>
       <div class="flex flex-wrap gap-3">
@@ -119,7 +119,7 @@ function categorize(tech: string): string {
             rel="noopener noreferrer"
             class="gold-underline inline-flex items-center gap-2 rounded-paper border border-[var(--color-archive-kraft)]/20 px-4 py-2 font-stamp text-stamp-label text-[var(--color-text-primary)] transition-all hover:border-[var(--color-accent-gold)]/40 hover:shadow-paper"
           >
-            <span>Repositorio</span>
+            <span data-i18n="expedients.repository">Repositorio</span>
             <span class="text-[var(--color-accent-gold)]">↗</span>
           </a>
         )}
@@ -130,7 +130,7 @@ function categorize(tech: string): string {
             rel="noopener noreferrer"
             class="gold-underline inline-flex items-center gap-2 rounded-paper border border-[var(--color-archive-kraft)]/20 px-4 py-2 font-stamp text-stamp-label text-[var(--color-text-primary)] transition-all hover:border-[var(--color-accent-gold)]/40 hover:shadow-paper"
           >
-            <span>Demo en vivo</span>
+            <span data-i18n="expedients.demo">Demo en vivo</span>
             <span class="text-[var(--color-accent-gold)]">↗</span>
           </a>
         )}
@@ -141,7 +141,7 @@ function categorize(tech: string): string {
             rel="noopener noreferrer"
             class="gold-underline inline-flex items-center gap-2 rounded-paper border border-[var(--color-archive-kraft)]/20 px-4 py-2 font-stamp text-stamp-label text-[var(--color-text-primary)] transition-all hover:border-[var(--color-accent-gold)]/40 hover:shadow-paper"
           >
-            <span>Sitio web</span>
+            <span data-i18n="expedients.website">Sitio web</span>
             <span class="text-[var(--color-accent-gold)]">↗</span>
           </a>
         )}
@@ -152,11 +152,11 @@ function categorize(tech: string): string {
   <!-- Dates stamp -->
   <footer class="border-t border-[var(--color-archive-kraft)]/20 pt-6 mt-12">
     <div class="flex flex-wrap items-center justify-between gap-4 text-caption text-[var(--color-text-secondary)]">
-      <span class="font-mono">
+      <span class="font-mono" data-i18n="expedients.published">
         Publicado: {entry.data.publishDate.toLocaleDateString('es-VE', { year: 'numeric', month: 'long', day: 'numeric' })}
       </span>
       {entry.data.updatedDate && (
-        <span class="font-mono">
+        <span class="font-mono" data-i18n="expedients.updated">
           Última actualización: {entry.data.updatedDate.toLocaleDateString('es-VE', { year: 'numeric', month: 'long', day: 'numeric' })}
         </span>
       )}

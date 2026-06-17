@@ -29,7 +29,7 @@ export default function ExpedientCover({
     <header className={`expedient-cover mb-8 ${className}`}>
       {/* Top bar */}
       <div className="flex items-center justify-between mb-3">
-        <span className="font-stamp text-stamp-label text-[var(--color-text-secondary)]">
+        <span className="font-stamp text-stamp-label text-[var(--color-text-secondary)]" data-i18n="common.expedient">
           ARCHIVO RENY MIRELES — EXPEDIENTE N° {expedientNumber}
         </span>
         <Stamp label={label} variant={variant} size="sm" />

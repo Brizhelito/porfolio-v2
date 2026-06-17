@@ -26,27 +26,27 @@ const featuredExpedientes = expedientes
 
         <h1 class="mt-6 text-display-xl text-[var(--color-text-primary)]">
           Archivo<br />
-          <span class="text-gold-gradient">Reny Mireles</span>
+          <span class="text-gold-gradient" data-i18n="hero.subtitle">Reny Mireles</span>
         </h1>
 
         <p class="mt-4 text-body-lg text-[var(--color-text-secondary)] max-w-md">
-          Ingeniería de sistemas distribuidos.<br />
-          Cada expediente documenta pensamiento de ingeniero.
+          <span data-i18n="hero.subtitle">Ingeniería de sistemas distribuidos.</span><br />
+          <span data-i18n="hero.subtitleDetail">Cada expediente documenta pensamiento de ingeniero.</span>
         </p>
 
         <!-- Metadata stamps -->
         <div class="mt-6 flex flex-wrap items-center gap-4 text-caption">
           <span class="font-mono text-[var(--color-accent-gold)]">
-            {expedientes.length} expedientes abiertos
+            {expedientes.length} <span data-i18n="hero.expedientsOpen">expedientes abiertos</span>
           </span>
           <span class="text-[var(--color-archive-kraft)]">·</span>
           <span class="font-mono text-[var(--color-text-secondary)]">
-            {totalRefinements} refinamientos totales
+            {totalRefinements} <span data-i18n="hero.totalRefinements">refinamientos totales</span>
           </span>
         </div>
 
         <div class="mt-2">
-          <span class="font-stamp text-stamp-label text-stamp-green">
+          <span class="font-stamp text-stamp-label text-stamp-green" data-i18n="hero.status">
             ACTIVO · DISPONIBLE
           </span>
         </div>
@@ -55,6 +55,7 @@ const featuredExpedientes = expedientes
         <a
           href="/expedientes"
           class="gold-underline mt-8 inline-block font-stamp text-stamp-title text-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] transition-colors"
+          data-i18n="hero.openExpedient"
         >
           ABRIR EXPEDIENTE PRINCIPAL →
         </a>
@@ -62,7 +63,7 @@ const featuredExpedientes = expedientes
 
       <!-- Right: Stack of Folders -->
       <div class="flex flex-col gap-4 w-full max-w-lg lg:flex-1">
-        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2">
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2" data-i18n="hero.recentExpedients">
           EXPEDIENTES RECIENTES
         </p>
         {featuredExpedientes.map((exp) => (
@@ -85,16 +86,16 @@ const featuredExpedientes = expedientes
     <!-- Bottom section: Quick links -->
     <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
       <a href="/about" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30">
-        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)]">FICHA DE IDENTIFICACIÓN</p>
-        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">Origen, metodología, capacidades</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)]" data-i18n="hero.quickLinkIdentification">FICHA DE IDENTIFICACIÓN</p>
+        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]" data-i18n="hero.quickLinkIdentificationDesc">Origen, metodología, capacidades</p>
       </a>
       <a href="/tools" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30">
-        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)]">CATÁLOGO DE HERRAMIENTAS</p>
-        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">Stack técnico clasificado</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)]" data-i18n="hero.quickLinkCatalog">CATÁLOGO DE HERRAMIENTAS</p>
+        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]" data-i18n="hero.quickLinkCatalogDesc">Stack técnico clasificado</p>
       </a>
       <a href="/contacto" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30">
-        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)]">SOLICITUD DE CONTACTO</p>
-        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">Abrir un nuevo expediente</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)]" data-i18n="hero.quickLinkContact">SOLICITUD DE CONTACTO</p>
+        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]" data-i18n="hero.quickLinkContactDesc">Abrir un nuevo expediente</p>
       </a>
     </div>
   </section>

@@ -49,11 +49,12 @@ const currentPath = Astro.url.pathname;
 
         <!-- Center: Navigation (desktop) -->
         <div class="hidden md:flex items-center gap-0.5">
-          {NAV_LINKS.map(({ href, label }) => {
+          {NAV_LINKS.map(({ href, label, i18n }) => {
             const isActive = currentPath === href || (href !== '/' && currentPath.startsWith(href));
             return (
               <a
                 href={href}
+                data-i18n={i18n}
                 class:list={[
                   'nav-link relative px-3 py-2 text-[13px] font-medium tracking-wide transition-all duration-200',
                   isActive
@@ -90,11 +91,12 @@ const currentPath = Astro.url.pathname;
     <!-- Mobile Menu Drawer -->
     <div id="mobile-menu" class="mobile-drawer hidden md:hidden border-t border-[var(--color-archive-kraft)]/30 bg-[var(--color-bg-primary)]">
       <div class="px-4 py-3 space-y-1">
-        {NAV_LINKS.map(({ href, label }) => {
+        {NAV_LINKS.map(({ href, label, i18n }) => {
           const isActive = currentPath === href || (href !== '/' && currentPath.startsWith(href));
           return (
             <a
               href={href}
+              data-i18n={i18n}
               class:list={[
                 'flex items-center gap-3 px-3 py-2.5 rounded-[3px] text-sm transition-colors',
                 isActive
