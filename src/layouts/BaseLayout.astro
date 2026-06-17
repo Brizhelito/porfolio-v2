@@ -77,6 +77,16 @@ const jsonLd = {
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
+    <!-- Prevent i18n flash: hide text if lang is non-default -->
+    <script is:inline>
+      (function() {
+        var lang = localStorage.getItem('lang');
+        if (lang === 'en') {
+          document.documentElement.classList.add('lang-pending');
+        }
+      })();
+    </script>
+
   </head>
   <body class="min-h-screen bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] transition-colors duration-300">
     <Header />

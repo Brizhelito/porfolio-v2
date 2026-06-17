@@ -22,6 +22,11 @@ export default function LanguageSwitch({ className = '' }: LanguageSwitchProps) 
     if (saved && saved !== 'es') {
       setActiveLang(saved);
       translateDocument(saved);
+      // Remove pending class to reveal translated text
+      document.documentElement.classList.remove('lang-pending');
+    } else {
+      // ES is default, no pending state needed
+      document.documentElement.classList.remove('lang-pending');
     }
   }, []);
 
@@ -56,6 +61,7 @@ export default function LanguageSwitch({ className = '' }: LanguageSwitchProps) 
       setActiveLang(lang);
       localStorage.setItem('lang', lang);
       document.documentElement.setAttribute('lang', lang);
+      document.documentElement.classList.remove('lang-pending');
       setIsAnimating(false);
     }, 200);
   };
