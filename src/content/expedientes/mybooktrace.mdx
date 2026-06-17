@@ -1,0 +1,48 @@
+---
+title: MyBookTrace
+expedientNumber: '004'
+classification: Aplicación mobile local-first para seguimiento de lectura
+status: archived
+refinementCount: 15
+description: >
+  App móvil para registrar libros leídos, notas y citas favoritas.
+  Arquitectura local-first con sincronización opcional en la nube.
+stack:
+  - Flutter
+  - Dart
+  - Drift/SQLite
+  - Riverpod
+  - Firebase
+metrics:
+  layers: 1
+  packages: 8
+  tests: 20
+publishDate: 2022-11-01
+updatedDate: 2023-05-15
+---
+
+import { LabNotes } from '../../components/expedientes/LabNotes';
+import RefinementTimeline from '../../components/expedientes/RefinementTimeline';
+
+## Resumen Técnico
+
+Aplicación de seguimiento de lectura con arquitectura local-first. Todos los datos residen en el dispositivo, con sincronización opcional vía Firebase para backup multi-dispositivo.
+
+## Notas de Laboratorio
+
+<LabNotes>
+  <LabNotes.Note date="2023-01-10" topic="Local-first vs cloud-first">
+    **Decisión**: Local-first por privacidad y velocidad. Los datos de lectura son personales. Firebase solo para backup, nunca como requisito de funcionamiento.
+  </LabNotes.Note>
+</LabNotes>
+
+## Refinamientos
+
+<RefinementTimeline
+  refinements={[
+    { id: 1, title: 'Offline database', description: 'Drift/SQLite con migraciones automáticas', isKey: true },
+    { id: 5, title: 'Book search', description: 'Integración con Google Books API + caché local' },
+    { id: 10, title: 'Reading stats', description: 'Estadísticas de lectura con gráficas locales', isKey: true },
+    { id: 15, title: 'Export system', description: 'Export a JSON/CSV para portabilidad de datos' },
+  ]}
+/>

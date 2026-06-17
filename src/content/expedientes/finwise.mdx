@@ -1,0 +1,51 @@
+---
+title: Finwise
+expedientNumber: '003'
+classification: Plataforma de gestión financiera personal
+status: active
+refinementCount: 18
+description: >
+  Aplicación web para tracking de gastos, presupuestos y metas financieras.
+  Dashboard con visualizaciones interactivas y exportación de reportes.
+stack:
+  - Next.js
+  - TypeScript
+  - Prisma
+  - PostgreSQL
+  - Chart.js
+  - Tailwind CSS
+  - Vercel
+metrics:
+  layers: 2
+  packages: 12
+  tests: 28
+publishDate: 2023-09-01
+---
+
+import { LabNotes } from '../../components/expedientes/LabNotes';
+import RefinementTimeline from '../../components/expedientes/RefinementTimeline';
+
+## Resumen Técnico
+
+Plataforma de finanzas personales con enfoque en simplicidad. Categorización automática de transacciones, presupuestos mensuales con alertas, y proyecciones basadas en patrones históricos.
+
+## Notas de Laboratorio
+
+<LabNotes>
+  <LabNotes.Note date="2023-10-15" topic="Categorización automática">
+    **Problema**: Usuarios no quieren categorizar manualmente cada gasto.
+
+    **Decisión**: Rule engine con patrones de texto (regex + keywords). 85% de precisión sin ML. ML descartado por complejidad vs beneficio.
+  </LabNotes.Note>
+</LabNotes>
+
+## Refinamientos
+
+<RefinementTimeline
+  refinements={[
+    { id: 1, title: 'Schema de datos', description: 'Modelo de transacciones con categorías anidadas', isKey: true },
+    { id: 6, title: 'Budget alerts', description: 'Sistema de notificaciones con umbrales configurables' },
+    { id: 12, title: 'Report export', description: 'PDF/CSV generation con server-side rendering', isKey: true },
+    { id: 18, title: 'Multi-currency', description: 'Soporte para múltiples monedas con conversión en tiempo real' },
+  ]}
+/>

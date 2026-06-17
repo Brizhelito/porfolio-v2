@@ -1,0 +1,105 @@
+---
+title: Kumoriya
+expedientNumber: '001'
+classification: Motor de agregación de contenido multiplataforma en tiempo real
+status: featured
+refinementCount: 47
+description: >
+  Sistema distribuido de 3 capas con arquitectura plugin-first.
+  Unifica múltiples fuentes de contenido mediante indexación dinámica,
+  normalización de metadatos y edge computing.
+stack:
+  - Flutter 3.32
+  - Go
+  - Fiber
+  - Cloudflare Workers
+  - Durable Objects
+  - WebSocket
+  - Riverpod
+  - Drift/SQLite
+  - PostgreSQL
+  - Redis
+  - Firebase FCM
+  - WebAuthn
+  - Passkeys
+  - CRDT
+  - GitHub Actions
+  - Sentry
+metrics:
+  layers: 3
+  packages: 45
+  plugins: 28
+  tests: 65
+links:
+  repository: https://github.com/renymireles/kumoriya
+  website: https://kumoriya.app
+publishDate: 2024-01-15
+updatedDate: 2024-12-01
+---
+
+import { LabNotes } from '../../components/expedientes/LabNotes';
+import RefinementTimeline from '../../components/expedientes/RefinementTimeline';
+import DecisionTree from '../../components/expedientes/DecisionTree';
+
+## Resumen Técnico
+
+Kumoriya es un sistema distribuido diseñado para unificar múltiples fuentes de contenido en una experiencia coherente. La arquitectura se divide en tres capas: presentación (Flutter), lógica de negocio (Go/Fiber) y edge computing (Cloudflare Workers).
+
+El sistema implementa una arquitectura **plugin-first** donde cada fuente de contenido es un plugin independiente, permitiendo extensibilidad sin modificar el core.
+
+## Notas de Laboratorio
+
+<LabNotes>
+  <LabNotes.Note date="2024-03-15" topic="Decisión de arquitectura">
+    **Pregunta**: ¿Centralizado o distribuido?
+
+    **Exploración**:
+    - Opción A: Monolito simple (rápido, limitado)
+    - Opción B: Microservicios (complejo, escalable)
+    - Opción C: Edge distribuido (novedoso, resiliente)
+
+    **Decisión**: Opción C. Se adapta mejor a constraints de latencia y disponibilidad.
+  </LabNotes.Note>
+
+  <LabNotes.Note date="2024-05-20" topic="Sincronización offline">
+    **Problema**: Los usuarios necesitan acceso sin conexión.
+
+    **Exploración**:
+    - Opción A: Cache simple con expiración
+    - Opción B: Sincronización bidireccional con CRDTs
+    - Opción C: Base de datos local-first con sync
+
+    **Decisión**: Opción C con CRDTs para resolución de conflictos. Mayor complejidad inicial pero experiencia superior.
+  </LabNotes.Note>
+
+  <LabNotes.Note date="2024-08-10" topic="Autenticación sin contraseñas">
+    **Contexto**: Usuarios target son tech-savvy, fricción de contraseñas es inaceptable.
+
+    **Implementación**: WebAuthn + Passkeys como método primario. Fallback a magic links.
+    Zero-knowledge proof para verificación de identidad.
+  </LabNotes.Note>
+</LabNotes>
+
+## Refinamientos
+
+<RefinementTimeline
+  refinements={[
+    { id: 1, title: 'Arquitectura plugin-first', description: '10+ source plugins, 18+ resolver plugins independientes', isKey: true },
+    { id: 8, title: 'Sincronización CRDT', description: 'LWW CRDT + WebSockets para tiempo real multi-dispositivo', isKey: true },
+    { id: 15, title: 'Edge caching strategy', description: 'Cloudflare Workers + Durable Objects para sesiones persistentes' },
+    { id: 23, title: 'Passkeys integration', description: 'WebAuthn con fallback graceful a magic links', isKey: true },
+    { id: 31, title: 'Offline-first storage', description: 'Drift/SQLite con sync queue y conflict resolution' },
+    { id: 47, title: 'Observability pipeline', description: 'Sentry + custom metrics en Cloudflare Analytics' },
+  ]}
+/>
+
+## Árbol de Decisiones
+
+<DecisionTree
+  question="¿Cómo manejar conflictos de datos en sincronización multi-dispositivo?"
+  options={[
+    { label: 'Last-Write-Wins', path: 'simple', chosen: false, description: 'Fácil de implementar, pérdida de datos posible' },
+    { label: 'CRDTs (LWW)', path: 'escalable', chosen: true, description: 'Resolución determinística sin servidor central' },
+    { label: 'OT (Operational Transform)', path: 'colaborativo', chosen: false, description: 'Requiere servidor central, overkill para este caso' },
+  ]}
+/>

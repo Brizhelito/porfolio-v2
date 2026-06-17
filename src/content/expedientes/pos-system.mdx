@@ -1,0 +1,64 @@
+---
+title: POS System
+expedientNumber: '002'
+classification: Dashboard fullstack para punto de venta
+status: active
+refinementCount: 23
+description: >
+  Sistema de punto de venta con dashboard administrativo en tiempo real.
+  Gestión de inventario, reportes financieros y multi-sucursal.
+stack:
+  - React
+  - TypeScript
+  - Node.js
+  - Express
+  - PostgreSQL
+  - Redis
+  - Docker
+  - Tailwind CSS
+metrics:
+  layers: 2
+  packages: 18
+  tests: 42
+publishDate: 2023-06-01
+updatedDate: 2024-03-15
+---
+
+import { LabNotes } from '../../components/expedientes/LabNotes';
+import RefinementTimeline from '../../components/expedientes/RefinementTimeline';
+import DecisionTree from '../../components/expedientes/DecisionTree';
+
+## Resumen Técnico
+
+Dashboard administrativo para sistema POS con gestión multi-sucursal. Arquitectura cliente-servidor con API REST, caché en Redis para reportes de alta frecuencia, y PostgreSQL como fuente de verdad.
+
+## Notas de Laboratorio
+
+<LabNotes>
+  <LabNotes.Note date="2023-07-20" topic="Estrategia de caché">
+    **Problema**: Reportes de ventas tomaban 3+ segundos con datos de 6 meses.
+
+    **Decisión**: Redis con invalidación por evento (nueva venta → invalidate cache de reportes del día). Latencia reducida a 50ms.
+  </LabNotes.Note>
+</LabNotes>
+
+## Refinamientos
+
+<RefinementTimeline
+  refinements={[
+    { id: 1, title: 'Arquitectura REST', description: 'API versionada con OpenAPI spec', isKey: true },
+    { id: 8, title: 'Multi-tenancy', description: 'Isolación por sucursal con row-level security en PostgreSQL' },
+    { id: 15, title: 'Real-time updates', description: 'WebSocket para notificaciones de inventario bajo', isKey: true },
+    { id: 23, title: 'Report engine', description: 'Generación async de PDFs con worker queue' },
+  ]}
+/>
+
+## Árbol de Decisiones
+
+<DecisionTree
+  question="¿Cómo manejar reportes pesados sin bloquear la API?"
+  options={[
+    { label: 'Síncrono con paginación', path: 'simple', chosen: false, description: 'Fácil pero bloquea el event loop' },
+    { label: 'Worker queue + Redis', path: 'async', chosen: true, description: 'Jobs en background, resultados en caché' },
+  ]}
+/>
