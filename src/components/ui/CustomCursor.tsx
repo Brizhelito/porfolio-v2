@@ -1,18 +1,11 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { gsap, prefersReducedMotion } from '@lib/animations';
 
 type CursorContext = 'normal' | 'link' | 'expediente' | 'reading';
 
-interface TrailParticle {
-  el: HTMLDivElement;
-  x: number;
-  y: number;
-  createdAt: number;
-}
-
-const TRAIL_INTERVAL = 120; // ms between particles
-const TRAIL_LIFETIME = 300; // ms fade
-const EASE_SPEED = 0.15; // lerp factor (lower = smoother/slower)
+const TRAIL_INTERVAL = 120;
+const TRAIL_LIFETIME = 300;
+const EASE_SPEED = 0.15;
 const RING_EASE_SPEED = 0.08;
 
 export default function CustomCursor() {
@@ -25,16 +18,18 @@ export default function CustomCursor() {
   const ringPos = useRef({ x: -100, y: -100 });
   const rafId = useRef<number>(0);
   const lastTrail = useRef(0);
-  const [isTouchDevice, setIsTouchDevice] = useState(true);
+  const [mounted, setMounted] = useState(false);
+  const [isFinePointer, setIsFinePointer] = useState(false);
   const [context, setContext] = useState<CursorContext>('normal');
   const contextLabel = useRef('');
-  const scrollSpeed = useRef(0);
   const lastScrollY = useRef(0);
 
-  // --- Detect touch ---
+  // --- Mount + detect pointer type ---
   useEffect(() => {
-    const touch = window.matchMedia('(pointer: coarse)').matches;
-    setIsTouchDevice(touch);
+    setMounted(true);
+    const fine = window.matchMedia('(pointer: fine)').matches;
+    const wide = window.innerWidth >= 768;
+    setIsFinePointer(fine && wide);
   }, []);
 
   // --- Context detection ---
@@ -45,7 +40,6 @@ export default function CustomCursor() {
       return;
     }
 
-    // Link / button
     const interactive = target.closest('a, button, [role="button"], input, textarea, select, label');
     if (interactive) {
       setContext('link');
@@ -55,7 +49,6 @@ export default function CustomCursor() {
       return;
     }
 
-    // Expediente card
     const expediente = target.closest('[data-cursor="expediente"]');
     if (expediente) {
       setContext('expediente');
@@ -67,15 +60,16 @@ export default function CustomCursor() {
 
   // --- Scroll speed for reading context ---
   useEffect(() => {
+    if (!isFinePointer) return;
     let ticking = false;
     const onScroll = () => {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
         const y = window.scrollY;
-        scrollSpeed.current = Math.abs(y - lastScrollY.current);
+        const speed = Math.abs(y - lastScrollY.current);
         lastScrollY.current = y;
-        if (scrollSpeed.current > 3 && context !== 'link' && context !== 'expediente') {
+        if (speed > 3 && context !== 'link' && context !== 'expediente') {
           setContext('reading');
         } else if (context === 'reading') {
           setContext('normal');
@@ -85,24 +79,32 @@ export default function CustomCursor() {
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, [context]);
+  }, [context, isFinePointer]);
 
   // --- Main animation loop ---
   useEffect(() => {
-    if (isTouchDevice || prefersReducedMotion) return;
+    if (!isFinePointer || prefersReducedMotion) return;
 
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
 
+    let hidden = true;
+
     const onMove = (e: MouseEvent) => {
       mousePos.current = { x: e.clientX, y: e.clientY };
-      // Show cursor
-      if (dot.style.opacity !== '1') dot.style.opacity = '1';
-      if (ring.style.opacity !== '1') ring.style.opacity = '1';
+      if (hidden) {
+        hidden = false;
+        dot.style.opacity = '1';
+        ring.style.opacity = '1';
+        // Snap to initial position to avoid jump
+        dotPos.current = { x: e.clientX, y: e.clientY };
+        ringPos.current = { x: e.clientX, y: e.clientY };
+      }
     };
 
     const onLeave = () => {
+      hidden = true;
       dot.style.opacity = '0';
       ring.style.opacity = '0';
       if (labelRef.current) labelRef.current.style.opacity = '0';
@@ -110,21 +112,19 @@ export default function CustomCursor() {
     };
 
     const animate = () => {
-      // Lerp dot (main)
-      dotPos.current.x += (mousePos.current.x - dotPos.current.x) * EASE_SPEED;
-      dotPos.current.y += (mousePos.current.y - dotPos.current.y) * EASE_SPEED;
-      dot.style.transform = `translate(${dotPos.current.x - 4}px, ${dotPos.current.y - 4}px)`;
+      if (!hidden) {
+        dotPos.current.x += (mousePos.current.x - dotPos.current.x) * EASE_SPEED;
+        dotPos.current.y += (mousePos.current.y - dotPos.current.y) * EASE_SPEED;
+        dot.style.transform = `translate(${dotPos.current.x - 4}px, ${dotPos.current.y - 4}px)`;
 
-      // Lerp ring (smoother)
-      ringPos.current.x += (mousePos.current.x - ringPos.current.x) * RING_EASE_SPEED;
-      ringPos.current.y += (mousePos.current.y - ringPos.current.y) * RING_EASE_SPEED;
-      ring.style.transform = `translate(${ringPos.current.x - 16}px, ${ringPos.current.y - 16}px)`;
+        ringPos.current.x += (mousePos.current.x - ringPos.current.x) * RING_EASE_SPEED;
+        ringPos.current.y += (mousePos.current.y - ringPos.current.y) * RING_EASE_SPEED;
+        ring.style.transform = `translate(${ringPos.current.x - 16}px, ${ringPos.current.y - 16}px)`;
+      }
 
-      // Label position
       if (labelRef.current) {
         labelRef.current.style.transform = `translate(${mousePos.current.x + 20}px, ${mousePos.current.y - 8}px)`;
       }
-      // Seal mini position
       if (sealRef.current) {
         sealRef.current.style.transform = `translate(${mousePos.current.x + 16}px, ${mousePos.current.y - 20}px)`;
       }
@@ -132,8 +132,8 @@ export default function CustomCursor() {
       rafId.current = requestAnimationFrame(animate);
     };
 
-    // --- Trail ---
     const createTrail = () => {
+      if (hidden) return;
       const now = Date.now();
       if (now - lastTrail.current < TRAIL_INTERVAL) return;
       lastTrail.current = now;
@@ -146,7 +146,6 @@ export default function CustomCursor() {
       particle.style.transform = 'scale(1)';
       document.body.appendChild(particle);
 
-      // Fade out
       gsap.to(particle, {
         opacity: 0,
         scale: 0.2,
@@ -168,43 +167,40 @@ export default function CustomCursor() {
       cancelAnimationFrame(rafId.current);
       clearInterval(trailInterval);
     };
-  }, [isTouchDevice]);
+  }, [isFinePointer]);
 
   // --- Context-specific style updates ---
   useEffect(() => {
     const dot = dotRef.current;
     const ring = ringRef.current;
-    const label = labelRef.current;
-    const seal = sealRef.current;
     if (!dot || !ring) return;
 
     dot.setAttribute('data-context', context);
     ring.setAttribute('data-context', context);
 
-    if (label) {
-      label.setAttribute('data-visible', context === 'link' ? 'true' : 'false');
-      label.textContent = contextLabel.current;
+    if (labelRef.current) {
+      labelRef.current.setAttribute('data-visible', context === 'link' ? 'true' : 'false');
+      labelRef.current.textContent = contextLabel.current;
     }
-    if (seal) {
-      seal.setAttribute('data-visible', context === 'expediente' ? 'true' : 'false');
+    if (sealRef.current) {
+      sealRef.current.setAttribute('data-visible', context === 'expediente' ? 'true' : 'false');
     }
   }, [context]);
 
-  // Don't render on touch devices
-  if (isTouchDevice) return null;
+  // Also listen for context globally
+  useEffect(() => {
+    if (!isFinePointer) return;
+    document.addEventListener('mouseover', detectContext);
+    return () => document.removeEventListener('mouseover', detectContext);
+  }, [isFinePointer, detectContext]);
+
+  if (!mounted || !isFinePointer) return null;
 
   return (
     <>
-      {/* Main dot */}
       <div ref={dotRef} className="cursor-dot" />
-
-      {/* Outer ring */}
       <div ref={ringRef} className="cursor-ring" />
-
-      {/* Link label */}
       <div ref={labelRef} className="cursor-label" data-visible="false" />
-
-      {/* Mini seal for expedientes */}
       <div ref={sealRef} className="cursor-seal-mini" data-visible="false">
         <svg width="28" height="28" viewBox="0 0 100 100">
           <polygon
@@ -225,17 +221,6 @@ export default function CustomCursor() {
           </text>
         </svg>
       </div>
-
-      {/* Context detection (global event) */}
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-            @media (pointer: fine) and (min-width: 768px) {
-              [data-cursor-label] { cursor: none !important; }
-            }
-          `,
-        }}
-      />
     </>
   );
 }
