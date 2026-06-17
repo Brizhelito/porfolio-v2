@@ -2,344 +2,216 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { gsap, prefersReducedMotion } from '@lib/animations';
 
 export type SealState = 'curiosity' | 'concentration' | 'satisfaction' | 'alert' | 'resting';
-export type SealColor = 'gold' | 'blue' | 'green' | 'red' | 'graphite';
-export type SealSize = 'sm' | 'md' | 'lg';
 
-export interface SealProps {
-  state?: SealState;
-  color?: SealColor;
-  size?: SealSize;
-  interactive?: boolean;
+const STATE_META: Record<SealState, { color: string; label: string }> = {
+  curiosity: { color: '#C9A961', label: 'curioso' },
+  concentration: { color: '#2D4A5C', label: 'concentrado' },
+  satisfaction: { color: '#5C7156', label: 'satisfecho' },
+  alert: { color: '#B23A28', label: 'alerta' },
+  resting: { color: '#4A4640', label: 'reposo' },
+};
+
+const PATH_STATE: Record<string, SealState> = {
+  '/': 'curiosity',
+  '/about': 'concentration',
+  '/tools': 'concentration',
+  '/expedientes': 'satisfaction',
+  '/colaboraciones': 'satisfaction',
+  '/contacto': 'alert',
+  '/inspiraciones': 'resting',
+};
+
+function stateForPath(path: string): SealState {
+  const key = Object.keys(PATH_STATE).find((p) => path === p || path.startsWith(p + '/'));
+  return key ? PATH_STATE[key] : 'curiosity';
 }
 
-const STATE_COLORS: Record<SealState, string> = {
-  curiosity: '#C9A961',
-  concentration: '#2D4A5C',
-  satisfaction: '#5C7156',
-  alert: '#B23A28',
-  resting: '#4A4640',
-};
-
-const SECTION_STATE_MAP: Record<string, SealState> = {
-  hero: 'curiosity',
-  about: 'concentration',
-  tools: 'concentration',
-  expedientes: 'satisfaction',
-  expediente: 'satisfaction',
-  contacto: 'alert',
-  colaboraciones: 'resting',
-  inspiraciones: 'resting',
-};
-
-const SIZE_MAP: Record<SealSize, number> = {
-  sm: 48,
-  md: 80,
-  lg: 120,
-};
-
-export default function Seal({
-  state: controlledState,
-  size = 'md',
-  interactive = true,
-}: SealProps) {
+export default function Seal() {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
-  const breatheRef = useRef<gsap.core.Tween | null>(null);
-  const wanderRef = useRef<gsap.core.Tween | null>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const [internalState, setInternalState] = useState<SealState>('curiosity');
-  const [currentSection, setCurrentSection] = useState<string>('hero');
-  const lastMouseMove = useRef(Date.now());
-  const lastStateChange = useRef<SealState>('curiosity');
+  const breatheTween = useRef<gsap.core.Tween | null>(null);
+  const wanderTween = useRef<gsap.core.Tween | null>(null);
+  const lastActive = useRef(Date.now());
+  const [state, setState] = useState<SealState>('curiosity');
+  const [mounted, setMounted] = useState(false);
 
-  const state = controlledState ?? internalState;
-  const color = STATE_COLORS[state];
-  const px = SIZE_MAP[size];
+  const meta = STATE_META[state];
+
+  const goToState = useCallback((next: SealState) => {
+    if (next === state) return;
+    setState(next);
+    lastActive.current = Date.now();
+  }, [state]);
+
+  // URL-based initial state
+  useEffect(() => {
+    setMounted(true);
+    goToState(stateForPath(window.location.pathname));
+  }, [goToState]);
+
+  // IntersectionObserver override for [data-section] elements
+  useEffect(() => {
+    const sections = document.querySelectorAll<HTMLElement>('[data-section]');
+    if (!sections.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((e) => e.isIntersecting);
+        if (visible.length) {
+          const id = visible[0].target.getAttribute('data-section') || '';
+          goToState(PATH_STATE[id] || 'curiosity');
+        }
+      },
+      { threshold: 0.3 },
+    );
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, [goToState]);
+
+  // Idle → resting after 15s inactivity
+  useEffect(() => {
+    const onActivity = () => { lastActive.current = Date.now(); };
+    window.addEventListener('mousemove', onActivity);
+    window.addEventListener('scroll', onActivity, { passive: true });
+
+    const interval = setInterval(() => {
+      if (Date.now() - lastActive.current > 15_000) {
+        goToState('resting');
+      }
+    }, 3000);
+
+    return () => {
+      window.removeEventListener('mousemove', onActivity);
+      window.removeEventListener('scroll', onActivity);
+      clearInterval(interval);
+    };
+  }, [goToState]);
+
+  // Re-awaken on activity
+  useEffect(() => {
+    if (state !== 'resting') return;
+    const onMove = () => {
+      if (Date.now() - lastActive.current < 1000) {
+        goToState(stateForPath(window.location.pathname));
+      }
+    };
+    window.addEventListener('mousemove', onMove);
+    return () => window.removeEventListener('mousemove', onMove);
+  }, [state, goToState]);
 
   // Stamp animation on state change
   useEffect(() => {
-    if (state === lastStateChange.current || prefersReducedMotion) return;
-    if (!svgRef.current) return;
+    if (!mounted || prefersReducedMotion || !svgRef.current) return;
+    gsap.fromTo(svgRef.current,
+      { scale: 1.3, rotate: -4, opacity: 0.6 },
+      { scale: 1, rotate: 0, opacity: 1, duration: 0.45, ease: 'back.out(1.7)' },
+    );
+  }, [state, mounted]);
 
-    const stampEl = svgRef.current.querySelector('.seal-stamp');
-    if (stampEl) {
-      gsap.fromTo(stampEl,
-        { scale: 0.5, opacity: 0, rotation: -15 },
-        {
-          scale: 1,
-          opacity: 1,
-          rotation: 0,
-          duration: 0.4,
-          ease: 'back.out(1.7)',
-          onComplete: () => {
-            gsap.to(stampEl, {
-              opacity: 0,
-              scale: 1.5,
-              duration: 0.3,
-              delay: 0.5,
-              ease: 'power2.in',
-            });
-          }
-        }
-      );
-    }
-    lastStateChange.current = state;
-  }, [state]);
-
-  // Breathing animation
+  // Breathe loop
   useEffect(() => {
     if (prefersReducedMotion || !svgRef.current) return;
-
-    breatheRef.current = gsap.to(svgRef.current, {
-      scale: 1.02,
-      duration: 2,
-      repeat: -1,
-      yoyo: true,
-      ease: 'sine.inOut',
+    breatheTween.current?.kill();
+    breatheTween.current = gsap.to(svgRef.current, {
+      scale: 1.04, duration: 2.5, repeat: -1, yoyo: true, ease: 'sine.inOut',
     });
-
-    return () => {
-      breatheRef.current?.kill();
-    };
+    return () => { breatheTween.current?.kill(); };
   }, []);
 
-  // Cursor following (curiosity state)
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (!interactive || !containerRef.current || state !== 'curiosity') return;
-      if (prefersReducedMotion) return;
-
-      const rect = containerRef.current.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-
-      const dx = e.clientX - centerX;
-      const dy = e.clientY - centerY;
-      const angle = Math.atan2(dy, dx);
-      const distance = Math.min(Math.sqrt(dx * dx + dy * dy), 300);
-      const intensity = distance / 300;
-
-      const tiltX = Math.cos(angle) * intensity * 8;
-      const tiltY = Math.sin(angle) * intensity * 8;
-
-      gsap.to(svgRef.current, {
-        rotateX: -tiltY,
-        rotateY: tiltX,
-        duration: 0.4,
-        ease: 'power2.out',
-      });
-
-      lastMouseMove.current = Date.now();
-    },
-    [interactive, state],
-  );
-
-  // Idle wander - moves around viewport every 30s
+  // Idle wander — random shift every 30s
   useEffect(() => {
-    if (!interactive || controlledState || prefersReducedMotion) return;
+    if (prefersReducedMotion || !containerRef.current) return;
 
-    const startWander = () => {
-      if (!containerRef.current) return;
-      wanderRef.current = gsap.to(containerRef.current, {
-        x: gsap.utils.random(-15, 15),
-        y: gsap.utils.random(-15, 15),
-        rotation: gsap.utils.random(-5, 5),
-        duration: gsap.utils.random(8, 12),
-        ease: 'sine.inOut',
-        onComplete: startWander,
+    const wander = () => {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 12 + Math.random() * 18;
+      wanderTween.current?.kill();
+      wanderTween.current = gsap.to(containerRef.current, {
+        x: Math.cos(angle) * dist,
+        y: Math.sin(angle) * dist,
+        duration: 1.2,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          wanderTween.current = gsap.to(containerRef.current, {
+            x: 0, y: 0, duration: 1.8, ease: 'power1.inOut',
+          });
+        },
       });
     };
 
-    const idleTimer = setTimeout(startWander, 30000);
+    const interval = setInterval(wander, 30_000);
+    return () => { clearInterval(interval); wanderTween.current?.kill(); };
+  }, []);
 
-    return () => {
-      clearTimeout(idleTimer);
-      wanderRef.current?.kill();
-    };
-  }, [interactive, controlledState]);
-
-  // Section detection via IntersectionObserver
-  useEffect(() => {
-    if (!interactive || controlledState) return;
-
-    const sections = document.querySelectorAll('section[id], main > section[id]');
-    if (sections.length === 0) return;
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
-            const sectionId = entry.target.getAttribute('id');
-            if (sectionId) {
-              setCurrentSection(sectionId);
-              const mappedState = SECTION_STATE_MAP[sectionId];
-              if (mappedState && mappedState !== internalState) {
-                setInternalState(mappedState);
-              }
-            }
-          }
-        });
-      },
-      {
-        rootMargin: '-20% 0px -60% 0px',
-        threshold: [0.3, 0.5, 0.7],
-      }
+  // Click → scroll to top
+  const handleClick = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (prefersReducedMotion || !svgRef.current) return;
+    gsap.fromTo(svgRef.current,
+      { scale: 0.8, rotate: 0 },
+      { scale: 1, rotate: 0, duration: 0.3, ease: 'back.out(2)' },
     );
+  }, []);
 
-    sections.forEach((section) => observerRef.current?.observe(section));
+  const isMobile = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
 
-    return () => {
-      observerRef.current?.disconnect();
-    };
-  }, [interactive, controlledState, internalState]);
-
-  // Auto-detect state based on user activity (fallback)
-  useEffect(() => {
-    if (!interactive || controlledState) return;
-
-    window.addEventListener('mousemove', handleMouseMove);
-
-    const interval = setInterval(() => {
-      const timeSinceMove = Date.now() - lastMouseMove.current;
-
-      if (timeSinceMove > 10000) {
-        setInternalState('resting');
-      } else if (timeSinceMove > 3000) {
-        setInternalState('concentration');
-      } else if (state !== 'curiosity' && state !== 'resting') {
-        setInternalState('curiosity');
-      }
-    }, 2000);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      clearInterval(interval);
-    };
-  }, [interactive, controlledState, handleMouseMove, state]);
-
-  // State-based animations
-  useEffect(() => {
-    if (!svgRef.current || prefersReducedMotion) return;
-
-    switch (state) {
-      case 'alert':
-        gsap.to(svgRef.current, {
-          keyframes: [
-            { x: -2, duration: 0.05 },
-            { x: 2, duration: 0.05 },
-            { x: -2, duration: 0.05 },
-            { x: 2, duration: 0.05 },
-            { x: 0, duration: 0.05 },
-          ],
-        });
-        break;
-      case 'satisfaction':
-        gsap.to(svgRef.current, {
-          y: -5,
-          duration: 0.3,
-          yoyo: true,
-          repeat: 1,
-          ease: 'power2.out',
-        });
-        break;
-      case 'concentration':
-        gsap.to(svgRef.current, {
-          scale: 1.05,
-          duration: 0.4,
-          yoyo: true,
-          repeat: 1,
-          ease: 'power2.inOut',
-        });
-        break;
-    }
-  }, [state]);
-
-  const handleClick = () => {
-    if (!interactive) return;
-    gsap.to(window, { scrollTo: 0, duration: 0.8, ease: 'power2.inOut' });
-  };
+  if (!mounted || isMobile) return null;
 
   return (
     <div
       ref={containerRef}
-      className="seal-container fixed bottom-6 right-6 z-[var(--z-cursor)] transition-transform duration-300"
-      style={{ width: px, height: px, perspective: '200px', cursor: interactive ? 'pointer' : 'default' }}
       onClick={handleClick}
-      aria-label="Volver arriba"
       role="button"
-      tabIndex={interactive ? 0 : undefined}
-      onKeyDown={(e) => e.key === 'Enter' && handleClick()}
+      tabIndex={0}
+      aria-label="Volver arriba"
+      className="fixed bottom-6 right-6 z-[var(--z-modal)] cursor-pointer select-none"
     >
       <svg
         ref={svgRef}
-        width={px}
-        height={px}
+        width={60}
+        height={60}
         viewBox="0 0 100 100"
         xmlns="http://www.w3.org/2000/svg"
-        className="seal-svg transition-colors duration-500"
-        style={{ transformStyle: 'preserve-3d' }}
+        className="drop-shadow-[0_2px_8px_rgba(0,0,0,0.12)]"
       >
-        {/* Outer octagon border */}
         <polygon
           points="30,5 70,5 95,30 95,70 70,95 30,95 5,70 5,30"
           fill="none"
-          stroke={color}
-          strokeWidth="2"
-          className="transition-all duration-500"
+          stroke={meta.color}
+          strokeWidth="2.5"
+          className="transition-[stroke] duration-500"
         />
-        {/* Inner circle */}
         <circle
-          cx="50"
-          cy="50"
-          r="35"
+          cx="50" cy="50" r="32"
           fill="none"
-          stroke={color}
-          strokeWidth="1.5"
-          opacity="0.6"
+          stroke={meta.color}
+          strokeWidth="1.2"
+          opacity="0.45"
           className="transition-all duration-500"
         />
-        {/* RM Monogram */}
         <text
-          x="50"
-          y="58"
+          x="50" y="55"
           textAnchor="middle"
-          fontFamily="serif"
+          fontFamily="'IBM Plex Serif', serif"
           fontSize="28"
           fontWeight="700"
-          fill={color}
-          className="transition-all duration-500"
+          fill={meta.color}
+          className="transition-[fill] duration-500"
         >
           RM
         </text>
-        {/* ARCHIVIST text */}
         <text
-          x="50"
-          y="80"
+          x="50" y="78"
           textAnchor="middle"
           fontFamily="monospace"
-          fontSize="7"
+          fontSize="6.5"
           letterSpacing="2"
-          fill={color}
-          opacity="0.7"
+          fill={meta.color}
+          opacity="0.6"
           className="transition-all duration-500"
         >
-          ARCHIVIST
+          {meta.label.toUpperCase()}
         </text>
-        {/* Stamp element for state change animation */}
-        <g className="seal-stamp" style={{ transformOrigin: '50% 50%' }}>
-          <circle cx="50" cy="50" r="42" fill="none" stroke={color} strokeWidth="2" strokeDasharray="4 4" opacity="0" />
-          <text
-            x="50"
-            y="58"
-            textAnchor="middle"
-            fontFamily="'Special Elite', cursive"
-            fontSize="10"
-            fill={color}
-            opacity="0"
-          >
-            {state.toUpperCase()}
-          </text>
-        </g>
       </svg>
     </div>
   );
