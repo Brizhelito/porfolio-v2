@@ -1,69 +1,131 @@
 {
-  "site": {
-    "title": "Archivo Reny Mireles",
-    "description": "Portafolio de ingeniería — Expedientes de trabajo de Reny Mireles"
-  },
   "nav": {
     "home": "Inicio",
-    "about": "Ficha de Identificación",
-    "tools": "Catálogo de Herramientas",
-    "expedientes": "Expedientes",
-    "colaboraciones": "Colaboraciones",
-    "inspiraciones": "Inspiraciones",
-    "contacto": "Contacto"
+    "about": "Ficha",
+    "tools": "Catálogo",
+    "expedients": "Expedientes",
+    "collaborations": "Colaboraciones",
+    "inspirations": "Inspiraciones",
+    "contact": "Contacto"
   },
-  "home": {
-    "hero_title_1": "Archivo",
-    "hero_title_2": "Reny Mireles",
-    "hero_subtitle": "Ingeniería de sistemas distribuidos.",
-    "hero_subtitle_2": "Cada expediente documenta pensamiento de ingeniero.",
-    "expedients_open": "{count} expedientes abiertos",
-    "total_refinements": "{count} refinamientos totales",
-    "status_active": "ACTIVO · DISPONIBLE",
-    "cta_main": "ABRIR EXPEDIENTE PRINCIPAL →",
-    "recent_expedients": "EXPEDIENTES RECIENTES"
+  "hero": {
+    "title": "Archivo",
+    "subtitle": "Ingeniería de sistemas distribuidos.",
+    "subtitleDetail": "Cada expediente documenta pensamiento de ingeniero.",
+    "status": "ACTIVO · DISPONIBLE",
+    "openExpedient": "ABRIR EXPEDIENTE PRINCIPAL →",
+    "expedientsOpen": "expedientes abiertos",
+    "totalRefinements": "refinamientos totales",
+    "recentExpedients": "EXPEDIENTES RECIENTES"
   },
-  "expedientes": {
-    "page_title": "Expedientes Abiertos",
-    "page_description": "Cada expediente documenta el proceso de ingeniería: decisiones, errores, refinamientos y las cicatrices de oro que dejaron.",
+  "about": {
+    "pageTitle": "Ficha de Identificación — Archivo Reny Mireles",
+    "header": "ARCHIVO RENY MIRELES",
+    "title": "Ficha de Identificación",
+    "origin": "ORIGEN",
+    "originValue": "Venezuela",
+    "specialty": "ESPECIALIDAD",
+    "specialtyValue": "Sistemas distribuidos, edge computing, mobile",
+    "methodology": "METODOLOGÍA",
+    "methodologyValue": "Iteración documentada, arquitectura plugin-first",
+    "languages": "IDIOMAS",
+    "languagesValue": "Español (nativo), Inglés (profesional)",
+    "availability": "DISPONIBILIDAD",
+    "availabilityValue": "Abierto a oportunidades",
+    "capabilitiesTitle": "Capacidades Demostradas",
+    "capabilitiesSubtitle": "Dominios técnicos verificados en expedientes",
+    "philosophyTitle": "Filosofía de Trabajo",
+    "philosophy": [
+      "Iteración sobre perfección: Cada refinamiento documentado añade valor medible.",
+      "Arquitectura plugin-first: Extensibilidad como principio de diseño, no como afterthought.",
+      "Documentación silenciosa: El código se explica solo, las notas de laboratorio capturan el por qué.",
+      "Performance como feature: Cada decisión arquitectónica considera el impacto en el usuario final."
+    ],
+    "note": "El contexto de cada herramienta se detalla en los expedientes. Aquí solo se listan capacidades verificadas en producción."
+  },
+  "tools": {
+    "pageTitle": "Catálogo de Herramientas — Archivo Reny Mireles",
+    "header": "ARCHIVO RENY MIRELES",
+    "title": "Catálogo de Herramientas",
+    "subtitle": "Clasificadores laterales por categoría. El contexto se detalla en los expedientes."
+  },
+  "expedients": {
+    "pageTitle": "Expedientes — Archivo Reny Mireles",
+    "pageDescription": "Todos los expedientes de trabajo abiertos en el archivo",
+    "archiveTitle": "ARCHIVO CENTRAL",
+    "title": "Expedientes Abiertos",
+    "subtitle": "Cada expediente documenta el proceso de ingeniería: decisiones, errores, refinamientos y las cicatrices de oro que dejaron.",
     "featured": "DESTACADOS",
     "active": "ACTIVOS",
     "archived": "ARCHIVADOS",
-    "refinements": "{count} refinamientos",
-    "stack_classified": "STACK TÉCNICO CLASIFICADO",
+    "classification": "Clasificación",
+    "status": "Status",
+    "refinements": "Refinamientos",
+    "stack": "Stack Técnico",
+    "metrics": "Métricas",
+    "labNotes": "Notas de Laboratorio",
+    "decisionTree": "Árbol de Decisiones",
+    "technicalStack": "STACK TÉCNICO CLASIFICADO",
     "links": "ENLACES DEL EXPEDIENTE",
     "repository": "Repositorio",
     "demo": "Demo en vivo",
     "website": "Sitio web",
     "published": "Publicado",
-    "updated": "Última actualización",
-    "verified": "VERIFICADO",
-    "layers": "CAPAS",
-    "packages": "PAQUETES",
-    "plugins": "PLUGINS",
-    "tests": "TESTS"
+    "updated": "Última actualización"
   },
-  "about": {
-    "page_title": "Ficha de Identificación",
-    "page_description": "Datos técnicos del archivista"
-  },
-  "tools": {
-    "page_title": "Catálogo de Herramientas",
-    "page_description": "Stack técnico clasificado y catalogado"
+  "collaborations": {
+    "pageTitle": "Colaboraciones — Archivo Reny Mireles",
+    "pageDescription": "Registro de colaboraciones profesionales y consultorías",
+    "header": "REGISTRO DE COLABORACIONES",
+    "title": "Colaboraciones",
+    "subtitle": "Proyectos colaborativos, consultorías y asesorías técnicas que han dejado cicatrices de oro en el archivo.",
+    "keyContributions": "CONTRIBUCIONES CLAVE",
+    "interested": "¿INTERESADO EN COLABORAR?",
+    "interestedText": "Abierto a consultorías, proyectos de ingeniería y colaboraciones técnicas. Cada colaboración es un expediente nuevo en el archivo.",
+    "openRequest": "ABRIR SOLICITUD DE CONTACTO →"
   },
   "contact": {
-    "page_title": "Abrir Nuevo Expediente",
-    "page_description": "Para consultas, propuestas de trabajo, o iniciar una colaboración — elige el canal que mejor se adapte a tu solicitud.",
-    "reception": "VENTANILLA DE RECEPCIÓN",
-    "available": "DISPONIBLE",
-    "response_times": "TIEMPOS DE RESPUESTA",
-    "email_response": "Correo: 24-48h",
-    "linkedin_response": "LinkedIn: 3-5 días",
-    "whatsapp_response": "WhatsApp: Inmediato (horario)",
+    "pageTitle": "Contacto — Archivo Reny Mireles",
+    "pageDescription": "Canales de contacto para abrir un nuevo expediente de colaboración",
+    "header": "VENTANILLA DE RECEPCIÓN",
+    "title": "Abrir Nuevo Expediente",
+    "subtitle": "Para consultas, propuestas de trabajo, o iniciar una colaboración — elige el canal que mejor se adapte a tu solicitud.",
+    "responseTimes": "TIEMPOS DE RESPUESTA",
+    "email": "Correo Electrónico",
+    "emailDesc": "Respuesta en 24-48h. Ideal para propuestas formales y documentación técnica.",
+    "github": "GitHub",
+    "githubDesc": "Repositorios públicos, issues, contribuciones open source.",
+    "linkedin": "LinkedIn",
+    "linkedinDesc": "Trayectoria profesional, recomendaciones, networking.",
+    "whatsapp": "WhatsApp",
+    "whatsappDesc": "Solo para comunicación urgente o coordinaciones en tiempo real.",
+    "freelanceTip": "Para propuestas de freelance, incluir: alcance, timeline estimado y presupuesto disponible.",
+    "timezoneTip": "Zona horaria: UTC-4 (Venezuela). Disponible para trabajo remoto global.",
     "location": "BASE: MARACAIBO, ZULIA, VENEZUELA"
   },
+  "inspirations": {
+    "pageTitle": "Inspiraciones — Archivo Reny Mireles",
+    "pageDescription": "Créditos de inspiración — las personas, ideas y recursos que formaron este archivo",
+    "header": "CRÉDITOS DEL ARCHIVO",
+    "title": "Inspiraciones",
+    "subtitle": "Las personas, ideas, herramientas y filosofías que dieron forma a la manera de pensar, construir y documentar de este archivo.",
+    "end": "FIN DE CRÉDITOS",
+    "epilogue": "Todo archivo es una conversación con quienes vinieron antes.",
+    "back": "VOLVER AL ARCHIVO →"
+  },
+  "footer": {
+    "archive": "ARCHIVO RENY MIRELES",
+    "tagline": "Ingeniería de sistemas distribuidos",
+    "built": "Construido con Astro · Cada expediente documenta pensamiento de ingeniero"
+  },
   "common": {
-    "back_to_archive": "VOLVER AL ARCHIVO →",
+    "expedient": "EXP.",
+    "active": "ACTIVO",
+    "archived": "ARCHIVADO",
+    "featured": "DESTACADO",
+    "verified": "VERIFICADO",
+    "completed": "COMPLETADO",
+    "open": "ABRIR",
     "access": "ACCEDER →"
   }
 }

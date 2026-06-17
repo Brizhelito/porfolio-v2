@@ -1,17 +1,21 @@
 ---
 import { SITE, SOCIAL_LINKS } from '@lib/constants';
+import { getLangFromUrl, useTranslations } from '../../i18n/index';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
-<footer class="border-t border-[var(--color-bg-secondary)] bg-[var(--color-bg-primary)] transition-colors duration-300">
+<footer class="border-t border-[var(--color-bg-secondary)] bg-[var(--color-bg-primary)]">
   <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
     <div class="flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
       <!-- Archive Stamp -->
       <div class="text-center sm:text-left">
         <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">
-          ARCHIVO RENY MIRELES
+          {t('footer.archive')}
         </p>
         <p class="mt-1 text-caption text-[var(--color-text-secondary)]">
-          Ingeniería de sistemas distribuidos · {new Date().getFullYear()}
+          {t('footer.tagline')} · {new Date().getFullYear()}
         </p>
       </div>
 
@@ -54,7 +58,7 @@ import { SITE, SOCIAL_LINKS } from '@lib/constants';
     <!-- Bottom line -->
     <div class="mt-6 border-t border-[var(--color-bg-secondary)] pt-4 text-center">
       <p class="text-caption text-[var(--color-text-secondary)]">
-        Construido con Astro · Cada expediente documenta pensamiento de ingeniero
+        {t('footer.built')}
       </p>
     </div>
   </div>
