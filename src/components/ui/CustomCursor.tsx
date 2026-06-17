@@ -121,6 +121,7 @@ export default function CustomCursor() {
         .cs{position:fixed;pointer-events:none;z-index:10000;opacity:0;transition:opacity .25s}
         .cs[data-vis="1"]{opacity:1}
         @media(pointer:coarse){.cd,.cr,.cl,.cs{display:none!important}}
+        @media(pointer:fine) and (min-width:768px){body,a,button,[role="button"]{cursor:none!important}}
       `}</style>
       <div ref={dotRef} className="cd" />
       <div ref={ringRef} className="cr" />
