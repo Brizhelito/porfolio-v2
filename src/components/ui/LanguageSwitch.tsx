@@ -13,7 +13,12 @@ interface LanguageSwitchProps {
 }
 
 export default function LanguageSwitch({ className = '' }: LanguageSwitchProps) {
-  const [activeLang, setActiveLang] = useState<'es' | 'en'>('es');
+  const [activeLang, setActiveLang] = useState<'es' | 'en'>(() => {
+    if (typeof document !== 'undefined') {
+      return (document.documentElement.getAttribute('data-lang') as 'es' | 'en') || 'es';
+    }
+    return 'es';
+  });
   const [isAnimating, setIsAnimating] = useState(false);
   const stampRef = useRef<HTMLDivElement>(null);
 

@@ -83,6 +83,7 @@ const jsonLd = {
         var lang = localStorage.getItem('lang');
         if (lang === 'en') {
           document.documentElement.classList.add('lang-pending');
+          document.documentElement.setAttribute('data-lang', 'en');
         }
       })();
     </script>
