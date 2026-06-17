@@ -17,42 +17,70 @@
   transition: width 0.2s ease, height 0.2s ease, opacity 0.15s ease;
 }
 
+/* ---- Ring: section color via --ring-color, element behavior via classes ---- */
 .cursor-ring {
   position: fixed;
   pointer-events: none;
   z-index: calc(var(--z-cursor, 9999) - 1);
   width: 32px;
   height: 32px;
-  border: 1.5px solid var(--color-accent-gold, #C9A961);
+  border: 1.5px solid var(--ring-color, var(--color-accent-gold));
   border-radius: 50%;
   left: 0;
   top: 0;
   transform: translate(-50%, -50%);
   will-change: transform;
-  transition: width 0.25s ease, height 0.25s ease, border-color 0.2s ease, opacity 0.2s ease;
   opacity: 0.6;
+  transition:
+    width 0.25s ease,
+    height 0.25s ease,
+    border-radius 0.2s ease,
+    border-color 0.4s ease,
+    opacity 0.2s ease,
+    border-width 0.2s ease;
 }
 
-.cursor-ring.is-hovering {
+/* Element: general link / button */
+.cursor-ring.is-linking {
   width: 48px;
   height: 48px;
   border-width: 1px;
   opacity: 0.35;
 }
 
-.cursor-ring.is-reading {
+/* Element: expediente card */
+.cursor-ring.is-expediente {
   width: 24px;
   height: 24px;
-  opacity: 0.3;
-}
-
-.cursor-ring.is-expediente {
-  width: 40px;
-  height: 40px;
-  border-color: var(--color-stamp-blue, #2D4A5C);
+  border-radius: 30%;
+  border-width: 1.5px;
   opacity: 0.5;
 }
 
+/* Element: input / textarea / contenteditable */
+.cursor-ring.is-input {
+  width: 56px;
+  height: 56px;
+  border-width: 1px;
+  opacity: 0.15;
+}
+
+/* Element: navbar link */
+.cursor-ring.is-navbar {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  opacity: 0.45;
+}
+
+/* Element: reading (slow scroll) */
+.cursor-ring.is-reading {
+  width: 20px;
+  height: 20px;
+  opacity: 0.25;
+}
+
+/* ---- Trail ---- */
 .cursor-trail-particle {
   position: fixed;
   pointer-events: none;
@@ -65,19 +93,22 @@
   will-change: transform, opacity;
 }
 
-/* Hide default cursor on desktop */
+/* ---- Hide default cursor on desktop ---- */
 @media (pointer: fine) {
   html:has(.cursor-dot) {
     cursor: none;
   }
   html:has(.cursor-dot) a,
   html:has(.cursor-dot) button,
-  html:has(.cursor-dot) [role="button"] {
+  html:has(.cursor-dot) [role="button"],
+  html:has(.cursor-dot) input,
+  html:has(.cursor-dot) textarea,
+  html:has(.cursor-dot) [contenteditable] {
     cursor: none;
   }
 }
 
-/* Restore default cursor on mobile/touch */
+/* ---- Restore default cursor on mobile ---- */
 @media (pointer: coarse) {
   .cursor-dot,
   .cursor-ring,

@@ -4,7 +4,22 @@ const TRAIL_INTERVAL = 80;
 const MAX_TRAIL = 20;
 const RING_FOLLOW = 0.12;
 
-type CursorMode = 'default' | 'hovering' | 'reading' | 'expediente';
+type CursorMode = 'default' | 'linking' | 'expediente' | 'input' | 'navbar' | 'reading';
+
+const SECTION_COLORS: Record<string, string> = {
+  '/': '#C9A961',
+  '/about': '#2D4A5C',
+  '/tools': '#4A4640',
+  '/expedientes': '#5C7156',
+  '/colaboraciones': '#5C7156',
+  '/contacto': '#B23A28',
+  '/inspiraciones': '#4A4640',
+};
+
+function sectionColor(path: string): string {
+  const key = Object.keys(SECTION_COLORS).find((p) => path === p || path.startsWith(p + '/'));
+  return key ? SECTION_COLORS[key] : '#C9A961';
+}
 
 export default function CustomCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
@@ -25,6 +40,9 @@ export default function CustomCursor() {
     const ring = ringRef.current;
     if (!dot || !ring) return;
 
+    // Section color on mount
+    ring.style.setProperty('--ring-color', sectionColor(window.location.pathname));
+
     const spawnTrail = (x: number, y: number) => {
       if (trailCount.current >= MAX_TRAIL) return;
       const p = document.createElement('div');
@@ -39,11 +57,14 @@ export default function CustomCursor() {
     };
 
     const setMode = (mode: CursorMode) => {
+      if (mode === modeRef.current) return;
       modeRef.current = mode;
       ring.className = 'cursor-ring' +
-        (mode === 'hovering' ? ' is-hovering' : '') +
-        (mode === 'reading' ? ' is-reading' : '') +
-        (mode === 'expediente' ? ' is-expediente' : '');
+        (mode === 'linking' ? ' is-linking' : '') +
+        (mode === 'expediente' ? ' is-expediente' : '') +
+        (mode === 'input' ? ' is-input' : '') +
+        (mode === 'navbar' ? ' is-navbar' : '') +
+        (mode === 'reading' ? ' is-reading' : '');
     };
 
     const onMouseMove = (e: MouseEvent) => {
@@ -61,40 +82,38 @@ export default function CustomCursor() {
 
     const onMouseOver = (e: MouseEvent) => {
       const t = e.target as HTMLElement;
-      if (t.closest('a, button, [role="button"]')) {
-        if (t.closest('[data-expediente]')) {
-          setMode('expediente');
-        } else {
-          setMode('hovering');
-        }
-        return;
-      }
+
+      // Order matters: most specific first
       if (t.closest('[data-expediente]')) {
         setMode('expediente');
-        return;
+      } else if (t.closest('input, textarea, [contenteditable]')) {
+        setMode('input');
+      } else if (t.closest('nav a, .nav-link')) {
+        setMode('navbar');
+      } else if (t.closest('a, button, [role="button"]')) {
+        setMode('linking');
       }
     };
 
     const onMouseOut = (e: MouseEvent) => {
       const t = e.target as HTMLElement;
-      if (t.closest('a, button, [role="button"], [data-expediente]')) {
+      if (t.closest('a, button, [role="button"], input, textarea, [contenteditable], [data-expediente]')) {
         setMode('default');
       }
     };
 
-    // Reading mode detection via scroll speed
+    // Reading mode: slow scroll → ring contracts
     const onScroll = () => {
-      const now = Date.now();
       const delta = Math.abs(window.scrollY - lastScrollY.current);
       lastScrollY.current = window.scrollY;
 
       if (scrollTimer.current) clearTimeout(scrollTimer.current);
-      if (delta < 3) {
+      if (delta < 3 && modeRef.current === 'default') {
         setMode('reading');
         scrollTimer.current = window.setTimeout(() => {
           setMode('default');
         }, 2000);
-      } else {
+      } else if (delta >= 3 && modeRef.current === 'reading') {
         setMode('default');
       }
     };
