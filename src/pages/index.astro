@@ -1,50 +1,61 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
-import FileFolder from '@components/ui/FileFolder';
-import CustomCursor from '@components/ui/CustomCursor';
-import { SITE } from '@lib/constants';
+import ScatteredExpedientes from '@components/expedientes/ScatteredExpedientes';
 import { getCollection } from 'astro:content';
+import { t } from '@lib/i18n';
+
+const T = (key: string) => t('es', key);
 
 const expedientes = await getCollection('expedientes');
 const totalRefinements = expedientes.reduce((sum, e) => sum + e.data.refinementCount, 0);
 const featuredExpedientes = expedientes
   .filter((e) => e.data.status === 'featured' || e.data.status === 'active')
-  .sort((a, b) => b.data.refinementCount - a.data.refinementCount);
+  .sort((a, b) => b.data.refinementCount - a.data.refinementCount)
+  .map((e) => ({
+    id: e.id,
+    title: e.data.title,
+    expedientNumber: e.data.expedientNumber,
+    status: e.data.status,
+    refinementCount: e.data.refinementCount,
+  }));
+
+const scatteredStrings = {
+  refinements: T('common.refinements'),
+  openExpedient: T('common.clickToOpen'),
+};
 ---
 
 <BaseLayout>
-  <!-- Custom Cursor (React Island) -->
-  <CustomCursor client:load />
-
   <!-- Hero: Archive Cover -->
-  <section data-seal-state="curiosity" class="page-enter relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+  <section class="page-enter relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8" data-lamp-section="hero">
     <div class="flex flex-col items-center gap-8 lg:flex-row lg:items-start lg:gap-16">
-      <!-- Left: Seal + Title -->
+      <!-- Left: Title -->
       <div class="flex flex-col items-center text-center lg:items-start lg:text-left lg:flex-1">
+
         <h1 class="mt-6 text-display-xl text-[var(--color-text-primary)]">
-          Archivo<br />
-          <span class="text-gold-gradient" data-i18n="hero.subtitle">Reny Mireles</span>
+          {T('hero.title')}<br />
+          <span class="text-gold-gradient">{T('hero.subtitle')}</span>
         </h1>
 
         <p class="mt-4 text-body-lg text-[var(--color-text-secondary)] max-w-md">
-          <span data-i18n="hero.subtitle">Ingeniería de sistemas distribuidos.</span><br />
-          <span data-i18n="hero.subtitleDetail">Cada expediente documenta pensamiento de ingeniero.</span>
+          {T('hero.subtitle')}<br />
+          {T('hero.subtitleDetail')}
         </p>
 
         <!-- Metadata stamps -->
         <div class="mt-6 flex flex-wrap items-center gap-4 text-caption">
           <span class="font-mono text-[var(--color-accent-gold)]">
-            {expedientes.length} <span data-i18n="hero.expedientsOpen">expedientes abiertos</span>
+            {expedientes.length} {T('hero.expedientsOpen')}
           </span>
           <span class="text-[var(--color-archive-kraft)]">·</span>
           <span class="font-mono text-[var(--color-text-secondary)]">
-            {totalRefinements} <span data-i18n="hero.totalRefinements">refinamientos totales</span>
+            {totalRefinements} {T('hero.totalRefinements')}
           </span>
         </div>
 
         <div class="mt-2">
-          <span class="font-stamp text-stamp-label text-stamp-green" data-i18n="hero.status">
-            ACTIVO · DISPONIBLE
+          <span class="font-stamp text-stamp-label text-stamp-green">
+            {T('hero.status')}
           </span>
         </div>
 
@@ -52,28 +63,22 @@ const featuredExpedientes = expedientes
         <a
           href="/expedientes"
           class="gold-underline mt-8 inline-block font-stamp text-stamp-title text-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] transition-colors"
-          data-i18n="hero.openExpedient"
+          data-seal-react
         >
-          ABRIR EXPEDIENTE PRINCIPAL →
+          {T('hero.openExpedient')}
         </a>
       </div>
 
-      <!-- Right: Stack of Folders -->
-      <div class="flex flex-col gap-4 w-full max-w-lg lg:flex-1">
-        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2" data-i18n="hero.recentExpedients">
-          EXPEDIENTES RECIENTES
+      <!-- Right: Scattered Desk -->
+      <div class="w-full max-w-lg lg:flex-1">
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2">
+          {T('hero.recentExpedients')}
         </p>
-        {featuredExpedientes.map((exp) => (
-          <a href={`/expedientes/${exp.id}`}>
-            <FileFolder
-              client:visible
-              title={exp.data.title}
-              expedientNumber={exp.data.expedientNumber}
-              status={exp.data.status}
-              refinementCount={exp.data.refinementCount}
-            />
-          </a>
-        ))}
+        <ScatteredExpedientes
+          client:visible
+          expedientes={featuredExpedientes}
+          strings={scatteredStrings}
+        />
       </div>
     </div>
 
@@ -81,18 +86,18 @@ const featuredExpedientes = expedientes
     <div class="mt-16 h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
 
     <!-- Bottom section: Quick links -->
-    <div data-seal-state="concentration" class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-      <a href="/about" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30">
-        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)]" data-i18n="hero.quickLinkIdentification">FICHA DE IDENTIFICACIÓN</p>
-        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]" data-i18n="hero.quickLinkIdentificationDesc">Origen, metodología, capacidades</p>
+    <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <a href="/about" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30" data-seal-react>
+        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)]">{T('hero.quickLinkIdentification')}</p>
+        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">{T('hero.quickLinkIdentificationDesc')}</p>
       </a>
-      <a href="/tools" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30">
-        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)]" data-i18n="hero.quickLinkCatalog">CATÁLOGO DE HERRAMIENTAS</p>
-        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]" data-i18n="hero.quickLinkCatalogDesc">Stack técnico clasificado</p>
+      <a href="/tools" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30" data-seal-react>
+        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)]">{T('hero.quickLinkCatalog')}</p>
+        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">{T('hero.quickLinkCatalogDesc')}</p>
       </a>
-      <a href="/contacto" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30">
-        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)]" data-i18n="hero.quickLinkContact">SOLICITUD DE CONTACTO</p>
-        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]" data-i18n="hero.quickLinkContactDesc">Abrir un nuevo expediente</p>
+      <a href="/contacto" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30" data-seal-react>
+        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)]">{T('hero.quickLinkContact')}</p>
+        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">{T('hero.quickLinkContactDesc')}</p>
       </a>
     </div>
   </section>
