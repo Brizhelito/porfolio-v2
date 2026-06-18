@@ -16,12 +16,20 @@
     "openExpedient": "ABRIR EXPEDIENTE PRINCIPAL →",
     "expedientsOpen": "expedientes abiertos",
     "totalRefinements": "refinamientos totales",
-    "recentExpedients": "EXPEDIENTES RECIENTES"
+    "recentExpedients": "EXPEDIENTES RECIENTES",
+    "quickLinkIdentification": "FICHA DE IDENTIFICACIÓN",
+    "quickLinkIdentificationDesc": "Origen, metodología, capacidades",
+    "quickLinkCatalog": "CATÁLOGO DE HERRAMIENTAS",
+    "quickLinkCatalogDesc": "Stack técnico clasificado",
+    "quickLinkContact": "SOLICITUD DE CONTACTO",
+    "quickLinkContactDesc": "Abrir un nuevo expediente"
   },
   "about": {
     "pageTitle": "Ficha de Identificación — Archivo Reny Mireles",
     "header": "ARCHIVO RENY MIRELES",
     "title": "Ficha de Identificación",
+    "titleValue": "Reny Mireles",
+    "classification": "Ingeniero de Sistemas Distribuidos",
     "origin": "ORIGEN",
     "originValue": "Venezuela",
     "specialty": "ESPECIALIDAD",
@@ -34,6 +42,20 @@
     "availabilityValue": "Abierto a oportunidades",
     "capabilitiesTitle": "Capacidades Demostradas",
     "capabilitiesSubtitle": "Dominios técnicos verificados en expedientes",
+    "capabilities": {
+      "frontend": "FRONTEND",
+      "frontendValue": "React, Flutter, Astro, Tailwind",
+      "backend": "BACKEND",
+      "backendValue": "Go, Node.js, Fiber, Express",
+      "edge": "EDGE",
+      "edgeValue": "Cloudflare Workers, Durable Objects",
+      "database": "DATABASE",
+      "databaseValue": "PostgreSQL, Redis, SQLite, MongoDB",
+      "devops": "DEVOPS",
+      "devopsValue": "Docker, GitHub Actions, Sentry",
+      "auth": "AUTH",
+      "authValue": "WebAuthn, Passkeys, OAuth2"
+    },
     "philosophyTitle": "Filosofía de Trabajo",
     "philosophy": [
       "Iteración sobre perfección: Cada refinamiento documentado añade valor medible.",
@@ -93,15 +115,22 @@
     "responseTimes": "TIEMPOS DE RESPUESTA",
     "email": "Correo Electrónico",
     "emailDesc": "Respuesta en 24-48h. Ideal para propuestas formales y documentación técnica.",
+    "emailPriority": "PRIMARIO",
     "github": "GitHub",
     "githubDesc": "Repositorios públicos, issues, contribuciones open source.",
+    "githubPriority": "CÓDIGO",
     "linkedin": "LinkedIn",
     "linkedinDesc": "Trayectoria profesional, recomendaciones, networking.",
+    "linkedinPriority": "PROFESIONAL",
     "whatsapp": "WhatsApp",
     "whatsappDesc": "Solo para comunicación urgente o coordinaciones en tiempo real.",
+    "whatsappPriority": "URGENTE",
     "freelanceTip": "Para propuestas de freelance, incluir: alcance, timeline estimado y presupuesto disponible.",
     "timezoneTip": "Zona horaria: UTC-4 (Venezuela). Disponible para trabajo remoto global.",
-    "location": "BASE: MARACAIBO, ZULIA, VENEZUELA"
+    "location": "BASE: MARACAIBO, ZULIA, VENEZUELA",
+    "responseEmail": "Correo: 24-48h",
+    "responseLinkedin": "LinkedIn: 3-5 días",
+    "responseWhatsapp": "WhatsApp: Inmediato (horario)"
   },
   "inspirations": {
     "pageTitle": "Inspiraciones — Archivo Reny Mireles",
@@ -126,6 +155,27 @@
     "verified": "VERIFICADO",
     "completed": "COMPLETADO",
     "open": "ABRIR",
-    "access": "ACCEDER →"
+    "access": "ACCEDER →",
+    "refinements": "refinamientos",
+    "clickToOpen": "Haz clic para abrir el expediente...",
+    "labNotes": "Notas de Laboratorio",
+    "decisionTree": "Árbol de Decisiones",
+    "key": "CLAVE",
+    "chosen": "ELEGIDO",
+    "available": "DISPONIBLE",
+    "technicalCard": "Ficha Técnica"
+  },
+  "notFound": {
+    "title": "404",
+    "stamp": "NO ENCONTRADO",
+    "subtitle": "EXPEDIENTE NO ENCONTRADO",
+    "description": "Este expediente no existe en el archivo, fue reclasificado, o la referencia fue escrita con tinta invisible.",
+    "backHome": "VOLVER AL ARCHIVO PRINCIPAL →",
+    "allExpedients": "VER TODOS LOS EXPEDIENTES",
+    "ref": "REF: 404 · DOCUMENTO PERDIDO · ARCHIVO RENY MIRELES"
+  },
+  "cursor": {
+    "custom": "CUSTOM",
+    "native": "NATIVO"
   }
 }

@@ -3,11 +3,9 @@ import Stamp from './Stamp';
 
 export interface TechnicalCardProps {
   title: string;
-  titleI18n?: string;
   expedientNumber?: string;
   classification?: string;
-  classificationI18n?: string;
-  fields: Array<{ label: string; value: string | ReactNode; labelI18n?: string; valueI18n?: string }>;
+  fields: Array<{ label: string; value: string | ReactNode }>;
   stampLabel?: string;
   stampVariant?: 'red' | 'blue' | 'green';
   className?: string;
@@ -15,10 +13,8 @@ export interface TechnicalCardProps {
 
 export default function TechnicalCard({
   title,
-  titleI18n,
   expedientNumber,
   classification,
-  classificationI18n,
   fields,
   stampLabel,
   stampVariant = 'blue',
@@ -36,11 +32,11 @@ export default function TechnicalCard({
               EXP. N° {expedientNumber}
             </span>
           )}
-          <h3 className="font-display text-display-sm text-[var(--color-text-primary)]" data-i18n={titleI18n}>
+          <h3 className="font-display text-display-sm text-[var(--color-text-primary)]">
             {title}
           </h3>
           {classification && (
-            <p className="mt-1 text-body-sm text-[var(--color-text-secondary)]" data-i18n={classificationI18n}>
+            <p className="mt-1 text-body-sm text-[var(--color-text-secondary)]">
               {classification}
             </p>
           )}
@@ -55,12 +51,12 @@ export default function TechnicalCard({
 
       {/* Fields */}
       <dl className="space-y-3">
-        {fields.map(({ label, value, labelI18n, valueI18n }, i) => (
+        {fields.map(({ label, value }, i) => (
           <div key={i} className="flex flex-col gap-1 sm:flex-row sm:gap-3">
-            <dt className="font-stamp text-stamp-label text-[var(--color-text-secondary)] min-w-[120px]" data-i18n={labelI18n}>
+            <dt className="font-stamp text-stamp-label text-[var(--color-text-secondary)] min-w-[120px]">
               {label}
             </dt>
-            <dd className="text-body-md text-[var(--color-text-primary)]" data-i18n={valueI18n}>
+            <dd className="text-body-md text-[var(--color-text-primary)]">
               {value}
             </dd>
           </div>

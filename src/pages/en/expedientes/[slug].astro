@@ -1,0 +1,122 @@
+---
+import ExpedientLayout from '@layouts/ExpedientLayout.astro';
+import ExpedientCover from '@components/expedientes/ExpedientCover';
+import TechnicalCard from '@components/ui/TechnicalCard';
+import Stamp from '@components/ui/Stamp';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { t } from '@lib/i18n';
+
+export async function getStaticPaths() {
+  const expedientes = await getCollection('expedientes_en');
+  return expedientes.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'expedientes_en'>;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const T = (key: string) => t('en', key);
+
+const stackGroups: Record<string, string[]> = {};
+entry.data.stack.forEach((tech) => {
+  const category = categorize(tech);
+  if (!stackGroups[category]) stackGroups[category] = [];
+  stackGroups[category].push(tech);
+});
+
+function categorize(tech: string): string {
+  const lower = tech.toLowerCase();
+  if (['flutter', 'react', 'next.js', 'astro', 'vue', 'svelte'].some(t => lower.includes(t))) return 'Frontend';
+  if (['go', 'node', 'express', 'fiber', 'fastify', 'nestjs', 'rust'].some(t => lower.includes(t))) return 'Backend';
+  if (['postgres', 'mysql', 'redis', 'sqlite', 'drift', 'mongodb', 'supabase'].some(t => lower.includes(t))) return 'Data';
+  if (['cloudflare', 'aws', 'gcp', 'vercel', 'docker', 'kubernetes'].some(t => lower.includes(t))) return 'Infrastructure';
+  if (['jest', 'vitest', 'playwright', 'cypress', 'sentry'].some(t => lower.includes(t))) return 'Testing & QA';
+  if (['github', 'ci', 'cd', 'webpack', 'vite'].some(t => lower.includes(t))) return 'DevOps';
+  return 'Other';
+}
+---
+
+<ExpedientLayout title={entry.data.title} description={entry.data.description} locale="en">
+  <ExpedientCover client:visible title={entry.data.title} expedientNumber={entry.data.expedientNumber} classification={entry.data.classification} status={entry.data.status} refinementCount={entry.data.refinementCount} strings={{ refinements: T('common.refinements') }} />
+
+  <div class="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
+    {entry.data.metrics?.layers != null && (
+      <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
+        <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.layers}</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">LAYERS</p>
+      </div>
+    )}
+    {entry.data.metrics?.packages != null && (
+      <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
+        <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.packages}</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">PACKAGES</p>
+      </div>
+    )}
+    {entry.data.metrics?.plugins != null && (
+      <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
+        <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.plugins}</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">PLUGINS</p>
+      </div>
+    )}
+    {entry.data.metrics?.tests != null && (
+      <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
+        <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.tests}</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">TESTS</p>
+      </div>
+    )}
+  </div>
+
+  <div class="prose-expedient mb-12">
+    <Content />
+  </div>
+
+  <div class="my-12 h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
+
+  <section class="mt-12 mb-10">
+    <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-6">{T('expedients.technicalStack')}</h2>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {Object.entries(stackGroups).map(([category, techs]) => (
+        <TechnicalCard client:visible title={category} fields={techs.map((t) => ({ label: 'Technology', value: t }))} stampLabel={`${techs.length}`} stampVariant="blue" />
+      ))}
+    </div>
+  </section>
+
+  {entry.data.links && (
+    <section class="mb-10">
+      <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-4">{T('expedients.links')}</h2>
+      <div class="flex flex-wrap gap-3">
+        {entry.data.links.repository && (
+          <a href={entry.data.links.repository} target="_blank" rel="noopener noreferrer" class="gold-underline inline-flex items-center gap-2 rounded-paper border border-[var(--color-archive-kraft)]/20 px-4 py-2 font-stamp text-stamp-label text-[var(--color-text-primary)] transition-all hover:border-[var(--color-accent-gold)]/40 hover:shadow-paper">
+            <span>{T('expedients.repository')}</span><span class="text-[var(--color-accent-gold)]">↗</span>
+          </a>
+        )}
+        {entry.data.links.demo && (
+          <a href={entry.data.links.demo} target="_blank" rel="noopener noreferrer" class="gold-underline inline-flex items-center gap-2 rounded-paper border border-[var(--color-archive-kraft)]/20 px-4 py-2 font-stamp text-stamp-label text-[var(--color-text-primary)] transition-all hover:border-[var(--color-accent-gold)]/40 hover:shadow-paper">
+            <span>{T('expedients.demo')}</span><span class="text-[var(--color-accent-gold)]">↗</span>
+          </a>
+        )}
+        {entry.data.links.website && (
+          <a href={entry.data.links.website} target="_blank" rel="noopener noreferrer" class="gold-underline inline-flex items-center gap-2 rounded-paper border border-[var(--color-archive-kraft)]/20 px-4 py-2 font-stamp text-stamp-label text-[var(--color-text-primary)] transition-all hover:border-[var(--color-accent-gold)]/40 hover:shadow-paper">
+            <span>{T('expedients.website')}</span><span class="text-[var(--color-accent-gold)]">↗</span>
+          </a>
+        )}
+      </div>
+    </section>
+  )}
+
+  <footer class="border-t border-[var(--color-archive-kraft)]/20 pt-6 mt-12">
+    <div class="flex flex-wrap items-center justify-between gap-4 text-caption text-[var(--color-text-secondary)]">
+      <span class="font-mono">{T('expedients.published')}: {entry.data.publishDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+      {entry.data.updatedDate && (
+        <span class="font-mono">{T('expedients.updated')}: {entry.data.updatedDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+      )}
+      <Stamp label={T('common.verified')} variant="green" size="sm" />
+    </div>
+  </footer>
+</ExpedientLayout>

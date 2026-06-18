@@ -1,4 +1,6 @@
 // Site metadata and constants
+import type { Locale } from './i18n';
+
 export const SITE = {
   title: 'Archivo Reny Mireles',
   description: 'Portafolio de ingeniería — Expedientes de trabajo de Reny Mireles',
@@ -7,14 +9,25 @@ export const SITE = {
   lang: 'es',
 };
 
+export const SITE_I18N: Record<Locale, { title: string; description: string }> = {
+  es: {
+    title: 'Archivo Reny Mireles',
+    description: 'Portafolio de ingeniería — Expedientes de trabajo de Reny Mireles',
+  },
+  en: {
+    title: 'Reny Mireles Archive',
+    description: 'Engineering portfolio — Work expedients by Reny Mireles',
+  },
+};
+
 export const NAV_LINKS = [
-  { href: '/', label: 'Inicio', i18n: 'nav.home' },
-  { href: '/about', label: 'Ficha', i18n: 'nav.about' },
-  { href: '/tools', label: 'Catálogo', i18n: 'nav.tools' },
-  { href: '/expedientes', label: 'Expedientes', i18n: 'nav.expedients' },
-  { href: '/colaboraciones', label: 'Colaboraciones', i18n: 'nav.collaborations' },
-  { href: '/inspiraciones', label: 'Inspiraciones', i18n: 'nav.inspirations' },
-  { href: '/contacto', label: 'Contacto', i18n: 'nav.contact' },
+  { href: '/', label: 'Inicio' },
+  { href: '/about', label: 'Ficha' },
+  { href: '/tools', label: 'Catálogo' },
+  { href: '/expedientes', label: 'Expedientes' },
+  { href: '/colaboraciones', label: 'Colaboraciones' },
+  { href: '/inspiraciones', label: 'Inspiraciones' },
+  { href: '/contacto', label: 'Contacto' },
 ] as const;
 
 export const SOCIAL_LINKS = {

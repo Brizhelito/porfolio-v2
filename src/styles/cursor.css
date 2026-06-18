@@ -121,3 +121,17 @@
     display: none !important;
   }
 }
+
+/* Native cursor mode: hide custom cursor, restore native */
+html[data-cursor="native"] .cursor-dot,
+html[data-cursor="native"] .cursor-ring,
+html[data-cursor="native"] .cursor-trail-particle {
+  display: none !important;
+}
+
+html[data-cursor="native"],
+html[data-cursor="native"] a,
+html[data-cursor="native"] button,
+html[data-cursor="native"] [role="button"] {
+  cursor: auto !important;
+}

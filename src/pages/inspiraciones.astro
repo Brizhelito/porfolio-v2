@@ -1,6 +1,9 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import Stamp from '@components/ui/Stamp';
+import { t } from '@lib/i18n';
+
+const T = (key: string) => t('es', key);
 
 const categories = [
   {
@@ -111,19 +114,18 @@ const categories = [
 ];
 ---
 
-<BaseLayout title="Inspiraciones — Archivo Reny Mireles" description="Créditos de inspiración — las personas, ideas y herramientas que formaron este archivo">
-  <section data-seal-state="resting" class="page-enter mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+<BaseLayout title={T('inspirations.pageTitle')} description={T('inspirations.pageDescription')}>
+  <section class="page-enter mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
     <!-- Header -->
     <header class="mb-16 text-center">
-      <span class="font-stamp text-stamp-label text-[var(--color-text-secondary)]" data-i18n="inspirations.header">
-        CRÉDITOS DEL ARCHIVO
+      <span class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">
+        {T('inspirations.header')}
       </span>
-      <h1 class="mt-3 font-display text-display-xl text-[var(--color-text-primary)]" data-i18n="inspirations.title">
-        Inspiraciones
+      <h1 class="mt-3 font-display text-display-xl text-[var(--color-text-primary)]">
+        {T('inspirations.title')}
       </h1>
-      <p class="mt-3 text-body-lg text-[var(--color-text-secondary)] max-w-lg mx-auto" data-i18n="inspirations.subtitle">
-        Las personas, ideas, herramientas y filosofías que dieron forma
-        a la manera de pensar, construir y documentar de este archivo.
+      <p class="mt-3 text-body-lg text-[var(--color-text-secondary)] max-w-lg mx-auto">
+        {T('inspirations.subtitle')}
       </p>
       <div class="mt-8 h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
     </header>
@@ -159,17 +161,17 @@ const categories = [
 
     <!-- Epilogue -->
     <div class="text-center">
-      <Stamp label="FIN DE CRÉDITOS" variant="red" size="lg" data-i18n="inspirations.end" />
-      <p class="mt-6 font-handwritten text-body-lg text-[var(--color-text-secondary)] max-w-sm mx-auto" data-i18n="inspirations.epilogue">
-        "Todo archivo es una conversación con quienes vinieron antes."
+      <Stamp label={T('inspirations.end')} variant="red" size="lg" />
+      <p class="mt-6 font-handwritten text-body-lg text-[var(--color-text-secondary)] max-w-sm mx-auto">
+        "{T('inspirations.epilogue')}"
       </p>
       <a
         href="/"
         class="gold-underline mt-6 inline-block font-stamp text-stamp-label text-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] transition-colors"
-        data-i18n="inspirations.back"
       >
-        VOLVER AL ARCHIVO →
+        {T('inspirations.back')}
       </a>
     </div>
   </section>
 </BaseLayout>
+

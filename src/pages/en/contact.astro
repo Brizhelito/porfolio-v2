@@ -1,0 +1,106 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Stamp from '@components/ui/Stamp';
+import StickyNote from '@components/ui/StickyNote';
+import { SOCIAL_LINKS } from '@lib/constants';
+import { t } from '@lib/i18n';
+
+const T = (key: string) => t('en', key);
+
+const channels = [
+  {
+    id: 'email',
+    label: T('contact.email'),
+    value: 'renymireles@outlook.com',
+    href: SOCIAL_LINKS.email,
+    icon: '✉',
+    priority: T('contact.emailPriority'),
+    variant: 'green' as const,
+    description: T('contact.emailDesc'),
+  },
+  {
+    id: 'github',
+    label: T('contact.github'),
+    value: '@renymireles',
+    href: SOCIAL_LINKS.github,
+    icon: '◈',
+    priority: T('contact.githubPriority'),
+    variant: 'blue' as const,
+    description: T('contact.githubDesc'),
+  },
+  {
+    id: 'linkedin',
+    label: T('contact.linkedin'),
+    value: '/in/renymireles',
+    href: SOCIAL_LINKS.linkedin,
+    icon: '▲',
+    priority: T('contact.linkedinPriority'),
+    variant: 'blue' as const,
+    description: T('contact.linkedinDesc'),
+  },
+  {
+    id: 'whatsapp',
+    label: T('contact.whatsapp'),
+    value: '+58 414-000-0000',
+    href: SOCIAL_LINKS.whatsapp,
+    icon: '◉',
+    priority: T('contact.whatsappPriority'),
+    variant: 'red' as const,
+    description: T('contact.whatsappDesc'),
+  },
+];
+---
+
+<BaseLayout title={T('contact.pageTitle')} description={T('contact.pageDescription')} locale="en">
+  <section class="page-enter mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <header class="mb-12">
+      <div class="flex items-center justify-between mb-4">
+        <span class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">{T('contact.header')}</span>
+        <Stamp label={T('common.available')} variant="green" size="md" />
+      </div>
+      <h1 class="font-display text-display-lg text-[var(--color-text-primary)]">{T('contact.title')}</h1>
+      <p class="mt-2 text-body-lg text-[var(--color-text-secondary)] max-w-2xl">{T('contact.subtitle')}</p>
+      <div class="mt-6 h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
+    </header>
+
+    <div class="grid gap-6 sm:grid-cols-2">
+      {channels.map((ch) => (
+        <a href={ch.href} target="_blank" rel="noopener noreferrer"
+          class="group relative rounded-paper texture-aged-paper border border-[var(--color-archive-kraft)]/30 p-6 shadow-paper transition-all hover:border-[var(--color-accent-gold)]/40 hover:shadow-paper-hover"
+          data-seal-react>
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl">{ch.icon}</span>
+              <div>
+                <h3 class="font-display text-display-xs text-[var(--color-text-primary)]">{ch.label}</h3>
+                <p class="font-mono text-body-sm text-[var(--color-text-secondary)]">{ch.value}</p>
+              </div>
+            </div>
+            <Stamp label={ch.priority} variant={ch.variant} size="sm" animate={false} />
+          </div>
+          <p class="text-body-sm text-[var(--color-text-secondary)] mb-3">{ch.description}</p>
+          <span class="font-stamp text-stamp-label text-[var(--color-accent-gold)] opacity-0 transition-opacity group-hover:opacity-100">{T('common.access')}</span>
+        </a>
+      ))}
+    </div>
+
+    <div class="mt-12 rounded-paper border border-dashed border-[var(--color-archive-kraft)]/40 p-6">
+      <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-4">{T('contact.responseTimes')}</h2>
+      <div class="grid gap-3 sm:grid-cols-3 text-body-sm">
+        <div class="flex items-center gap-2"><span class="inline-block h-2 w-2 rounded-full bg-green-600" /><span class="text-[var(--color-text-secondary)]">{T('contact.responseEmail')}</span></div>
+        <div class="flex items-center gap-2"><span class="inline-block h-2 w-2 rounded-full bg-blue-600" /><span class="text-[var(--color-text-secondary)]">{T('contact.responseLinkedin')}</span></div>
+        <div class="flex items-center gap-2"><span class="inline-block h-2 w-2 rounded-full bg-red-600" /><span class="text-[var(--color-text-secondary)]">{T('contact.responseWhatsapp')}</span></div>
+      </div>
+    </div>
+
+    <div class="mt-8 flex flex-wrap gap-6">
+      <StickyNote client:visible color="blue" rotation={-2}><p class="text-[var(--color-text-primary)]">{T('contact.freelanceTip')}</p></StickyNote>
+      <StickyNote client:visible color="pink" rotation={2}><p class="text-[var(--color-text-primary)]">{T('contact.timezoneTip')}</p></StickyNote>
+    </div>
+
+    <div class="mt-12 text-center">
+      <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">{T('contact.location')}</p>
+      <p class="font-mono text-caption text-[var(--color-text-secondary)]/60 mt-1">10.6544° N, 71.6365° W</p>
+    </div>
+  </section>
+</BaseLayout>

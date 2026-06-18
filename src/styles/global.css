@@ -93,15 +93,6 @@
     scroll-behavior: smooth;
   }
 
-  /* Prevent i18n flash: hide text until translation applied */
-  html.lang-pending [data-i18n] {
-    visibility: hidden;
-  }
-
-  html.lang-pending #lang-switch-wrap {
-    visibility: hidden;
-  }
-
   body {
     font-family: var(--font-family-body);
     background-color: var(--color-bg-primary);

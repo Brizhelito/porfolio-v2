@@ -11,19 +11,21 @@ export interface DecisionTreeProps {
   question: string;
   options: DecisionOption[];
   className?: string;
+  strings?: { title?: string; chosen?: string };
 }
 
 export default function DecisionTree({
   question,
   options,
   className = '',
+  strings,
 }: DecisionTreeProps) {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   return (
     <section className={`decision-tree ${className}`}>
       <h2 className="font-display text-display-md text-[var(--color-text-primary)] mb-4">
-        Árbol de Decisiones
+        {strings?.title ?? 'Árbol de Decisiones'}
       </h2>
 
       {/* Question */}
@@ -81,7 +83,7 @@ export default function DecisionTree({
                 </span>
                 {opt.chosen && (
                   <span className="font-stamp text-[9px] text-[var(--color-accent-gold)] border border-[var(--color-accent-gold)]/30 rounded px-1">
-                    ELEGIDO
+                    {strings?.chosen ?? 'ELEGIDO'}
                   </span>
                 )}
               </div>

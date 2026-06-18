@@ -7,6 +7,7 @@ export interface ExpedientCoverProps {
   status: 'active' | 'archived' | 'featured';
   refinementCount: number;
   className?: string;
+  strings?: { refinements?: string };
 }
 
 const STATUS_MAP = {
@@ -22,6 +23,7 @@ export default function ExpedientCover({
   status,
   refinementCount,
   className = '',
+  strings,
 }: ExpedientCoverProps) {
   const { label, variant } = STATUS_MAP[status];
 
@@ -29,7 +31,7 @@ export default function ExpedientCover({
     <header className={`expedient-cover mb-8 ${className}`}>
       {/* Top bar */}
       <div className="flex items-center justify-between mb-3">
-        <span className="font-stamp text-stamp-label text-[var(--color-text-secondary)]" data-i18n="common.expedient">
+        <span className="font-stamp text-stamp-label text-[var(--color-text-secondary)]">
           ARCHIVO RENY MIRELES — EXPEDIENTE N° {expedientNumber}
         </span>
         <Stamp label={label} variant={variant} size="sm" />
@@ -47,7 +49,7 @@ export default function ExpedientCover({
 
       {/* Metadata line */}
       <div className="flex flex-wrap items-center gap-4 text-body-sm text-[var(--color-text-secondary)]">
-        <span className="font-mono">{refinementCount} refinamientos</span>
+        <span className="font-mono">{refinementCount} {strings?.refinements ?? 'refinamientos'}</span>
         <span className="text-[var(--color-archive-kraft)]">·</span>
         <span className="font-stamp text-stamp-label">{label}</span>
       </div>

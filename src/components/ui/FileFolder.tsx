@@ -10,6 +10,7 @@ export interface FileFolderProps {
   children?: ReactNode;
   onOpen?: () => void;
   className?: string;
+  strings?: { refinements?: string; clickToOpen?: string };
 }
 
 const STATUS_VARIANT = {
@@ -32,6 +33,7 @@ export default function FileFolder({
   children,
   onOpen,
   className = '',
+  strings,
 }: FileFolderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const folderRef = useRef<HTMLDivElement>(null);
@@ -90,7 +92,7 @@ export default function FileFolder({
                 {title}
               </h3>
               <p className="mt-1 text-body-sm text-[var(--color-text-secondary)]">
-                {refinementCount} refinamientos
+                {refinementCount} {strings?.refinements ?? 'refinamientos'}
               </p>
             </div>
             <Stamp
@@ -109,7 +111,7 @@ export default function FileFolder({
         >
           {children ?? (
             <p className="text-body-md text-[var(--color-text-secondary)]">
-              Haz clic para abrir el expediente...
+              {strings?.clickToOpen ?? 'Haz clic para abrir el expediente...'}
             </p>
           )}
         </div>

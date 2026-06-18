@@ -1,0 +1,106 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import FileFolder from '@components/ui/FileFolder';
+import { getCollection } from 'astro:content';
+import { t } from '@lib/i18n';
+
+const T = (key: string) => t('en', key);
+const strings = { refinements: T('common.refinements'), clickToOpen: T('common.clickToOpen') };
+
+const expedientes = await getCollection('expedientes_en');
+const totalRefinements = expedientes.reduce((sum, e) => sum + e.data.refinementCount, 0);
+const featuredExpedientes = expedientes
+  .filter((e) => e.data.status === 'featured' || e.data.status === 'active')
+  .sort((a, b) => b.data.refinementCount - a.data.refinementCount);
+
+// Deterministic random rotation per folder (±3deg)
+const rotations = featuredExpedientes.map((_, i) => ((i * 7 + 3) % 11 - 5) * 0.6);
+---
+
+<BaseLayout locale="en">
+  <!-- Hero: Archive Cover -->
+  <section class="page-enter relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8" data-lamp-section="hero">
+    <div class="flex flex-col items-center gap-8 lg:flex-row lg:items-start lg:gap-16">
+      <!-- Left: Title -->
+      <div class="flex flex-col items-center text-center lg:items-start lg:text-left lg:flex-1">
+
+        <h1 class="mt-6 text-display-xl text-[var(--color-text-primary)]">
+          {T('hero.title')}<br />
+          <span class="text-gold-gradient">Reny Mireles</span>
+        </h1>
+
+        <p class="mt-4 text-body-lg text-[var(--color-text-secondary)] max-w-md">
+          {T('hero.subtitle')}<br />
+          {T('hero.subtitleDetail')}
+        </p>
+
+        <!-- Metadata stamps -->
+        <div class="mt-6 flex flex-wrap items-center gap-4 text-caption">
+          <span class="font-mono text-[var(--color-accent-gold)]">
+            {expedientes.length} {T('hero.expedientsOpen')}
+          </span>
+          <span class="text-[var(--color-archive-kraft)]">·</span>
+          <span class="font-mono text-[var(--color-text-secondary)]">
+            {totalRefinements} {T('hero.totalRefinements')}
+          </span>
+        </div>
+
+        <div class="mt-2">
+          <span class="font-stamp text-stamp-label text-stamp-green">
+            {T('hero.status')}
+          </span>
+        </div>
+
+        <!-- CTA -->
+        <a
+          href="/en/expedientes"
+          class="gold-underline mt-8 inline-block font-stamp text-stamp-title text-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] transition-colors"
+          data-seal-react
+        >
+          {T('hero.openExpedient')}
+        </a>
+      </div>
+
+      <!-- Right: Stack of Folders -->
+      <div class="flex flex-col gap-4 w-full max-w-lg lg:flex-1" style="perspective: 1200px;">
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2">
+          {T('hero.recentExpedients')}
+        </p>
+        <div style="transform-style: preserve-3d;">
+          {featuredExpedientes.map((exp, i) => (
+            <a href={`/en/expedientes/${exp.id}`} data-seal-react
+              style={`transform: rotateZ(${rotations[i]}deg);`}>
+              <FileFolder
+                client:visible
+                title={exp.data.title}
+                expedientNumber={exp.data.expedientNumber}
+                status={exp.data.status}
+                refinementCount={exp.data.refinementCount}
+                strings={strings}
+              />
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Gold separator -->
+    <div class="mt-16 h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
+
+    <!-- Bottom section: Quick links -->
+    <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <a href="/en/about" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30" data-seal-react>
+        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)]">{T('hero.quickLinkIdentification')}</p>
+        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">{T('hero.quickLinkIdentificationDesc')}</p>
+      </a>
+      <a href="/en/tools" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30" data-seal-react>
+        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)]">{T('hero.quickLinkCatalog')}</p>
+        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">{T('hero.quickLinkCatalogDesc')}</p>
+      </a>
+      <a href="/en/contact" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30" data-seal-react>
+        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)]">{T('hero.quickLinkContact')}</p>
+        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">{T('hero.quickLinkContactDesc')}</p>
+      </a>
+    </div>
+  </section>
+</BaseLayout>

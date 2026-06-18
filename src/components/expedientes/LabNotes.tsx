@@ -45,13 +45,14 @@ function LabNote({ date, topic, children }: LabNoteProps) {
 export interface LabNotesProps {
   children: ReactNode;
   className?: string;
+  strings?: { title?: string };
 }
 
-function LabNotesContainer({ children, className = '' }: LabNotesProps) {
+function LabNotesContainer({ children, className = '', strings }: LabNotesProps) {
   return (
     <section className={`lab-notes ${className}`}>
       <h2 className="font-display text-display-md text-[var(--color-text-primary)] mb-4">
-        Notas de Laboratorio
+        {strings?.title ?? 'Notas de Laboratorio'}
       </h2>
       <div className="space-y-3">
         {children}

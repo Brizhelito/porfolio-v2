@@ -1,0 +1,67 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import TechnicalCard from '@components/ui/TechnicalCard';
+import StickyNote from '@components/ui/StickyNote';
+import { t } from '@lib/i18n';
+
+const T = (key: string) => t('en', key);
+---
+
+<BaseLayout title={T('about.pageTitle')} locale="en">
+  <section class="page-enter mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <header class="mb-8">
+      <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2">{T('about.header')}</p>
+      <h1 class="text-display-lg text-[var(--color-text-primary)]">{T('about.title')}</h1>
+    </header>
+
+    <div class="grid gap-6 lg:grid-cols-2">
+      <TechnicalCard
+        title={T('about.titleValue')}
+        expedientNumber="000"
+        classification={T('about.classification')}
+        stampLabel={T('common.active')}
+        stampVariant="green"
+        fields={[
+          { label: T('about.origin'), value: T('about.originValue') },
+          { label: T('about.specialty'), value: T('about.specialtyValue') },
+          { label: T('about.methodology'), value: T('about.methodologyValue') },
+          { label: T('about.languages'), value: T('about.languagesValue') },
+          { label: T('about.availability'), value: T('about.availabilityValue') },
+        ]}
+      />
+
+      <TechnicalCard
+        title={T('about.capabilitiesTitle')}
+        classification={T('about.capabilitiesSubtitle')}
+        stampLabel={T('common.verified')}
+        stampVariant="blue"
+        fields={[
+          { label: T('about.capabilities.frontend'), value: T('about.capabilities.frontendValue') },
+          { label: T('about.capabilities.backend'), value: T('about.capabilities.backendValue') },
+          { label: T('about.capabilities.edge'), value: T('about.capabilities.edgeValue') },
+          { label: T('about.capabilities.database'), value: T('about.capabilities.databaseValue') },
+          { label: T('about.capabilities.devops'), value: T('about.capabilities.devopsValue') },
+          { label: T('about.capabilities.auth'), value: T('about.capabilities.authValue') },
+        ]}
+      />
+    </div>
+
+    <div class="mt-8">
+      <StickyNote rotation={-1}>
+        <span>{T('about.note')}</span>
+      </StickyNote>
+    </div>
+
+    <div class="mt-12">
+      <h2 class="font-display text-display-md text-[var(--color-text-primary)] mb-4">{T('about.philosophyTitle')}</h2>
+      <div class="prose-expedient">
+        <ul>
+          <li><strong>Iteration over perfection:</strong> Each documented refinement adds measurable value.</li>
+          <li><strong>Plugin-first architecture:</strong> Extensibility as a design principle, not an afterthought.</li>
+          <li><strong>Silent documentation:</strong> Code speaks for itself, lab notes capture the why.</li>
+          <li><strong>Performance as feature:</strong> Every architectural decision considers end-user impact.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

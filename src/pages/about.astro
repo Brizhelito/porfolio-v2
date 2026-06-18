@@ -2,65 +2,64 @@
 import BaseLayout from '@layouts/BaseLayout.astro';
 import TechnicalCard from '@components/ui/TechnicalCard';
 import StickyNote from '@components/ui/StickyNote';
+import { t } from '@lib/i18n';
+
+const T = (key: string) => t('es', key);
 ---
 
-<BaseLayout title="Ficha de Identificación — Archivo Reny Mireles">
-  <section data-seal-state="concentration" class="page-enter mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+<BaseLayout title={`${T('about.pageTitle')}`}>
+  <section class="page-enter mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
     <header class="mb-8">
-      <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2" data-i18n="about.header">ARCHIVO RENY MIRELES</p>
-      <h1 class="text-display-lg text-[var(--color-text-primary)]" data-i18n="about.title">Ficha de Identificación</h1>
+      <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2">{T('about.header')}</p>
+      <h1 class="text-display-lg text-[var(--color-text-primary)]">{T('about.title')}</h1>
     </header>
 
     <div class="grid gap-6 lg:grid-cols-2">
       <TechnicalCard
-        title="Reny Mireles"
-        titleI18n="about.titleValue"
+        title={T('about.titleValue')}
         expedientNumber="000"
-        classification="Ingeniero de Sistemas Distribuidos"
-        classificationI18n="about.classification"
-        stampLabel="ACTIVO"
+        classification={T('about.classification')}
+        stampLabel={T('common.active')}
         stampVariant="green"
         fields={[
-          { label: 'ORIGEN', value: 'Venezuela', labelI18n: 'about.origin', valueI18n: 'about.originValue' },
-          { label: 'ESPECIALIDAD', value: 'Sistemas distribuidos, edge computing, mobile', labelI18n: 'about.specialty', valueI18n: 'about.specialtyValue' },
-          { label: 'METODOLOGÍA', value: 'Iteración documentada, arquitectura plugin-first', labelI18n: 'about.methodology', valueI18n: 'about.methodologyValue' },
-          { label: 'IDIOMAS', value: 'Español (nativo), Inglés (profesional)', labelI18n: 'about.languages', valueI18n: 'about.languagesValue' },
-          { label: 'DISPONIBILIDAD', value: 'Abierto a oportunidades', labelI18n: 'about.availability', valueI18n: 'about.availabilityValue' },
+          { label: T('about.origin'), value: T('about.originValue') },
+          { label: T('about.specialty'), value: T('about.specialtyValue') },
+          { label: T('about.methodology'), value: T('about.methodologyValue') },
+          { label: T('about.languages'), value: T('about.languagesValue') },
+          { label: T('about.availability'), value: T('about.availabilityValue') },
         ]}
       />
 
       <TechnicalCard
-        title="Capacidades Demostradas"
-        titleI18n="about.capabilitiesTitle"
-        classification="Dominios técnicos verificados en expedientes"
-        classificationI18n="about.capabilitiesSubtitle"
-        stampLabel="VERIFICADO"
+        title={T('about.capabilitiesTitle')}
+        classification={T('about.capabilitiesSubtitle')}
+        stampLabel={T('common.verified')}
         stampVariant="blue"
         fields={[
-          { label: 'FRONTEND', value: 'React, Flutter, Astro, Tailwind', labelI18n: 'about.capabilities.frontend', valueI18n: 'about.capabilities.frontendValue' },
-          { label: 'BACKEND', value: 'Go, Node.js, Fiber, Express', labelI18n: 'about.capabilities.backend', valueI18n: 'about.capabilities.backendValue' },
-          { label: 'EDGE', value: 'Cloudflare Workers, Durable Objects', labelI18n: 'about.capabilities.edge', valueI18n: 'about.capabilities.edgeValue' },
-          { label: 'DATABASE', value: 'PostgreSQL, Redis, SQLite, MongoDB', labelI18n: 'about.capabilities.database', valueI18n: 'about.capabilities.databaseValue' },
-          { label: 'DEVOPS', value: 'Docker, GitHub Actions, Sentry', labelI18n: 'about.capabilities.devops', valueI18n: 'about.capabilities.devopsValue' },
-          { label: 'AUTH', value: 'WebAuthn, Passkeys, OAuth2', labelI18n: 'about.capabilities.auth', valueI18n: 'about.capabilities.authValue' },
+          { label: T('about.capabilities.frontend'), value: T('about.capabilities.frontendValue') },
+          { label: T('about.capabilities.backend'), value: T('about.capabilities.backendValue') },
+          { label: T('about.capabilities.edge'), value: T('about.capabilities.edgeValue') },
+          { label: T('about.capabilities.database'), value: T('about.capabilities.databaseValue') },
+          { label: T('about.capabilities.devops'), value: T('about.capabilities.devopsValue') },
+          { label: T('about.capabilities.auth'), value: T('about.capabilities.authValue') },
         ]}
       />
     </div>
 
     <div class="mt-8">
       <StickyNote rotation={-1}>
-        <span data-i18n="about.note">El contexto de cada herramienta se detalla en los expedientes. Aquí solo se listan capacidades verificadas en producción.</span>
+        <span>{T('about.note')}</span>
       </StickyNote>
     </div>
 
     <div class="mt-12">
-      <h2 class="font-display text-display-md text-[var(--color-text-primary)] mb-4" data-i18n="about.philosophyTitle">Filosofía de Trabajo</h2>
+      <h2 class="font-display text-display-md text-[var(--color-text-primary)] mb-4">{T('about.philosophyTitle')}</h2>
       <div class="prose-expedient">
         <ul>
-          <li data-i18n="about.philosophy.0"><strong>Iteración sobre perfección:</strong> Cada refinamiento documentado añade valor medible.</li>
-          <li data-i18n="about.philosophy.1"><strong>Arquitectura plugin-first:</strong> Extensibilidad como principio de diseño, no como afterthought.</li>
-          <li data-i18n="about.philosophy.2"><strong>Documentación silenciosa:</strong> El código se explica solo, las notas de laboratorio capturan el por qué.</li>
-          <li data-i18n="about.philosophy.3"><strong>Performance como feature:</strong> Cada decisión arquitectónica considera el impacto en el usuario final.</li>
+          <li><strong>Iteración sobre perfección:</strong> Cada refinamiento documentado añade valor medible.</li>
+          <li><strong>Arquitectura plugin-first:</strong> Extensibilidad como principio de diseño, no como afterthought.</li>
+          <li><strong>Documentación silenciosa:</strong> El código se explica solo, las notas de laboratorio capturan el por qué.</li>
+          <li><strong>Performance como feature:</strong> Cada decisión arquitectónica considera el impacto en el usuario final.</li>
         </ul>
       </div>
     </div>

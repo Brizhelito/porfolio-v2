@@ -1,0 +1,72 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Stamp from '@components/ui/Stamp';
+import { t } from '@lib/i18n';
+
+const T = (key: string) => t('en', key);
+
+const categories = [
+  { section: 'SOFTWARE ENGINEERING', entries: [
+    { name: 'Martin Fowler', role: 'Software Architecture', note: 'Refactoring, enterprise patterns, and technical debt as a decision framework.' },
+    { name: 'Kent Beck', role: 'Extreme Programming', note: 'Simplicity, communication, feedback. The foundation of how I think about iteration.' },
+    { name: 'Rich Hickey', role: 'Simplicity as discipline', note: '"Simple Made Easy" changed how I evaluate incidental vs essential complexity.' },
+    { name: 'Gerard Meszaros', role: 'Testing Patterns', note: 'xUnit Test Patterns — the reference manual for tests that communicate intent.' },
+  ]},
+  { section: 'DISTRIBUTED SYSTEMS', entries: [
+    { name: 'Leslie Lamport', role: 'Consensus fundamentals', note: 'Paxos, logical clocks, and the theoretical basis of every modern distributed system.' },
+    { name: 'Pat Helland', role: 'Life beyond distributed transactions', note: 'The paper that made me understand why saga patterns are inevitable.' },
+    { name: 'Marc Shapiro', role: 'CRDTs', note: 'Conflict-free Replicated Data Types — the foundation of Kumoriya sync layer.' },
+  ]},
+  { section: 'INTERFACE DESIGN', entries: [
+    { name: 'Edward Tufte', role: 'Information visualization', note: 'Data-ink ratio. Every pixel must justify its existence.' },
+    { name: 'Dieter Rams', role: 'Industrial design', note: '"Weniger, aber besser" — less, but better. Philosophy applied to APIs and UIs.' },
+    { name: 'John Maeda', role: 'Laws of simplicity', note: 'Organize, reduce, and know when design has reached its final form.' },
+  ]},
+  { section: 'PHILOSOPHY & METHODOLOGY', entries: [
+    { name: 'Kintsugi (金継ぎ)', role: 'Philosophy of repair', note: 'Scars are not hidden — they are celebrated with gold. The conceptual basis of this entire archive.' },
+    { name: 'Nassim Taleb', role: 'Antifragility', note: 'What benefits from chaos. Systems (and engineers) should be antifragile.' },
+    { name: 'Richard Feynman', role: 'First-principle thinking', note: '"What I cannot create, I do not understand." The methodology of every expedient.' },
+  ]},
+  { section: 'TOOLS THAT SHAPED STYLE', entries: [
+    { name: 'Neovim', role: 'Editor', note: 'Modal editing as an extension of thought. Minimal configuration, maximum efficiency.' },
+    { name: 'Figma', role: 'Collaborative design', note: 'Components, tokens, auto-layout. The bridge between design and code.' },
+    { name: 'Obsidian', role: 'Second brain', note: 'Zettelkasten + graph view. This is how connections between expedients are born.' },
+  ]},
+];
+---
+
+<BaseLayout title={T('inspirations.pageTitle')} description={T('inspirations.pageDescription')} locale="en">
+  <section class="page-enter mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <header class="mb-16 text-center">
+      <span class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">{T('inspirations.header')}</span>
+      <h1 class="mt-3 font-display text-display-xl text-[var(--color-text-primary)]">{T('inspirations.title')}</h1>
+      <p class="mt-3 text-body-lg text-[var(--color-text-secondary)] max-w-lg mx-auto">{T('inspirations.subtitle')}</p>
+      <div class="mt-8 h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
+    </header>
+
+    <div class="space-y-16">
+      {categories.map((cat) => (
+        <section>
+          <h2 class="font-stamp text-stamp-title text-[var(--color-accent-gold)] mb-8 text-center">{cat.section}</h2>
+          <div class="space-y-8">
+            {cat.entries.map((entry) => (
+              <div class="group text-center">
+                <p class="font-display text-display-sm text-[var(--color-text-primary)] group-hover:text-[var(--color-accent-gold)] transition-colors">{entry.name}</p>
+                <p class="mt-1 font-stamp text-stamp-label text-[var(--color-text-secondary)]">{entry.role}</p>
+                <p class="mt-2 text-body-sm text-[var(--color-text-secondary)] max-w-md mx-auto italic">"{entry.note}"</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+
+    <div class="my-16 h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
+
+    <div class="text-center">
+      <Stamp label={T('inspirations.end')} variant="red" size="lg" />
+      <p class="mt-6 font-handwritten text-body-lg text-[var(--color-text-secondary)] max-w-sm mx-auto">"{T('inspirations.epilogue')}"</p>
+      <a href="/en" class="gold-underline mt-6 inline-block font-stamp text-stamp-label text-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] transition-colors">{T('inspirations.back')}</a>
+    </div>
+  </section>
+</BaseLayout>

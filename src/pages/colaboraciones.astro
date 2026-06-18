@@ -3,6 +3,9 @@ import BaseLayout from '@layouts/BaseLayout.astro';
 import TechnicalCard from '@components/ui/TechnicalCard';
 import Stamp from '@components/ui/Stamp';
 import StickyNote from '@components/ui/StickyNote';
+import { t } from '@lib/i18n';
+
+const T = (key: string) => t('es', key);
 
 const collaborations = [
   {
@@ -11,7 +14,7 @@ const collaborations = [
     role: 'Consultor de Desarrollo',
     period: '2024',
     status: 'green' as const,
-    statusLabel: 'COMPLETADO',
+    statusLabel: T('common.completed'),
     description:
       'Asesoría técnica en la modernización de la plataforma de gestión institucional. Migración de arquitectura legacy a stack moderno con enfoque en rendimiento y mantenibilidad.',
     contributions: [
@@ -31,22 +34,21 @@ const collaborations = [
 ];
 ---
 
-<BaseLayout title="Colaboraciones — Archivo Reny Mireles" description="Registro de colaboraciones profesionales y consultorías">
-  <section data-seal-state="satisfaction" class="page-enter mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+<BaseLayout title={T('collaborations.pageTitle')} description={T('collaborations.pageDescription')}>
+  <section class="page-enter mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
     <!-- Header -->
     <header class="mb-12">
       <div class="flex items-center justify-between mb-4">
-        <span class="font-stamp text-stamp-label text-[var(--color-text-secondary)]" data-i18n="collaborations.header">
-          REGISTRO DE COLABORACIONES
+        <span class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">
+          {T('collaborations.header')}
         </span>
         <Stamp label={`${collaborations.length} REGISTRO`} variant="green" size="md" />
       </div>
-      <h1 class="font-display text-display-lg text-[var(--color-text-primary)]" data-i18n="collaborations.title">
-        Colaboraciones
+      <h1 class="font-display text-display-lg text-[var(--color-text-primary)]">
+        {T('collaborations.title')}
       </h1>
-      <p class="mt-2 text-body-lg text-[var(--color-text-secondary)] max-w-2xl" data-i18n="collaborations.subtitle">
-        Proyectos colaborativos, consultorías y asesorías técnicas que han dejado
-        cicatrices de oro en el archivo.
+      <p class="mt-2 text-body-lg text-[var(--color-text-secondary)] max-w-2xl">
+        {T('collaborations.subtitle')}
       </p>
       <div class="mt-6 h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
     </header>
@@ -74,8 +76,8 @@ const collaborations = [
 
                 <!-- Contributions -->
                 <div class="mb-4">
-                  <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2" data-i18n="collaborations.keyContributions">
-                    CONTRIBUCIONES CLAVE
+                  <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2">
+                    {T('collaborations.keyContributions')}
                   </p>
                   <ul class="space-y-1">
                     {collab.contributions.map((c) => (
@@ -101,7 +103,7 @@ const collaborations = [
               <div class="lg:w-64 shrink-0">
                 <TechnicalCard
                   client:visible
-                  title="Ficha Técnica"
+                  title={T('common.technicalCard')}
                   fields={collab.fields}
                   stampLabel={collab.statusLabel}
                   stampVariant={collab.status}
@@ -126,20 +128,19 @@ const collaborations = [
 
     <!-- Open to collabs -->
     <div class="mt-16 rounded-paper border border-dashed border-[var(--color-accent-gold)]/40 p-8 text-center">
-      <p class="font-stamp text-stamp-title text-[var(--color-accent-gold)] mb-2" data-i18n="collaborations.interested">
-        ¿INTERESADO EN COLABORAR?
+      <p class="font-stamp text-stamp-title text-[var(--color-accent-gold)] mb-2">
+        {T('collaborations.interested')}
       </p>
-      <p class="text-body-md text-[var(--color-text-secondary)] max-w-md mx-auto mb-4" data-i18n="collaborations.interestedText">
-        Abierto a consultorías, proyectos de ingeniería y colaboraciones técnicas.
-        Cada colaboración es un expediente nuevo en el archivo.
+      <p class="text-body-md text-[var(--color-text-secondary)] max-w-md mx-auto mb-4">
+        {T('collaborations.interestedText')}
       </p>
       <a
         href="/contacto"
         class="gold-underline inline-block font-stamp text-stamp-label text-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] transition-colors"
-        data-i18n="collaborations.openRequest"
       >
-        ABRIR SOLICITUD DE CONTACTO →
+        {T('collaborations.openRequest')}
       </a>
     </div>
   </section>
 </BaseLayout>
+

@@ -43,6 +43,9 @@ export default function CustomCursor() {
 
   useEffect(() => {
     if (window.matchMedia('(pointer: coarse)').matches) return;
+    // Respect user's cursor preference
+    const saved = localStorage.getItem('cursor');
+    if (saved === 'native') return;
 
     const dot = dotRef.current;
     const ringEl = ringRef.current;

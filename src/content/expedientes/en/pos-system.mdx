@@ -1,0 +1,64 @@
+---
+title: POS System
+expedientNumber: '002'
+classification: Fullstack point-of-sale dashboard
+status: active
+refinementCount: 23
+description: >
+  Point-of-sale system with real-time administrative dashboard.
+  Inventory management, financial reports, and multi-branch support.
+stack:
+  - React
+  - TypeScript
+  - Node.js
+  - Express
+  - PostgreSQL
+  - Redis
+  - Docker
+  - Tailwind CSS
+metrics:
+  layers: 2
+  packages: 18
+  tests: 42
+publishDate: 2023-06-01
+updatedDate: 2024-03-15
+---
+
+import { LabNotes } from '../../../components/expedientes/LabNotes';
+import RefinementTimeline from '../../../components/expedientes/RefinementTimeline';
+import DecisionTree from '../../../components/expedientes/DecisionTree';
+
+## Technical Summary
+
+Administrative dashboard for a POS system with multi-branch management. Client-server architecture with REST API, Redis caching for high-frequency reports, and PostgreSQL as the source of truth.
+
+## Lab Notes
+
+<LabNotes>
+  <LabNotes.Note date="2023-07-20" topic="Caching strategy">
+    **Problem**: Sales reports took 3+ seconds with 6 months of data.
+
+    **Decision**: Redis with event-based invalidation (new sale → invalidate daily report cache). Latency reduced to 50ms.
+  </LabNotes.Note>
+</LabNotes>
+
+## Refinements
+
+<RefinementTimeline
+  refinements={[
+    { id: 1, title: 'REST architecture', description: 'Versioned API with OpenAPI spec', isKey: true },
+    { id: 8, title: 'Multi-tenancy', description: 'Branch isolation with row-level security in PostgreSQL' },
+    { id: 15, title: 'Real-time updates', description: 'WebSocket for low inventory notifications', isKey: true },
+    { id: 23, title: 'Report engine', description: 'Async PDF generation with worker queue' },
+  ]}
+/>
+
+## Decision Tree
+
+<DecisionTree
+  question="How to handle heavy reports without blocking the API?"
+  options={[
+    { label: 'Synchronous with pagination', path: 'simple', chosen: false, description: 'Easy but blocks the event loop' },
+    { label: 'Worker queue + Redis', path: 'async', chosen: true, description: 'Background jobs, cached results' },
+  ]}
+/>

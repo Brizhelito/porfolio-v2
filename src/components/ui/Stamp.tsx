@@ -8,7 +8,6 @@ export interface StampProps {
   size?: 'sm' | 'md' | 'lg';
   animate?: boolean;
   className?: string;
-  'data-i18n'?: string;
 }
 
 const VARIANT_COLORS = {
@@ -26,7 +25,6 @@ export default function Stamp({
   size = 'md',
   animate = true,
   className = '',
-  'data-i18n': dataI18n,
 }: StampProps) {
   const ref = useRef<HTMLDivElement>(null);
   const colors = VARIANT_COLORS[variant];
@@ -54,7 +52,6 @@ export default function Stamp({
     <div
       ref={ref}
       className={`stamp inline-flex items-center justify-center font-stamp ${className}`}
-      data-i18n={dataI18n}
       style={{
         width: px,
         height: shape === 'rectangle' ? px * 0.5 : px,

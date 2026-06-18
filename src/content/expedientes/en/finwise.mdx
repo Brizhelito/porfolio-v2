@@ -1,0 +1,51 @@
+---
+title: Finwise
+expedientNumber: '003'
+classification: Personal finance management platform
+status: active
+refinementCount: 18
+description: >
+  Web app for expense tracking, budgets, and financial goals.
+  Dashboard with interactive visualizations and report exports.
+stack:
+  - Next.js
+  - TypeScript
+  - Prisma
+  - PostgreSQL
+  - Chart.js
+  - Tailwind CSS
+  - Vercel
+metrics:
+  layers: 2
+  packages: 12
+  tests: 28
+publishDate: 2023-09-01
+---
+
+import { LabNotes } from '../../../components/expedientes/LabNotes';
+import RefinementTimeline from '../../../components/expedientes/RefinementTimeline';
+
+## Technical Summary
+
+Personal finance platform focused on simplicity. Automatic transaction categorization, monthly budgets with alerts, and projections based on historical patterns.
+
+## Lab Notes
+
+<LabNotes>
+  <LabNotes.Note date="2023-10-15" topic="Auto-categorization">
+    **Problem**: Users don't want to manually categorize every expense.
+
+    **Decision**: Rule engine with text patterns (regex + keywords). 85% accuracy without ML. ML discarded due to complexity vs benefit ratio.
+  </LabNotes.Note>
+</LabNotes>
+
+## Refinements
+
+<RefinementTimeline
+  refinements={[
+    { id: 1, title: 'Data schema', description: 'Transaction model with nested categories', isKey: true },
+    { id: 6, title: 'Budget alerts', description: 'Notification system with configurable thresholds' },
+    { id: 12, title: 'Report export', description: 'PDF/CSV generation with server-side rendering', isKey: true },
+    { id: 18, title: 'Multi-currency', description: 'Multi-currency support with real-time conversion' },
+  ]}
+/>

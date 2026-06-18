@@ -1,0 +1,70 @@
+---
+title: Matrixezz
+expedientNumber: '005'
+classification: Collaborative EdTech platform for math education
+status: active
+refinementCount: 31
+description: >
+  Educational platform with interactive matrix editor,
+  real-time collaborative exercises, and automatic grading.
+stack:
+  - React
+  - TypeScript
+  - Node.js
+  - Socket.io
+  - MongoDB
+  - KaTeX
+  - Docker
+metrics:
+  layers: 2
+  packages: 14
+  plugins: 6
+  tests: 35
+publishDate: 2023-03-01
+updatedDate: 2024-06-01
+---
+
+import { LabNotes } from '../../../components/expedientes/LabNotes';
+import RefinementTimeline from '../../../components/expedientes/RefinementTimeline';
+import DecisionTree from '../../../components/expedientes/DecisionTree';
+
+## Technical Summary
+
+Educational platform for teaching linear algebra with emphasis on matrices. Interactive visual editor, collaborative mode with real-time presence via Socket.io, and automatic exercise grading.
+
+## Lab Notes
+
+<LabNotes>
+  <LabNotes.Note date="2023-04-15" topic="Math rendering">
+    **Decision**: KaTeX over MathJax. 10x faster rendering, sufficient for our LaTeX subset. MathJax added as fallback for complex expressions.
+  </LabNotes.Note>
+
+  <LabNotes.Note date="2023-08-20" topic="Real-time collaboration">
+    **Problem**: Multiple users editing the same matrix simultaneously.
+
+    **Decision**: Simplified Operational Transform for matrix operations (single cell). Conflict resolution by cell position — two users can edit different cells without conflict.
+  </LabNotes.Note>
+</LabNotes>
+
+## Refinements
+
+<RefinementTimeline
+  refinements={[
+    { id: 1, title: 'Matrix editor', description: 'Interactive grid with fraction and symbol support', isKey: true },
+    { id: 9, title: 'KaTeX integration', description: 'High-performance math rendering' },
+    { id: 17, title: 'Real-time collaboration', description: 'Socket.io + simplified OT for concurrent editing', isKey: true },
+    { id: 24, title: 'Auto-grading engine', description: 'Automatic evaluation with step-by-step verification', isKey: true },
+    { id: 31, title: 'Progress tracking', description: 'Student dashboard with learning analytics' },
+  ]}
+/>
+
+## Decision Tree
+
+<DecisionTree
+  question="How to implement the interactive matrix editor?"
+  options={[
+    { label: 'HTML table + contentEditable', path: 'simple', chosen: false, description: 'Limited, mobile issues' },
+    { label: 'Canvas rendering', path: 'complex', chosen: false, description: 'Powerful but hurts accessibility' },
+    { label: 'Div grid + KaTeX', path: 'balanced', chosen: true, description: 'Accessible, performant, easy to extend' },
+  ]}
+/>

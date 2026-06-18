@@ -3,7 +3,8 @@ import Header from '@components/layout/Header.astro';
 import Footer from '@components/layout/Footer.astro';
 import Seal from '@components/ui/Seal';
 import CustomCursor from '@components/ui/CustomCursor';
-import { SITE, GOOGLE_FONTS_URL } from '@lib/constants';
+import { SITE, SITE_I18N, GOOGLE_FONTS_URL } from '@lib/constants';
+import { getLocalizedHref, type Locale } from '@lib/i18n';
 import '@styles/global.css';
 import '@styles/typography.css';
 import '@styles/textures.css';
@@ -14,22 +15,29 @@ interface Props {
   title?: string;
   description?: string;
   ogImage?: string;
+  locale?: Locale;
 }
 
 const {
   title = SITE.title,
   description = SITE.description,
   ogImage,
+  locale = 'es',
 } = Astro.props;
 
+const siteMeta = SITE_I18N[locale];
 const canonicalUrl = new URL(Astro.url.pathname, SITE.url).href;
+
+// Generate hreflang URLs for both locales
+const esUrl = new URL(getLocalizedHref(Astro.url.pathname, 'es'), SITE.url).href;
+const enUrl = new URL(getLocalizedHref(Astro.url.pathname, 'en'), SITE.url).href;
 
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: SITE.author,
   url: SITE.url,
-  description: SITE.description,
+  description: siteMeta.description,
   sameAs: [
     'https://github.com/renymireles',
     'https://linkedin.com/in/renymireles',
@@ -40,19 +48,20 @@ const jsonLd = {
 ---
 
 <!doctype html>
-<html lang={SITE.lang}>
+<html lang={locale}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content={description} />
+    <meta name="description" content={description || siteMeta.description} />
     <meta name="author" content={SITE.author} />
 
     <!-- Canonical -->
     <link rel="canonical" href={canonicalUrl} />
 
-    <!-- Hreflang (Phase 1: Spanish only, Phase 2: add English) -->
-    <link rel="alternate" hreflang="es" href={canonicalUrl} />
-    <link rel="alternate" hreflang="x-default" href={canonicalUrl} />
+    <!-- Hreflang -->
+    <link rel="alternate" hreflang="es" href={esUrl} />
+    <link rel="alternate" hreflang="en" href={enUrl} />
+    <link rel="alternate" hreflang="x-default" href={esUrl} />
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -64,40 +73,28 @@ const jsonLd = {
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={description || siteMeta.description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:locale" content="es_VE" />
+    <meta property="og:locale" content={locale === 'en' ? 'en_US' : 'es_VE'} />
     {ogImage && <meta property="og:image" content={ogImage} />}
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:description" content={description || siteMeta.description} />
 
     <title>{title}</title>
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-
-    <!-- Prevent i18n flash: hide text if lang is non-default -->
-    <script is:inline>
-      (function() {
-        var lang = localStorage.getItem('lang');
-        if (lang === 'en') {
-          document.documentElement.classList.add('lang-pending');
-          document.documentElement.setAttribute('data-lang', 'en');
-        }
-      })();
-    </script>
-
   </head>
   <body class="min-h-screen bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] transition-colors duration-300">
-    <Header />
+    <Header locale={locale} />
     <main class="relative z-[var(--z-content)]">
       <slot />
     </main>
-    <Footer />
+    <Footer locale={locale} />
     <Seal client:load />
     <CustomCursor client:load />
   </body>

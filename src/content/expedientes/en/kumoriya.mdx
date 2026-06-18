@@ -1,0 +1,105 @@
+---
+title: Kumoriya
+expedientNumber: '001'
+classification: Real-time cross-platform content aggregation engine
+status: featured
+refinementCount: 47
+description: >
+  3-layer distributed system with plugin-first architecture.
+  Unifies multiple content sources through dynamic indexing,
+  metadata normalization, and edge computing.
+stack:
+  - Flutter 3.32
+  - Go
+  - Fiber
+  - Cloudflare Workers
+  - Durable Objects
+  - WebSocket
+  - Riverpod
+  - Drift/SQLite
+  - PostgreSQL
+  - Redis
+  - Firebase FCM
+  - WebAuthn
+  - Passkeys
+  - CRDT
+  - GitHub Actions
+  - Sentry
+metrics:
+  layers: 3
+  packages: 45
+  plugins: 28
+  tests: 65
+links:
+  repository: https://github.com/renymireles/kumoriya
+  website: https://kumoriya.app
+publishDate: 2024-01-15
+updatedDate: 2024-12-01
+---
+
+import { LabNotes } from '../../../components/expedientes/LabNotes';
+import RefinementTimeline from '../../../components/expedientes/RefinementTimeline';
+import DecisionTree from '../../../components/expedientes/DecisionTree';
+
+## Technical Summary
+
+Kumoriya is a distributed system designed to unify multiple content sources into a coherent experience. The architecture is split into three layers: presentation (Flutter), business logic (Go/Fiber), and edge computing (Cloudflare Workers).
+
+The system implements a **plugin-first** architecture where each content source is an independent plugin, enabling extensibility without modifying the core.
+
+## Lab Notes
+
+<LabNotes>
+  <LabNotes.Note date="2024-03-15" topic="Architecture decision">
+    **Question**: Centralized or distributed?
+
+    **Exploration**:
+    - Option A: Simple monolith (fast, limited)
+    - Option B: Microservices (complex, scalable)
+    - Option C: Distributed edge (novel, resilient)
+
+    **Decision**: Option C. Best fit for latency and availability constraints.
+  </LabNotes.Note>
+
+  <LabNotes.Note date="2024-05-20" topic="Offline synchronization">
+    **Problem**: Users need offline access.
+
+    **Exploration**:
+    - Option A: Simple cache with expiration
+    - Option B: Bidirectional sync with CRDTs
+    - Option C: Local-first database with sync
+
+    **Decision**: Option C with CRDTs for conflict resolution. Higher initial complexity but superior experience.
+  </LabNotes.Note>
+
+  <LabNotes.Note date="2024-08-10" topic="Passwordless authentication">
+    **Context**: Target users are tech-savvy, password friction is unacceptable.
+
+    **Implementation**: WebAuthn + Passkeys as primary method. Fallback to magic links.
+    Zero-knowledge proof for identity verification.
+  </LabNotes.Note>
+</LabNotes>
+
+## Refinements
+
+<RefinementTimeline
+  refinements={[
+    { id: 1, title: 'Plugin-first architecture', description: '10+ source plugins, 18+ independent resolver plugins', isKey: true },
+    { id: 8, title: 'CRDT synchronization', description: 'LWW CRDT + WebSockets for real-time multi-device', isKey: true },
+    { id: 15, title: 'Edge caching strategy', description: 'Cloudflare Workers + Durable Objects for persistent sessions' },
+    { id: 23, title: 'Passkeys integration', description: 'WebAuthn with graceful fallback to magic links', isKey: true },
+    { id: 31, title: 'Offline-first storage', description: 'Drift/SQLite with sync queue and conflict resolution' },
+    { id: 47, title: 'Observability pipeline', description: 'Sentry + custom metrics on Cloudflare Analytics' },
+  ]}
+/>
+
+## Decision Tree
+
+<DecisionTree
+  question="How to handle data conflicts in multi-device synchronization?"
+  options={[
+    { label: 'Last-Write-Wins', path: 'simple', chosen: false, description: 'Easy to implement, possible data loss' },
+    { label: 'CRDTs (LWW)', path: 'scalable', chosen: true, description: 'Deterministic resolution without central server' },
+    { label: 'OT (Operational Transform)', path: 'collaborative', chosen: false, description: 'Requires central server, overkill for this case' },
+  ]}
+/>

@@ -2,9 +2,9 @@
 import ExpedientLayout from '@layouts/ExpedientLayout.astro';
 import ExpedientCover from '@components/expedientes/ExpedientCover';
 import TechnicalCard from '@components/ui/TechnicalCard';
-import GoldThread from '@components/ui/GoldThread';
 import Stamp from '@components/ui/Stamp';
 import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { t } from '@lib/i18n';
 
 export async function getStaticPaths() {
   const expedientes = await getCollection('expedientes');
@@ -20,6 +20,8 @@ interface Props {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
+
+const T = (key: string) => t('es', key);
 
 const stackGroups: Record<string, string[]> = {};
 entry.data.stack.forEach((tech) => {
@@ -49,6 +51,7 @@ function categorize(tech: string): string {
     classification={entry.data.classification}
     status={entry.data.status}
     refinementCount={entry.data.refinementCount}
+    strings={{ refinements: T('common.refinements') }}
   />
 
   <!-- Quick metadata -->
@@ -56,25 +59,25 @@ function categorize(tech: string): string {
     {entry.data.metrics?.layers != null && (
       <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
         <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.layers}</p>
-        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]" data-i18n="expedients.metrics">CAPAS</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">CAPAS</p>
       </div>
     )}
     {entry.data.metrics?.packages != null && (
       <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
         <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.packages}</p>
-        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]" data-i18n="expedients.metrics">PAQUETES</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">PAQUETES</p>
       </div>
     )}
     {entry.data.metrics?.plugins != null && (
       <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
         <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.plugins}</p>
-        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]" data-i18n="expedients.metrics">PLUGINS</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">PLUGINS</p>
       </div>
     )}
     {entry.data.metrics?.tests != null && (
       <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
         <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.tests}</p>
-        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]" data-i18n="expedients.metrics">TESTS</p>
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">TESTS</p>
       </div>
     )}
   </div>
@@ -84,13 +87,13 @@ function categorize(tech: string): string {
     <Content />
   </div>
 
-  <!-- Gold thread separator -->
-  <GoldThread client:visible />
+  <!-- Gold separator -->
+  <div class="my-12 h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
 
   <!-- Stack técnico clasificado -->
   <section class="mt-12 mb-10">
-    <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-6" data-i18n="expedients.technicalStack">
-      STACK TÉCNICO CLASIFICADO
+    <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-6">
+      {T('expedients.technicalStack')}
     </h2>
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {Object.entries(stackGroups).map(([category, techs]) => (
@@ -108,8 +111,8 @@ function categorize(tech: string): string {
   <!-- Links section -->
   {entry.data.links && (
     <section class="mb-10">
-      <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-4" data-i18n="expedients.links">
-        ENLACES DEL EXPEDIENTE
+      <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-4">
+        {T('expedients.links')}
       </h2>
       <div class="flex flex-wrap gap-3">
         {entry.data.links.repository && (
@@ -119,7 +122,7 @@ function categorize(tech: string): string {
             rel="noopener noreferrer"
             class="gold-underline inline-flex items-center gap-2 rounded-paper border border-[var(--color-archive-kraft)]/20 px-4 py-2 font-stamp text-stamp-label text-[var(--color-text-primary)] transition-all hover:border-[var(--color-accent-gold)]/40 hover:shadow-paper"
           >
-            <span data-i18n="expedients.repository">Repositorio</span>
+            <span>{T('expedients.repository')}</span>
             <span class="text-[var(--color-accent-gold)]">↗</span>
           </a>
         )}
@@ -130,7 +133,7 @@ function categorize(tech: string): string {
             rel="noopener noreferrer"
             class="gold-underline inline-flex items-center gap-2 rounded-paper border border-[var(--color-archive-kraft)]/20 px-4 py-2 font-stamp text-stamp-label text-[var(--color-text-primary)] transition-all hover:border-[var(--color-accent-gold)]/40 hover:shadow-paper"
           >
-            <span data-i18n="expedients.demo">Demo en vivo</span>
+            <span>{T('expedients.demo')}</span>
             <span class="text-[var(--color-accent-gold)]">↗</span>
           </a>
         )}
@@ -141,7 +144,7 @@ function categorize(tech: string): string {
             rel="noopener noreferrer"
             class="gold-underline inline-flex items-center gap-2 rounded-paper border border-[var(--color-archive-kraft)]/20 px-4 py-2 font-stamp text-stamp-label text-[var(--color-text-primary)] transition-all hover:border-[var(--color-accent-gold)]/40 hover:shadow-paper"
           >
-            <span data-i18n="expedients.website">Sitio web</span>
+            <span>{T('expedients.website')}</span>
             <span class="text-[var(--color-accent-gold)]">↗</span>
           </a>
         )}
@@ -152,15 +155,15 @@ function categorize(tech: string): string {
   <!-- Dates stamp -->
   <footer class="border-t border-[var(--color-archive-kraft)]/20 pt-6 mt-12">
     <div class="flex flex-wrap items-center justify-between gap-4 text-caption text-[var(--color-text-secondary)]">
-      <span class="font-mono" data-i18n="expedients.published">
-        Publicado: {entry.data.publishDate.toLocaleDateString('es-VE', { year: 'numeric', month: 'long', day: 'numeric' })}
+      <span class="font-mono">
+        {T('expedients.published')}: {entry.data.publishDate.toLocaleDateString('es-VE', { year: 'numeric', month: 'long', day: 'numeric' })}
       </span>
       {entry.data.updatedDate && (
-        <span class="font-mono" data-i18n="expedients.updated">
-          Última actualización: {entry.data.updatedDate.toLocaleDateString('es-VE', { year: 'numeric', month: 'long', day: 'numeric' })}
+        <span class="font-mono">
+          {T('expedients.updated')}: {entry.data.updatedDate.toLocaleDateString('es-VE', { year: 'numeric', month: 'long', day: 'numeric' })}
         </span>
       )}
-      <Stamp label="VERIFICADO" variant="green" size="sm" />
+      <Stamp label={T('common.verified')} variant="green" size="sm" />
     </div>
   </footer>
 </ExpedientLayout>

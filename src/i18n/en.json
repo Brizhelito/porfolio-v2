@@ -16,12 +16,20 @@
     "openExpedient": "OPEN MAIN EXPEDIENT →",
     "expedientsOpen": "open expedients",
     "totalRefinements": "total refinements",
-    "recentExpedients": "RECENT EXPEDIENTS"
+    "recentExpedients": "RECENT EXPEDIENTS",
+    "quickLinkIdentification": "IDENTIFICATION CARD",
+    "quickLinkIdentificationDesc": "Origin, methodology, capabilities",
+    "quickLinkCatalog": "TOOLS CATALOG",
+    "quickLinkCatalogDesc": "Classified technical stack",
+    "quickLinkContact": "CONTACT REQUEST",
+    "quickLinkContactDesc": "Open a new expedient"
   },
   "about": {
     "pageTitle": "Identification Card — Reny Mireles Archive",
     "header": "RENY MIRELES ARCHIVE",
     "title": "Identification Card",
+    "titleValue": "Reny Mireles",
+    "classification": "Distributed Systems Engineer",
     "origin": "ORIGIN",
     "originValue": "Venezuela",
     "specialty": "SPECIALTY",
@@ -34,6 +42,20 @@
     "availabilityValue": "Open to opportunities",
     "capabilitiesTitle": "Demonstrated Capabilities",
     "capabilitiesSubtitle": "Technical domains verified in expedients",
+    "capabilities": {
+      "frontend": "FRONTEND",
+      "frontendValue": "React, Flutter, Astro, Tailwind",
+      "backend": "BACKEND",
+      "backendValue": "Go, Node.js, Fiber, Express",
+      "edge": "EDGE",
+      "edgeValue": "Cloudflare Workers, Durable Objects",
+      "database": "DATABASE",
+      "databaseValue": "PostgreSQL, Redis, SQLite, MongoDB",
+      "devops": "DEVOPS",
+      "devopsValue": "Docker, GitHub Actions, Sentry",
+      "auth": "AUTH",
+      "authValue": "WebAuthn, Passkeys, OAuth2"
+    },
     "philosophyTitle": "Work Philosophy",
     "philosophy": [
       "Iteration over perfection: Each documented refinement adds measurable value.",
@@ -93,15 +115,22 @@
     "responseTimes": "RESPONSE TIMES",
     "email": "Email",
     "emailDesc": "Response in 24-48h. Ideal for formal proposals and technical documentation.",
+    "emailPriority": "PRIMARY",
     "github": "GitHub",
     "githubDesc": "Public repositories, issues, open source contributions.",
+    "githubPriority": "CODE",
     "linkedin": "LinkedIn",
     "linkedinDesc": "Professional trajectory, recommendations, networking.",
+    "linkedinPriority": "PROFESSIONAL",
     "whatsapp": "WhatsApp",
     "whatsappDesc": "Only for urgent communication or real-time coordination.",
+    "whatsappPriority": "URGENT",
     "freelanceTip": "For freelance proposals, include: scope, estimated timeline, and available budget.",
     "timezoneTip": "Timezone: UTC-4 (Venezuela). Available for global remote work.",
-    "location": "BASE: MARACAIBO, ZULIA, VENEZUELA"
+    "location": "BASE: MARACAIBO, ZULIA, VENEZUELA",
+    "responseEmail": "Email: 24-48h",
+    "responseLinkedin": "LinkedIn: 3-5 days",
+    "responseWhatsapp": "WhatsApp: Immediate (business hours)"
   },
   "inspirations": {
     "pageTitle": "Inspirations — Reny Mireles Archive",
@@ -126,6 +155,27 @@
     "verified": "VERIFIED",
     "completed": "COMPLETED",
     "open": "OPEN",
-    "access": "ACCESS →"
+    "access": "ACCESS →",
+    "refinements": "refinements",
+    "clickToOpen": "Click to open the expedient...",
+    "labNotes": "Lab Notes",
+    "decisionTree": "Decision Tree",
+    "key": "KEY",
+    "chosen": "CHOSEN",
+    "available": "AVAILABLE",
+    "technicalCard": "Technical Card"
+  },
+  "notFound": {
+    "title": "404",
+    "stamp": "NOT FOUND",
+    "subtitle": "EXPEDIENT NOT FOUND",
+    "description": "This expedient does not exist in the archive, was reclassified, or the reference was written in invisible ink.",
+    "backHome": "RETURN TO MAIN ARCHIVE →",
+    "allExpedients": "VIEW ALL EXPEDIENTS",
+    "ref": "REF: 404 · LOST DOCUMENT · RENY MIRELES ARCHIVE"
+  },
+  "cursor": {
+    "custom": "CUSTOM",
+    "native": "NATIVE"
   }
 }
