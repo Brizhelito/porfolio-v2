@@ -1,9 +1,9 @@
 {
   "nav": {
     "home": "Home",
-    "about": "Profile",
-    "tools": "Catalog",
-    "expedients": "Expedients",
+    "about": "Profile (About)",
+    "tools": "Catalog (Stack)",
+    "expedients": "Expedients (Projects)",
     "collaborations": "Collaborations",
     "inspirations": "Inspirations",
     "contact": "Contact"
@@ -22,7 +22,13 @@
     "quickLinkCatalog": "TOOLS CATALOG",
     "quickLinkCatalogDesc": "Classified technical stack",
     "quickLinkContact": "CONTACT REQUEST",
-    "quickLinkContactDesc": "Open a new expedient"
+    "quickLinkContactDesc": "Open a new expedient",
+    "ctaProjects": "VIEW PROJECTS",
+    "ctaContact": "CONTACT",
+    "ctaProjectsDesc": "Explore work expedients",
+    "ctaContactDesc": "Open a new expedient",
+    "featuredProject": "FEATURED PROJECT",
+    "seeAll": "See all →"
   },
   "about": {
     "pageTitle": "Identification Card — Reny Mireles Archive",
@@ -69,7 +75,9 @@
     "pageTitle": "Tools Catalog — Reny Mireles Archive",
     "header": "RENY MIRELES ARCHIVE",
     "title": "Tools Catalog",
-    "subtitle": "Lateral classifiers by category. Context is detailed in the expedients."
+    "subtitle": "Lateral classifiers by category. Context is detailed in the expedients.",
+    "usedIn": "Used in",
+    "viewExpedients": "View expedients →"
   },
   "expedients": {
     "pageTitle": "Expedients — Reny Mireles Archive",
@@ -93,7 +101,12 @@
     "demo": "Live demo",
     "website": "Website",
     "published": "Published",
-    "updated": "Last updated"
+    "updated": "Last updated",
+    "nextSteps": "WHAT'S NEXT?",
+    "viewProfile": "VIEW FULL PROFILE",
+    "viewProfileDesc": "Origin, methodology, and capabilities",
+    "contactCta": "CONTACT",
+    "contactCtaDesc": "Open a collaboration expedient"
   },
   "collaborations": {
     "pageTitle": "Collaborations — Reny Mireles Archive",
@@ -145,7 +158,8 @@
   "footer": {
     "archive": "RENY MIRELES ARCHIVE",
     "tagline": "Distributed systems engineering",
-    "built": "Built with Astro · Each expedient documents engineer-level thinking"
+    "built": "Built with Astro · Each expedient documents engineer-level thinking",
+    "secondaryLinks": "ARCHIVE LINKS"
   },
   "common": {
     "expedient": "EXP.",

@@ -1,10 +1,14 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
 import { t } from '@lib/i18n';
+import { getCollection } from 'astro:content';
 
 const T = (key: string) => t('es', key);
 
-const categories = [
+const expedientes = await getCollection('expedientes');
+
+// Build category -> expedient mapping
+const categoryDefs = [
   { name: 'Frontend', tools: ['React', 'Flutter', 'Astro', 'Tailwind CSS', 'TypeScript', 'Next.js'] },
   { name: 'Mobile', tools: ['Flutter', 'Dart', 'Riverpod', 'Drift/SQLite', 'Firebase'] },
   { name: 'Backend', tools: ['Go', 'Fiber', 'Node.js', 'Express', 'Python'] },
@@ -14,6 +18,16 @@ const categories = [
   { name: 'Auth & Security', tools: ['WebAuthn', 'Passkeys', 'OAuth2', 'JWT', 'CRDT'] },
   { name: 'Architecture', tools: ['Plugin-first', 'Microservicios', 'Event-driven', 'CQRS'] },
 ];
+
+// For each category, find expedientes whose stack contains any of its tools
+const categories = categoryDefs.map((cat) => {
+  const related = expedientes.filter((exp) =>
+    cat.tools.some((tool) =>
+      exp.data.stack.some((s) => s.toLowerCase().includes(tool.toLowerCase()) || tool.toLowerCase().includes(s.toLowerCase()))
+    )
+  );
+  return { ...cat, related };
+});
 ---
 
 <BaseLayout title={T('tools.pageTitle')}>
@@ -39,6 +53,24 @@ const categories = [
               </span>
             ))}
           </div>
+          {cat.related.length > 0 && (
+            <div class="mt-3 pt-3 border-t border-[var(--color-archive-kraft)]/10">
+              <p class="font-stamp text-[10px] tracking-[0.1em] text-[var(--color-text-secondary)] mb-1.5">{T('tools.usedIn')}:</p>
+              <div class="flex flex-wrap gap-2">
+                {cat.related.map((exp) => (
+                  <a
+                    href={`/expedientes/${exp.id}`}
+                    class="inline-flex items-center gap-1 text-body-sm font-mono text-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] transition-colors"
+                    data-seal-react
+                  >
+                    <span class="text-[10px] opacity-60">{exp.data.expedientNumber}</span>
+                    {exp.data.title}
+                    <span class="text-[var(--color-accent-gold)] opacity-50">↗</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       ))}
     </div>

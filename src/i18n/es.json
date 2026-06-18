@@ -1,9 +1,9 @@
 {
   "nav": {
     "home": "Inicio",
-    "about": "Ficha",
-    "tools": "Catálogo",
-    "expedients": "Expedientes",
+    "about": "Ficha (About)",
+    "tools": "Catálogo (Stack)",
+    "expedients": "Expedientes (Projects)",
     "collaborations": "Colaboraciones",
     "inspirations": "Inspiraciones",
     "contact": "Contacto"
@@ -22,7 +22,13 @@
     "quickLinkCatalog": "CATÁLOGO DE HERRAMIENTAS",
     "quickLinkCatalogDesc": "Stack técnico clasificado",
     "quickLinkContact": "SOLICITUD DE CONTACTO",
-    "quickLinkContactDesc": "Abrir un nuevo expediente"
+    "quickLinkContactDesc": "Abrir un nuevo expediente",
+    "ctaProjects": "VER PROYECTOS",
+    "ctaContact": "CONTACTAR",
+    "ctaProjectsDesc": "Explorar expedientes de trabajo",
+    "ctaContactDesc": "Abrir un nuevo expediente",
+    "featuredProject": "PROYECTO DESTACADO",
+    "seeAll": "Ver todos →"
   },
   "about": {
     "pageTitle": "Ficha de Identificación — Archivo Reny Mireles",
@@ -69,7 +75,9 @@
     "pageTitle": "Catálogo de Herramientas — Archivo Reny Mireles",
     "header": "ARCHIVO RENY MIRELES",
     "title": "Catálogo de Herramientas",
-    "subtitle": "Clasificadores laterales por categoría. El contexto se detalla en los expedientes."
+    "subtitle": "Clasificadores laterales por categoría. El contexto se detalla en los expedientes.",
+    "usedIn": "Usado en",
+    "viewExpedients": "Ver expedientes →"
   },
   "expedients": {
     "pageTitle": "Expedientes — Archivo Reny Mireles",
@@ -93,7 +101,12 @@
     "demo": "Demo en vivo",
     "website": "Sitio web",
     "published": "Publicado",
-    "updated": "Última actualización"
+    "updated": "Última actualización",
+    "nextSteps": "¿QUÉ SIGUE?",
+    "viewProfile": "VER PERFIL COMPLETO",
+    "viewProfileDesc": "Origen, metodología y capacidades",
+    "contactCta": "CONTACTAR",
+    "contactCtaDesc": "Abrir un expediente de colaboración"
   },
   "collaborations": {
     "pageTitle": "Colaboraciones — Archivo Reny Mireles",
@@ -145,7 +158,8 @@
   "footer": {
     "archive": "ARCHIVO RENY MIRELES",
     "tagline": "Ingeniería de sistemas distribuidos",
-    "built": "Construido con Astro · Cada expediente documenta pensamiento de ingeniero"
+    "built": "Construido con Astro · Cada expediente documenta pensamiento de ingeniero",
+    "secondaryLinks": "ENLACES DEL ARCHIVO"
   },
   "common": {
     "expedient": "EXP.",

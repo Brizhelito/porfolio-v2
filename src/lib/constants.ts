@@ -25,9 +25,13 @@ export const NAV_LINKS = [
   { href: '/about', label: 'Ficha' },
   { href: '/tools', label: 'Catálogo' },
   { href: '/expedientes', label: 'Expedientes' },
+  { href: '/contacto', label: 'Contacto' },
+] as const;
+
+/** Secondary links shown in footer instead of main nav */
+export const FOOTER_LINKS = [
   { href: '/colaboraciones', label: 'Colaboraciones' },
   { href: '/inspiraciones', label: 'Inspiraciones' },
-  { href: '/contacto', label: 'Contacto' },
 ] as const;
 
 export const SOCIAL_LINKS = {

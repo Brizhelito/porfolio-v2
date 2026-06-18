@@ -13,6 +13,8 @@ export interface Expediente {
 interface ScatteredExpedientesProps {
   expedientes: Expediente[];
   strings?: { refinements?: string; openExpedient?: string };
+  /** Base path for links, e.g. '/expedientes' or '/en/expedientes' */
+  basePath?: string;
 }
 
 // Deterministic scatter values per index (rotation, offsetX, offsetY)
@@ -39,6 +41,7 @@ const STATUS_LABEL = {
 export default function ScatteredExpedientes({
   expedientes,
   strings,
+  basePath = '/expedientes',
 }: ScatteredExpedientesProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const folderRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -70,7 +73,7 @@ export default function ScatteredExpedientes({
           return (
             <a
               key={exp.id}
-              href={`/expedientes/${exp.id}`}
+              href={`${basePath}/${exp.id}`}
               className="scattered-item block w-full max-w-md"
               style={{
                 zIndex: isHovered ? 50 : scatter.z,

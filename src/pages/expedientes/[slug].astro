@@ -166,4 +166,20 @@ function categorize(tech: string): string {
       <Stamp label={T('common.verified')} variant="green" size="sm" />
     </div>
   </footer>
+
+  <!-- Next Steps CTAs -->
+  <section class="mt-10 mb-4">
+    <div class="h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30 mb-8" />
+    <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-4">{T('expedients.nextSteps')}</p>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <a href="/about" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30 group" data-seal-react>
+        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)] group-hover:text-[var(--color-accent-gold-bright)] transition-colors">{T('expedients.viewProfile')}</p>
+        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">{T('expedients.viewProfileDesc')}</p>
+      </a>
+      <a href="/contacto" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30 group" data-seal-react>
+        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)] group-hover:text-[var(--color-accent-gold-bright)] transition-colors">{T('expedients.contactCta')}</p>
+        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">{T('expedients.contactCtaDesc')}</p>
+      </a>
+    </div>
+  </section>
 </ExpedientLayout>

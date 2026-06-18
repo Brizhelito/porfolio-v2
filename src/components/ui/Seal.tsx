@@ -21,9 +21,11 @@ const PATH_STATE: Record<string, SealState> = {
   '/inspiraciones': 'resting',
 };
 
-const SIZE_PX: Record<string, number> = { sm: 36, md: 60, lg: 96 };
-const TILT_RADIUS = 150;
-const TILT_MAX_DEG = 8;
+const SIZE_PX: Record<string, number> = { sm: 36, md: 60, lg: 96, xl: 180 };
+const TILT_RADIUS = 200;
+const TILT_MAX_DEG = 10;
+const HERO_TILT_MAX_DEG = 20;
+const HERO_TRANSLATE_PX = 8;
 
 function stateForPath(path: string): SealState {
   // Strip /en prefix for English routes
@@ -33,11 +35,13 @@ function stateForPath(path: string): SealState {
 }
 
 interface SealProps {
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
+  /** 'floating' = fixed bottom-right corner; 'hero' = inline, larger, scroll-fades */
+  variant?: 'floating' | 'hero';
 }
 
-export default function Seal({ size = 'md', className = '' }: SealProps) {
+export default function Seal({ size = 'md', className = '', variant = 'floating' }: SealProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const breatheTween = useRef<gsap.core.Tween | null>(null);
@@ -49,9 +53,12 @@ export default function Seal({ size = 'md', className = '' }: SealProps) {
   const [state, setState] = useState<SealState>('curiosity');
   const [mounted, setMounted] = useState(false);
   const [hoverBoost, setHoverBoost] = useState(false);
+  const [visible, setVisible] = useState(variant === 'hero'); // hero starts visible, floating hidden on landing
 
+  const isHero = variant === 'hero';
   const meta = STATE_META[state];
   const px = SIZE_PX[size];
+  const tiltMax = isHero ? HERO_TILT_MAX_DEG : TILT_MAX_DEG;
 
   const goToState = useCallback((next: SealState) => {
     setState((prev) => {
@@ -67,6 +74,31 @@ export default function Seal({ size = 'md', className = '' }: SealProps) {
     setMounted(true);
     goToState(stateForPath(window.location.pathname));
   }, [goToState]);
+
+  // Floating seal: hide on landing until scroll past hero, show on other pages
+  useEffect(() => {
+    if (isHero || !mounted) return;
+    const header = document.getElementById('archive-header');
+    const isLanding = header?.dataset.landing === 'true';
+    if (!isLanding) {
+      setVisible(true);
+      return;
+    }
+    // On landing: show floating seal only after scrolling past 80px
+    const onScroll = () => setVisible(window.scrollY > 80);
+    onScroll(); // check initial scroll
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [isHero, mounted]);
+
+  // Hero seal: fade out when scrolling past hero section
+  useEffect(() => {
+    if (!isHero || !mounted) return;
+    const onScroll = () => setVisible(window.scrollY < window.innerHeight * 0.6);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [isHero, mounted]);
 
   // Stamp animation on state change (debounced)
   useEffect(() => {
@@ -152,7 +184,7 @@ export default function Seal({ size = 'md', className = '' }: SealProps) {
     }
   }, [hoverBoost]);
 
-  // Cursor proximity tilt (RAF-throttled)
+  // Cursor proximity tilt + translation (RAF-throttled) — "watching" effect
   useEffect(() => {
     if (prefersReducedMotion || !svgRef.current) return;
 
@@ -169,15 +201,24 @@ export default function Seal({ size = 'md', className = '' }: SealProps) {
         const dx = e.clientX - cx;
         const dy = e.clientY - cy;
         const dist = Math.sqrt(dx * dx + dy * dy);
+        const radius = isHero ? TILT_RADIUS * 2.5 : TILT_RADIUS;
 
-        if (dist < TILT_RADIUS) {
-          const factor = 1 - dist / TILT_RADIUS;
-          const tiltX = (dy / TILT_RADIUS) * TILT_MAX_DEG * factor;
-          const tiltY = -(dx / TILT_RADIUS) * TILT_MAX_DEG * factor;
+        if (dist < radius) {
+          const factor = 1 - dist / radius;
+          const smoothFactor = factor * factor; // quadratic easing for more natural feel
+          const tiltX = (dy / radius) * tiltMax * smoothFactor;
+          const tiltY = -(dx / radius) * tiltMax * smoothFactor;
+
+          // Translation toward cursor (hero only) — makes it feel like it's leaning in
+          const translateX = isHero ? (dx / radius) * HERO_TRANSLATE_PX * smoothFactor : 0;
+          const translateY = isHero ? (dy / radius) * HERO_TRANSLATE_PX * smoothFactor : 0;
+
           gsap.to(svgRef.current, {
             rotateX: tiltX,
             rotateY: tiltY,
-            duration: 0.3,
+            x: translateX,
+            y: translateY,
+            duration: 0.2,
             ease: 'power2.out',
             overwrite: 'auto',
           });
@@ -185,8 +226,10 @@ export default function Seal({ size = 'md', className = '' }: SealProps) {
           gsap.to(svgRef.current, {
             rotateX: 0,
             rotateY: 0,
-            duration: 0.5,
-            ease: 'power2.out',
+            x: 0,
+            y: 0,
+            duration: 0.6,
+            ease: 'elastic.out(1, 0.5)',
             overwrite: 'auto',
           });
         }
@@ -198,10 +241,11 @@ export default function Seal({ size = 'md', className = '' }: SealProps) {
       window.removeEventListener('mousemove', onMouseMove);
       cancelAnimationFrame(rafId.current);
     };
-  }, []);
+  }, [isHero, tiltMax, mounted]);
 
-  // Idle → resting after 15s inactivity
+  // Idle → resting after 15s inactivity (floating only)
   useEffect(() => {
+    if (isHero) return;
     const onActivity = () => { lastActive.current = Date.now(); };
     window.addEventListener('mousemove', onActivity);
     window.addEventListener('scroll', onActivity, { passive: true });
@@ -217,7 +261,7 @@ export default function Seal({ size = 'md', className = '' }: SealProps) {
       window.removeEventListener('scroll', onActivity);
       clearInterval(interval);
     };
-  }, [goToState]);
+  }, [goToState, isHero]);
 
   // Re-awaken on activity
   useEffect(() => {
@@ -239,11 +283,11 @@ export default function Seal({ size = 'md', className = '' }: SealProps) {
       scale: 1.04, duration: 2.5, repeat: -1, yoyo: true, ease: 'sine.inOut',
     });
     return () => { breatheTween.current?.kill(); };
-  }, []);
+  }, [mounted]);
 
-  // Idle wander — random shift every 30s
+  // Idle wander — random shift every 30s (floating only)
   useEffect(() => {
-    if (prefersReducedMotion || !containerRef.current) return;
+    if (isHero || prefersReducedMotion || !containerRef.current) return;
 
     const wander = () => {
       const angle = Math.random() * Math.PI * 2;
@@ -264,17 +308,30 @@ export default function Seal({ size = 'md', className = '' }: SealProps) {
 
     const interval = setInterval(wander, 30_000);
     return () => { clearInterval(interval); wanderTween.current?.kill(); };
-  }, []);
+  }, [isHero]);
 
-  // Click → scroll to top
+  // Click: floating → scroll to top; hero → bounce + cycle state
   const handleClick = useCallback(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (prefersReducedMotion || !svgRef.current) return;
-    gsap.fromTo(svgRef.current,
-      { scale: 0.8, rotate: 0 },
-      { scale: 1, rotate: 0, duration: 0.3, ease: 'back.out(2)' },
-    );
-  }, []);
+    if (isHero) {
+      // Cycle through states on click
+      const states: SealState[] = ['curiosity', 'concentration', 'satisfaction', 'alert'];
+      const idx = states.indexOf(state);
+      goToState(states[(idx + 1) % states.length]);
+      if (!prefersReducedMotion && svgRef.current) {
+        gsap.fromTo(svgRef.current,
+          { scale: 0.8, rotate: -8 },
+          { scale: 1, rotate: 0, duration: 0.4, ease: 'back.out(2.5)' },
+        );
+      }
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (prefersReducedMotion || !svgRef.current) return;
+      gsap.fromTo(svgRef.current,
+        { scale: 0.8, rotate: 0 },
+        { scale: 1, rotate: 0, duration: 0.3, ease: 'back.out(2)' },
+      );
+    }
+  }, [isHero, state, goToState]);
 
   const isMobile = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
 
@@ -283,6 +340,79 @@ export default function Seal({ size = 'md', className = '' }: SealProps) {
   // When hovering a react element, use gold color override
   const displayColor = hoverBoost ? '#C9A961' : meta.color;
 
+  if (isHero) {
+    return (
+      <div
+        ref={containerRef}
+        onClick={handleClick}
+        role="button"
+        tabIndex={0}
+        aria-label="Seal interactivo"
+        className={`cursor-pointer select-none transition-opacity duration-500 ${visible ? 'opacity-100' : 'opacity-0 pointer-events-none'} ${className}`}
+        style={{ perspective: '600px' } as CSSProperties}
+      >
+        <svg
+          ref={svgRef}
+          width={px}
+          height={px}
+          viewBox="0 0 100 100"
+          xmlns="http://www.w3.org/2000/svg"
+          className="drop-shadow-[0_4px_20px_rgba(201,169,97,0.25)]"
+          style={{ transformStyle: 'preserve-3d' }}
+        >
+          {/* Outer octagon */}
+          <polygon
+            points="30,5 70,5 95,30 95,70 70,95 30,95 5,70 5,30"
+            fill="none"
+            stroke={displayColor}
+            strokeWidth="2"
+            className="transition-[stroke] duration-500"
+          />
+          {/* Inner circle */}
+          <circle
+            cx="50" cy="50" r="32"
+            fill="none"
+            stroke={displayColor}
+            strokeWidth="1"
+            opacity="0.45"
+            className="transition-all duration-500"
+          />
+          {/* Decorative dots */}
+          <circle cx="50" cy="15" r="2" fill={displayColor} opacity="0.4" className="transition-all duration-500" />
+          <circle cx="50" cy="85" r="2" fill={displayColor} opacity="0.4" className="transition-all duration-500" />
+          <circle cx="15" cy="50" r="2" fill={displayColor} opacity="0.4" className="transition-all duration-500" />
+          <circle cx="85" cy="50" r="2" fill={displayColor} opacity="0.4" className="transition-all duration-500" />
+          {/* RM text */}
+          <text
+            x="50" y="55"
+            textAnchor="middle"
+            fontFamily="'IBM Plex Serif', serif"
+            fontSize="26"
+            fontWeight="700"
+            fill={displayColor}
+            className="transition-[fill] duration-500"
+          >
+            RM
+          </text>
+          {/* State label */}
+          <text
+            x="50" y="76"
+            textAnchor="middle"
+            fontFamily="'JetBrains Mono', monospace"
+            fontSize="5.5"
+            letterSpacing="1.5"
+            fill={displayColor}
+            opacity="0.65"
+            className="transition-all duration-500"
+          >
+            {meta.label.toUpperCase()}
+          </text>
+        </svg>
+      </div>
+    );
+  }
+
+  // Floating variant
   return (
     <div
       ref={containerRef}
@@ -290,7 +420,7 @@ export default function Seal({ size = 'md', className = '' }: SealProps) {
       role="button"
       tabIndex={0}
       aria-label="Volver arriba"
-      className={`fixed bottom-6 right-6 z-[var(--z-modal)] cursor-pointer select-none ${className}`}
+      className={`fixed bottom-6 right-6 z-[var(--z-modal)] cursor-pointer select-none transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0 pointer-events-none'} ${className}`}
       style={{ perspective: '400px' } as CSSProperties}
     >
       <svg
