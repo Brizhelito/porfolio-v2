@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState, useCallback, type CSSProperties } from 'react';
 import { gsap, prefersReducedMotion } from '@lib/animations';
+import { sealStateForPath, type SealState } from '@lib/page-config';
 
-export type SealState = 'curiosity' | 'concentration' | 'satisfaction' | 'alert' | 'resting';
-
+// P1-12: STATE_META stays here (it's Seal-specific display metadata).
+// The path→state mapping was extracted to @lib/page-config.ts so
+// CustomCursor and Seal share a single source of truth.
 const STATE_META: Record<SealState, { color: string; label: string }> = {
   curiosity: { color: '#C9A961', label: 'curioso' },
   concentration: { color: '#2D4A5C', label: 'concentrado' },
@@ -11,28 +13,11 @@ const STATE_META: Record<SealState, { color: string; label: string }> = {
   resting: { color: '#4A4640', label: 'reposo' },
 };
 
-const PATH_STATE: Record<string, SealState> = {
-  '/': 'curiosity',
-  '/about': 'concentration',
-  '/tools': 'concentration',
-  '/expedientes': 'satisfaction',
-  '/colaboraciones': 'satisfaction',
-  '/contacto': 'alert',
-  '/inspiraciones': 'resting',
-};
-
 const SIZE_PX: Record<string, number> = { sm: 36, md: 60, lg: 96, xl: 180 };
 const TILT_RADIUS = 200;
 const TILT_MAX_DEG = 10;
 const HERO_TILT_MAX_DEG = 20;
 const HERO_TRANSLATE_PX = 8;
-
-function stateForPath(path: string): SealState {
-  // Strip /en prefix for English routes
-  const normalized = path.startsWith('/en') ? path.replace('/en', '') || '/' : path;
-  const key = Object.keys(PATH_STATE).find((p) => normalized === p || normalized.startsWith(p + '/'));
-  return key ? PATH_STATE[key] : 'curiosity';
-}
 
 interface SealProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -69,10 +54,10 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
     });
   }, []);
 
-  // URL-based initial state
+  // URL-based initial state — P1-12: delegate to @lib/page-config
   useEffect(() => {
     setMounted(true);
-    goToState(stateForPath(window.location.pathname));
+    goToState(sealStateForPath(window.location.pathname));
   }, [goToState]);
 
   // Floating seal: hide on landing until scroll past hero, show on other pages
@@ -84,20 +69,28 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
       setVisible(true);
       return;
     }
+    const container = document.querySelector('.landing-scroll');
+    const target = container || window;
+    const getScrollY = () => (target === window ? window.scrollY : (container as HTMLElement).scrollTop);
     // On landing: show floating seal only after scrolling past 80px
-    const onScroll = () => setVisible(window.scrollY > 80);
+    const onScroll = () => setVisible(getScrollY() > 80);
     onScroll(); // check initial scroll
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    target.addEventListener('scroll', onScroll, { passive: true });
+    return () => target.removeEventListener('scroll', onScroll);
   }, [isHero, mounted]);
 
   // Hero seal: fade out when scrolling past hero section
   useEffect(() => {
     if (!isHero || !mounted) return;
-    const onScroll = () => setVisible(window.scrollY < window.innerHeight * 0.6);
+    const header = document.getElementById('archive-header');
+    const isLanding = header?.dataset.landing === 'true';
+    const container = isLanding ? document.querySelector('.landing-scroll') : null;
+    const target = container || window;
+    const getScrollY = () => (target === window ? window.scrollY : (container as HTMLElement).scrollTop);
+    const onScroll = () => setVisible(getScrollY() < window.innerHeight * 0.6);
     onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    target.addEventListener('scroll', onScroll, { passive: true });
+    return () => target.removeEventListener('scroll', onScroll);
   }, [isHero, mounted]);
 
   // Stamp animation on state change (debounced)
@@ -123,7 +116,9 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
         const visible = entries.filter((e) => e.isIntersecting);
         if (visible.length) {
           const id = visible[0].target.getAttribute('data-section') || '';
-          goToState(PATH_STATE[id] || 'curiosity');
+          // P1-12: look up state via page-config instead of local PATH_STATE
+          const meta = sealStateForPath(`/${id}`);
+          goToState(meta);
         }
       },
       { threshold: 0.3 },
@@ -132,47 +127,36 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
     return () => observer.disconnect();
   }, [goToState]);
 
-  // Element hover reactions — [data-seal-react] elements
+  // P1-03: replaced per-element MutationObserver + mouseenter/mouseleave
+  // attachment with EVENT DELEGATION. Two listeners on document instead of
+  // N listeners on N [data-seal-react] elements. No MutationObserver needed
+  // — dynamically added elements are caught automatically by the closest()
+  // check inside the delegated handler.
   useEffect(() => {
-    const onHoverIn = () => setHoverBoost(true);
-    const onHoverOut = () => setHoverBoost(false);
+    if (!mounted) return;
 
-    const attach = (el: Element) => {
-      el.addEventListener('mouseenter', onHoverIn);
-      el.addEventListener('mouseleave', onHoverOut);
+    const onOver = (e: MouseEvent) => {
+      const t = e.target as HTMLElement;
+      if (t.closest?.('[data-seal-react]')) setHoverBoost(true);
     };
-    const detach = (el: Element) => {
-      el.removeEventListener('mouseenter', onHoverIn);
-      el.removeEventListener('mouseleave', onHoverOut);
-    };
-
-    const elements = document.querySelectorAll('[data-seal-react]');
-    elements.forEach(attach);
-
-    // Observe DOM for dynamically added elements
-    const mutObs = new MutationObserver((mutations) => {
-      for (const m of mutations) {
-        m.addedNodes.forEach((n) => {
-          if (n instanceof HTMLElement) {
-            if (n.hasAttribute?.('data-seal-react')) attach(n);
-            n.querySelectorAll?.('[data-seal-react]').forEach(attach);
-          }
-        });
-        m.removedNodes.forEach((n) => {
-          if (n instanceof HTMLElement) {
-            if (n.hasAttribute?.('data-seal-react')) detach(n);
-            n.querySelectorAll?.('[data-seal-react]').forEach(detach);
-          }
-        });
+    const onOut = (e: MouseEvent) => {
+      const t = e.target as HTMLElement;
+      const related = e.relatedTarget as HTMLElement | null;
+      // Only clear hoverBoost if we're actually leaving a seal-react element
+      // (not just moving between its children).
+      if (t.closest?.('[data-seal-react]') &&
+          !(related?.closest?.('[data-seal-react]'))) {
+        setHoverBoost(false);
       }
-    });
-    mutObs.observe(document.body, { childList: true, subtree: true });
-
-    return () => {
-      elements.forEach(detach);
-      mutObs.disconnect();
     };
-  }, []);
+
+    document.addEventListener('mouseover', onOver);
+    document.addEventListener('mouseout', onOut);
+    return () => {
+      document.removeEventListener('mouseover', onOver);
+      document.removeEventListener('mouseout', onOut);
+    };
+  }, [mounted]);
 
   // Hover boost: subtle bounce + gold flash when hovering data-seal-react elements
   useEffect(() => {
@@ -187,6 +171,12 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
   // Cursor proximity tilt + translation (RAF-throttled) — "watching" effect
   useEffect(() => {
     if (prefersReducedMotion || !svgRef.current) return;
+
+    // P0-04: skip cursor tilt on touch devices (no mousemove anyway, but
+    // this also prevents the elastic-return tween from fighting with touch
+    // scroll on hybrid devices).
+    if (typeof window !== 'undefined' &&
+        window.matchMedia('(pointer: coarse)').matches) return;
 
     let ticking = false;
     const onMouseMove = (e: MouseEvent) => {
@@ -268,7 +258,7 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
     if (state !== 'resting') return;
     const onMove = () => {
       if (Date.now() - lastActive.current < 1000) {
-        goToState(stateForPath(window.location.pathname));
+        goToState(sealStateForPath(window.location.pathname));
       }
     };
     window.addEventListener('mousemove', onMove);
@@ -324,7 +314,12 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
         );
       }
     } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const container = document.querySelector('.landing-scroll');
+      if (container) {
+        container.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
       if (prefersReducedMotion || !svgRef.current) return;
       gsap.fromTo(svgRef.current,
         { scale: 0.8, rotate: 0 },
@@ -333,9 +328,14 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
     }
   }, [isHero, state, goToState]);
 
-  const isMobile = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+  // P0-04: distinguish floating (hide on mobile — FAB over content) from
+  // hero (always visible — it's part of the visual composition). Hero seal
+  // has no tilt/click-cycle on touch but still renders decoratively.
+  const isMobile = typeof window !== 'undefined' &&
+    window.matchMedia('(pointer: coarse)').matches;
 
-  if (!mounted || isMobile) return null;
+  if (!mounted) return null;
+  if (isMobile && !isHero) return null;
 
   // When hovering a react element, use gold color override
   const displayColor = hoverBoost ? '#C9A961' : meta.color;

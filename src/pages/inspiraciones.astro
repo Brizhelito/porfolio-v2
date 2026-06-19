@@ -139,15 +139,21 @@ const categories = [
           </h2>
           <div class="space-y-8">
             {cat.entries.map((entry) => (
-              <div class="group text-center">
-                <p class="font-display text-display-sm text-[var(--color-text-primary)] group-hover:text-[var(--color-accent-gold)] transition-colors">
+              // P2-12: removed group-hover:text-[var(--color-accent-gold)]
+              // because these entries are NOT interactive (not links, not
+              // clickable). Hover affordance without underlying behavior
+              // violates Nielsen heuristic #2 (match between system and
+              // real world). Visual style now stays consistent regardless
+              // of pointer position.
+              <div class="text-center">
+                <p class="font-display text-display-sm text-[var(--color-text-primary)]">
                   {entry.name}
                 </p>
                 <p class="mt-1 font-stamp text-stamp-label text-[var(--color-text-secondary)]">
                   {entry.role}
                 </p>
                 <p class="mt-2 text-body-sm text-[var(--color-text-secondary)] max-w-md mx-auto italic">
-                  "{entry.note}"
+                  &ldquo;{entry.note}&rdquo;
                 </p>
               </div>
             ))}

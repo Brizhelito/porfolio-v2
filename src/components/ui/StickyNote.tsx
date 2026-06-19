@@ -31,7 +31,11 @@ export default function StickyNote({
         fontFamily: 'var(--font-family-handwritten)',
         fontSize: '18px',
         lineHeight: 1.4,
-        maxWidth: '280px',
+        // P1-11: responsive maxWidth. On mobile (320-375px viewport) the
+        // previous fixed `maxWidth: '280px'` left almost no margin; using
+        // min() the note shrinks to fit narrow viewports while staying
+        // capped at 280px on wide ones.
+        maxWidth: 'min(280px, calc(100vw - 32px))',
       }}
     >
       {/* Tape effect */}

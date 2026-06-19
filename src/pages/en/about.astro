@@ -5,6 +5,11 @@ import StickyNote from '@components/ui/StickyNote';
 import { t } from '@lib/i18n';
 
 const T = (key: string) => t('en', key);
+
+// P3-02: pull philosophy items from the EN i18n dictionary instead of
+// hardcoding them in the template. Same pattern as /about.astro.
+import en from '../../i18n/en.json';
+const philosophyItems: string[] = (en.about as any).philosophy ?? [];
 ---
 
 <BaseLayout title={T('about.pageTitle')} locale="en">
@@ -56,10 +61,9 @@ const T = (key: string) => t('en', key);
       <h2 class="font-display text-display-md text-[var(--color-text-primary)] mb-4">{T('about.philosophyTitle')}</h2>
       <div class="prose-expedient">
         <ul>
-          <li><strong>Iteration over perfection:</strong> Each documented refinement adds measurable value.</li>
-          <li><strong>Plugin-first architecture:</strong> Extensibility as a design principle, not an afterthought.</li>
-          <li><strong>Silent documentation:</strong> Code speaks for itself, lab notes capture the why.</li>
-          <li><strong>Performance as feature:</strong> Every architectural decision considers end-user impact.</li>
+          {philosophyItems.map((item) => (
+            <li>{item}</li>
+          ))}
         </ul>
       </div>
     </div>

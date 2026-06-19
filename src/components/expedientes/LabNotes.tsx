@@ -9,10 +9,22 @@ export interface LabNoteProps {
 function LabNote({ date, topic, children }: LabNoteProps) {
   const [expanded, setExpanded] = useState(false);
 
+  // P2-09: full keyboard accessibility. Previously this was a div with
+  // onClick only — no role, no tabIndex, no key handler, no aria-expanded.
+  // Keyboard users couldn't expand lab notes at all.
   return (
     <div
       className="lab-note texture-aged-paper rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 cursor-pointer transition-shadow hover:shadow-paper"
       onClick={() => setExpanded(!expanded)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          setExpanded(!expanded);
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      aria-expanded={expanded}
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-3">

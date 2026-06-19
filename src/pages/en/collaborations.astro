@@ -29,6 +29,9 @@ const collaborations = [
       { label: 'PERIOD', value: '2024' },
       { label: 'MODALITY', value: 'Remote / On-site (Maracaibo)' },
     ],
+    // P3-03: anecdote moved into data array (no more template hardcoded text)
+    anecdote:
+      'The Corpozulia team was exceptionally receptive. The migration was completed in phases with zero downtime.',
   },
 ];
 ---
@@ -81,9 +84,7 @@ const collaborations = [
           <div class="mt-4 ml-8">
             <StickyNote client:visible color="yellow" rotation={-1.5}>
               <p class="text-[var(--color-text-primary)]">
-                {collab.id === 'corpozulia-2024'
-                  ? 'The Corpozulia team was exceptionally receptive. Migration completed in phases with zero downtime.'
-                  : 'Documented collaboration.'}
+                {collab.anecdote ?? 'Documented collaboration.'}
               </p>
             </StickyNote>
           </div>

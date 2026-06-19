@@ -1,4 +1,4 @@
-import { useState, useRef, type ReactNode } from 'react';
+import { useState, useRef, useEffect, type ReactNode } from 'react';
 import { animations, prefersReducedMotion } from '@lib/animations';
 import Stamp from './Stamp';
 
@@ -47,8 +47,22 @@ export default function FileFolder({
   const [isOpen, setIsOpen] = useState(false);
   const folderRef = useRef<HTMLDivElement>(null);
   const isHero = variant === 'hero';
+  // P1-05 / P2-07: track touch + hover to drive the "Abrir" hint visibility
+  // and to decide whether tapping the hero should toggle (desktop) or
+  // navigate (touch — handled by the parent <a>).
+  const [isTouch, setIsTouch] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  useEffect(() => {
+    setIsTouch(
+      window.matchMedia('(hover: none)').matches ||
+      window.matchMedia('(pointer: coarse)').matches
+    );
+  }, []);
 
   const handleToggle = () => {
+    // P1-05: on touch, the hero variant's tap should NOT toggle the flap
+    // (the parent <a> navigates). Let the click bubble to <a> on touch.
+    if (isHero && isTouch) return;
     if (!folderRef.current) return;
 
     if (isOpen) {
@@ -71,6 +85,8 @@ export default function FileFolder({
       className={`file-folder relative cursor-pointer ${className}`}
       style={{ perspective: '800px' }}
       onClick={handleToggle}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => e.key === 'Enter' && handleToggle()}
@@ -162,8 +178,10 @@ export default function FileFolder({
           )}
         </div>
 
-        {/* Hero-only: open hint */}
-        {isHero && !isOpen && (
+        {/* Hero-only: open hint — P2-07: only show when hovered on
+            desktop. On touch, the parent <a> navigates so the hint would
+            be misleading; hide it entirely. */}
+        {isHero && !isOpen && !isTouch && isHovered && (
           <div className="absolute bottom-2 right-3 flex items-center gap-1 text-[10px] font-mono text-[var(--color-accent-gold)]/50 uppercase tracking-widest">
             <span>Abrir</span>
             <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

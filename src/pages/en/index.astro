@@ -1,12 +1,16 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
-import ScatteredExpedientes from '@components/expedientes/ScatteredExpedientes';
 import Seal from '@components/ui/Seal';
 import FileFolder from '@components/ui/FileFolder';
 import CursorToggle from '@components/ui/CursorToggle';
 import LanguageSwitch from '@components/ui/LanguageSwitch';
+import Stamp from '@components/ui/Stamp';
+import EvidenceBoard from '@components/expedientes/EvidenceBoard';
+import StackCatalog from '@components/expedientes/StackCatalog';
+import CrossReferences from '@components/ui/CrossReferences';
 import { getCollection } from 'astro:content';
 import { t, getLocalizedHref } from '@lib/i18n';
+import { SOCIAL_LINKS } from '@lib/constants';
 
 const locale = 'en' as const;
 const T = (key: string) => t(locale, key);
@@ -26,141 +30,318 @@ const otherExpedientes = expedientes
     expedientNumber: e.data.expedientNumber,
     status: e.data.status,
     refinementCount: e.data.refinementCount,
+    description: e.data.description,
+    stack: e.data.stack,
   }));
 
-const scatteredStrings = {
-  refinements: T('common.refinements'),
-  openExpedient: T('common.clickToOpen'),
-};
+// Build tool → expedient titles map for stack cross-references
+const toolUsage: Record<string, string[]> = {};
+for (const e of expedientes) {
+  for (const tool of (e.data.stack ?? [])) {
+    if (!toolUsage[tool]) toolUsage[tool] = [];
+    toolUsage[tool].push(e.data.title);
+  }
+}
 
 const expedientesHref = getLocalizedHref('/expedientes', locale);
 const aboutHref = getLocalizedHref('/about', locale);
 const toolsHref = getLocalizedHref('/tools', locale);
 const contactHref = getLocalizedHref('/contacto', locale);
+const collaborationsHref = getLocalizedHref('/collaborations', locale);
+const inspirationsHref = getLocalizedHref('/inspirations', locale);
+
+// Cross-reference items for section 5
+const crossRefItems = [
+  { href: collaborationsHref, label: T('hero.crossRefCollaborations'), description: T('hero.crossRefCollaborationsDesc'), variant: 'green' as const },
+  { href: inspirationsHref, label: T('hero.crossRefInspirations'), description: T('hero.crossRefInspirationsDesc'), variant: 'blue' as const },
+];
+
+// Stack categories for landing preview (4 main, 3-4 chips each)
+const stackCategories = [
+  { name: 'Frontend', tools: ['React', 'Astro', 'Tailwind CSS', 'TypeScript'] },
+  { name: 'Backend', tools: ['Go', 'Node.js', 'Fiber', 'Express'] },
+  { name: 'Edge & Cloud', tools: ['Cloudflare Workers', 'Durable Objects', 'Vercel'] },
+  { name: 'DevOps', tools: ['Docker', 'GitHub Actions', 'Sentry'] },
+];
 ---
 
-<BaseLayout locale="en">
-  <!-- Hero: Full viewport, split layout -->
-  <section
-    class="page-enter relative flex min-h-[100dvh] flex-col mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
-    data-lamp-section="hero"
-  >
-    <!-- Floating controls (always visible without scroll) -->
-    <div class="flex items-center justify-end gap-2 pt-4">
-      <CursorToggle client:load />
-      <LanguageSwitch client:load currentPath={currentPath} locale={locale} />
-    </div>
+<BaseLayout locale="en" landing={true}>
+  <div class="landing-snap">
 
-    <!-- Main hero content: centered vertically, split left/right on desktop -->
-    <div class="flex flex-1 flex-col items-center justify-center gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
-
-      <!-- Left: Seal + Name + CTAs -->
-      <div class="flex flex-col items-center text-center lg:items-start lg:text-left lg:flex-1 lg:max-w-lg">
-        <Seal client:load size="xl" variant="hero" className="mb-6" />
-
-        <h1 class="text-display-xl text-[var(--color-text-primary)]">
-          Reny Mireles
-        </h1>
-
-        <p class="mt-3 text-body-lg text-[var(--color-text-secondary)] max-w-md">
-          {T('hero.subtitle')}<br />
-          {T('hero.subtitleDetail')}
-        </p>
-
-        <div class="mt-5 flex flex-wrap items-center gap-4 text-caption">
-          <span class="font-mono text-[var(--color-accent-gold)]">
-            {expedientes.length} {T('hero.expedientsOpen')}
-          </span>
-          <span class="text-[var(--color-archive-kraft)]">·</span>
-          <span class="font-mono text-[var(--color-text-secondary)]">
-            {totalRefinements} {T('hero.totalRefinements')}
-          </span>
-        </div>
-
-        <div class="mt-2">
-          <span class="font-stamp text-stamp-label text-stamp-green">{T('hero.status')}</span>
-        </div>
-
-        <div class="mt-8 flex flex-wrap items-center gap-4">
-          <a href={expedientesHref} class="inline-flex items-center gap-2 rounded-[3px] border border-[var(--color-accent-gold)] bg-[var(--color-accent-gold)]/10 px-5 py-2.5 font-stamp text-stamp-label text-[var(--color-accent-gold)] transition-all hover:bg-[var(--color-accent-gold)]/20 hover:border-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] hover:shadow-paper" data-seal-react>
-            {T('hero.ctaProjects')}
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
-          </a>
-          <a href={contactHref} class="inline-flex items-center gap-2 rounded-[3px] border border-[var(--color-archive-kraft)]/40 px-5 py-2.5 font-stamp text-stamp-label text-[var(--color-text-secondary)] transition-all hover:border-[var(--color-accent-gold)]/40 hover:text-[var(--color-text-primary)] hover:shadow-paper" data-seal-react>
-            {T('hero.ctaContact')}
-          </a>
-        </div>
+    <!-- 1. Hero: Full viewport, split layout -->
+    <section
+      class="page-enter relative flex min-h-[100dvh] flex-col mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+      data-lamp-section="hero"
+    >
+      <!-- Floating controls (always visible without scroll) -->
+      <div class="flex items-center justify-end gap-2 pt-4">
+        <CursorToggle client:load />
+        <LanguageSwitch client:load currentPath={currentPath} locale={locale} />
       </div>
 
-      <!-- Right: Kumoriya "thrown on desk" -->
-      {kumoriya && (
-        <div class="relative w-full max-w-md lg:flex-1 lg:max-w-lg">
-          <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)] mb-2 text-center lg:text-left">
-            {T('hero.featuredProject')}
+      <!-- Main hero content: centered vertically, split left/right on desktop -->
+      <div class="flex flex-1 flex-col items-center justify-center gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
+
+        <!-- Left: Seal + Name + CTAs -->
+        <div class="flex flex-col items-center text-center lg:items-start lg:text-left lg:flex-1 lg:max-w-lg">
+          <Seal client:load size="xl" variant="hero" className="mb-6" />
+
+          <h1 class="text-display-xl text-[var(--color-text-primary)]">
+            Reny Mireles
+          </h1>
+
+          <p class="mt-3 text-body-lg text-[var(--color-text-secondary)] max-w-md">
+            {T('hero.subtitle')}<br />
+            {T('hero.subtitleDetail')}
           </p>
-          <a
-            href={`/en/expedientes/${kumoriya.id}`}
-            class="block"
-            style="transform: rotate(-3deg); transition: transform 0.3s ease;"
-            onmouseenter="this.style.transform='rotate(0deg) scale(1.02)'"
-            onmouseleave="this.style.transform='rotate(-3deg)'"
-            data-seal-react
-          >
-            <FileFolder
-              client:load
-              title={kumoriya.data.title}
-              expedientNumber={kumoriya.data.expedientNumber}
-              status={kumoriya.data.status}
-              refinementCount={kumoriya.data.refinementCount}
-              variant="hero"
-              classification={kumoriya.data.classification}
-              stack={kumoriya.data.stack}
-              metrics={kumoriya.data.metrics}
-              strings={{ refinements: T('common.refinements'), clickToOpen: T('common.clickToOpen') }}
-            />
-          </a>
+
+          <div class="mt-5 flex flex-wrap items-center gap-4 text-caption">
+            <span class="font-mono text-[var(--color-accent-gold)]">
+              {expedientes.filter((e) => e.data.status !== 'archived').length} {T('hero.expedientsOpen')}
+            </span>
+            <span class="text-[var(--color-archive-kraft)]">·</span>
+            <span class="font-mono text-[var(--color-text-secondary)]">
+              {totalRefinements} {T('hero.totalRefinements')}
+            </span>
+          </div>
+
+          <div class="mt-2">
+            <span class="font-stamp text-stamp-label text-stamp-green">{T('hero.status')}</span>
+          </div>
+
+          <div class="mt-8 flex flex-wrap items-center gap-4">
+            <a href={expedientesHref} class="inline-flex items-center gap-2 rounded-[3px] border border-[var(--color-accent-gold)] bg-[var(--color-accent-gold)]/10 px-5 py-2.5 font-stamp text-stamp-label text-[var(--color-accent-gold)] transition-all hover:bg-[var(--color-accent-gold)]/20 hover:border-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] hover:shadow-paper" data-seal-react>
+              {T('hero.ctaProjects')}
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+            </a>
+            <a href={contactHref} class="inline-flex items-center gap-2 rounded-[3px] border border-[var(--color-archive-kraft)]/40 px-5 py-2.5 font-stamp text-stamp-label text-[var(--color-text-secondary)] transition-all hover:border-[var(--color-accent-gold)]/40 hover:text-[var(--color-text-primary)] hover:shadow-paper" data-seal-react>
+              {T('hero.ctaContact')}
+            </a>
+          </div>
         </div>
-      )}
-    </div>
-  </section>
 
-  <!-- Other Expedientes (below hero) -->
-  {otherExpedientes.length > 0 && (
-    <section class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between mb-4">
-        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">
-          {T('hero.recentExpedients')}
-        </p>
-        <a href={expedientesHref} class="text-body-sm font-mono text-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] transition-colors" data-seal-react>
-          {T('hero.seeAll')}
-        </a>
+        <!-- Right: Kumoriya "thrown on desk" -->
+        {kumoriya && (
+          <div class="relative w-full max-w-md lg:flex-1 lg:max-w-lg">
+            <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)] mb-2 text-center lg:text-left">
+              {T('hero.featuredProject')}
+            </p>
+            <a
+              href={`/en/expedientes/${kumoriya.id}`}
+              class="hero-folder block"
+              data-seal-react
+            >
+              <FileFolder
+                client:load
+                title={kumoriya.data.title}
+                expedientNumber={kumoriya.data.expedientNumber}
+                status={kumoriya.data.status}
+                refinementCount={kumoriya.data.refinementCount}
+                variant="hero"
+                classification={kumoriya.data.classification}
+                stack={kumoriya.data.stack}
+                metrics={kumoriya.data.metrics}
+                strings={{ refinements: T('common.refinements'), clickToOpen: T('common.clickToOpen') }}
+              />
+            </a>
+          </div>
+        )}
       </div>
-      <ScatteredExpedientes
-        client:visible
-        expedientes={otherExpedientes}
-        strings={scatteredStrings}
-        basePath="/en/expedientes"
-      />
     </section>
-  )}
 
-  <!-- Quick links section -->
-  <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+    <!-- Gold divider -->
     <div class="h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
 
-    <div class="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
-      <a href={aboutHref} class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-5 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30 group" data-seal-react>
-        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)] group-hover:text-[var(--color-accent-gold-bright)] transition-colors">{T('hero.quickLinkIdentification')}</p>
-        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">{T('hero.quickLinkIdentificationDesc')}</p>
-      </a>
-      <a href={toolsHref} class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-5 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30 group" data-seal-react>
-        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)] group-hover:text-[var(--color-accent-gold-bright)] transition-colors">{T('hero.quickLinkCatalog')}</p>
-        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">{T('hero.quickLinkCatalogDesc')}</p>
-      </a>
-      <a href={contactHref} class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-5 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30 group" data-seal-react>
-        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)] group-hover:text-[var(--color-accent-gold-bright)] transition-colors">{T('hero.quickLinkContact')}</p>
-        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">{T('hero.quickLinkContactDesc')}</p>
-      </a>
-    </div>
-  </section>
+    <!-- 2. Ficha Rápida -->
+    <section class="relative flex min-h-[100dvh] flex-col pt-16 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" data-lamp-section="ficha">
+      <div class="flex flex-1 flex-col items-center justify-center">
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2">{T('hero.fichaTitle')}</p>
+
+        <div class="relative w-full max-w-2xl rounded-paper texture-aged-paper texture-worn-edges border border-[var(--color-archive-kraft)]/30 p-6 sm:p-8 shadow-paper">
+          <div class="flex items-start justify-between mb-4">
+            <div>
+              <h2 class="font-display text-display-md text-[var(--color-text-primary)]">{T('about.titleValue')}</h2>
+              <p class="mt-1 text-body-md text-[var(--color-text-secondary)]">{T('about.classification')}</p>
+            </div>
+            <Stamp label={T('common.active')} variant="green" size="sm" animate={false} />
+          </div>
+
+          <div class="mb-4 border-t border-dashed border-[var(--color-archive-kraft)]/40" />
+
+          <dl class="space-y-3 mb-6">
+            <div class="flex flex-col gap-1 sm:flex-row sm:gap-3">
+              <dt class="font-stamp text-stamp-label text-[var(--color-text-secondary)] min-w-[120px]">{T('about.specialty')}</dt>
+              <dd class="text-body-md text-[var(--color-text-primary)]">{T('about.specialtyValue')}</dd>
+            </div>
+            <div class="flex flex-col gap-1 sm:flex-row sm:gap-3">
+              <dt class="font-stamp text-stamp-label text-[var(--color-text-secondary)] min-w-[120px]">{T('about.methodology')}</dt>
+              <dd class="text-body-md text-[var(--color-text-primary)]">{T('about.methodologyValue')}</dd>
+            </div>
+          </dl>
+
+          <div class="mb-6">
+            <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)] mb-3">{T('hero.fichaCapabilities')}</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="inline-block rounded-paper border border-[var(--color-archive-kraft)]/30 bg-[var(--color-bg-secondary)]/50 px-3 py-1 font-mono text-body-sm text-[var(--color-text-primary)]">
+                {T('about.capabilities.frontend')}: {T('about.capabilities.frontendValue')}
+              </span>
+              <span class="inline-block rounded-paper border border-[var(--color-archive-kraft)]/30 bg-[var(--color-bg-secondary)]/50 px-3 py-1 font-mono text-body-sm text-[var(--color-text-primary)]">
+                {T('about.capabilities.backend')}: {T('about.capabilities.backendValue')}
+              </span>
+              <span class="inline-block rounded-paper border border-[var(--color-archive-kraft)]/30 bg-[var(--color-bg-secondary)]/50 px-3 py-1 font-mono text-body-sm text-[var(--color-text-primary)]">
+                {T('about.capabilities.edge')}: {T('about.capabilities.edgeValue')}
+              </span>
+            </div>
+          </div>
+
+          <a href={aboutHref} class="inline-flex items-center gap-2 font-stamp text-stamp-label text-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] transition-colors" data-seal-react>
+            {T('hero.fichaCta')}
+          </a>
+
+          <!-- Corner decorations -->
+          <div class="absolute right-2 top-2 h-4 w-4 border-r border-t border-[var(--color-archive-kraft)]/30" />
+          <div class="absolute bottom-2 left-2 h-4 w-4 border-b border-l border-[var(--color-archive-kraft)]/30" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Gold divider -->
+    <div class="h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
+
+    <!-- 3. Evidence Board (Expedientes) -->
+    {otherExpedientes.length > 0 && (
+      <section class="relative flex min-h-[100dvh] flex-col mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" data-lamp-section="expedientes">
+        <div class="flex flex-1 flex-col justify-center py-12">
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-1">
+                {T('hero.evidenceBoardTitle')}
+              </p>
+              <p class="text-body-sm text-[var(--color-text-secondary)]">
+                {T('hero.evidenceBoardSubtitle')}
+              </p>
+            </div>
+            <a href={expedientesHref} class="inline-flex items-center gap-2 rounded-[3px] border border-[var(--color-accent-gold)]/50 px-4 py-2 font-stamp text-stamp-label text-[var(--color-accent-gold)] transition-all hover:bg-[var(--color-accent-gold)]/10 hover:border-[var(--color-accent-gold)]" data-seal-react>
+              {T('hero.seeAll')}
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+            </a>
+          </div>
+          <EvidenceBoard
+            client:visible
+            items={otherExpedientes}
+            basePath="/en/expedientes"
+            strings={{ refinements: T('common.refinements'), clickToOpen: T('common.clickToOpen') }}
+          />
+        </div>
+      </section>
+    )}
+
+    <!-- Gold divider -->
+    <div class="h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
+
+    <!-- 4. Stack Técnico (Card Catalog) -->
+    <section class="relative flex min-h-[100dvh] flex-col mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" data-lamp-section="stack">
+      <div class="flex flex-1 flex-col items-center justify-center py-12">
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2">{T('hero.stackTitle')}</p>
+        <p class="text-body-lg text-[var(--color-text-secondary)] mb-10 text-center">{T('hero.stackSubtitle')}</p>
+
+        <StackCatalog
+          client:visible
+          categories={stackCategories}
+          toolUsage={toolUsage}
+        />
+
+        <a href={toolsHref} class="mt-8 inline-flex items-center gap-2 font-stamp text-stamp-label text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors" data-seal-react>
+          {T('hero.stackCta')}
+        </a>
+      </div>
+    </section>
+
+    <!-- Gold divider -->
+    <div class="h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
+
+    <!-- 5. Cross References -->
+    <section class="relative flex min-h-[100dvh] flex-col mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" data-lamp-section="quicklinks">
+      <div class="flex flex-1 flex-col items-center justify-center py-12">
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2">{T('hero.crossRefTitle')}</p>
+        <div class="mt-8 w-full">
+          <CrossReferences
+            client:visible
+            items={crossRefItems}
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Gold divider -->
+    <div class="h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
+
+    <!-- 6. Cierre de Contacto -->
+    <section class="relative flex min-h-[100dvh] flex-col pt-16 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" data-lamp-section="contact">
+      <div class="flex flex-1 flex-col items-center justify-center text-center">
+        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-4">{T('hero.contactClosingLabel')}</p>
+        <h2 class="font-display text-display-lg text-[var(--color-text-primary)] mb-3">
+          {T('hero.contactClosingTitle')}
+        </h2>
+        <p class="text-body-lg text-[var(--color-text-secondary)] max-w-xl mb-8">
+          {T('hero.contactClosingSubtitle')}
+        </p>
+
+        <!-- Response times -->
+        <div class="mb-8 rounded-paper border border-dashed border-[var(--color-archive-kraft)]/40 p-6 w-full max-w-lg">
+          <p class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-4">
+            {T('hero.contactClosingResponse')}
+          </p>
+          <div class="grid gap-3 sm:grid-cols-3 text-body-sm">
+            <div class="flex items-center gap-2">
+              <span class="inline-block h-2 w-2 rounded-full bg-[var(--color-stamp-green)]" />
+              <span class="text-[var(--color-text-secondary)]">{T('contact.responseEmail')}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="inline-block h-2 w-2 rounded-full bg-[var(--color-stamp-blue)]" />
+              <span class="text-[var(--color-text-secondary)]">{T('contact.responseLinkedin')}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="inline-block h-2 w-2 rounded-full bg-[var(--color-stamp-red)]" />
+              <span class="text-[var(--color-text-secondary)]">{T('contact.responseWhatsapp')}</span>
+            </div>
+          </div>
+        </div>
+
+        <a
+          href={contactHref}
+          class="inline-flex items-center gap-2 rounded-[3px] border-2 border-[var(--color-kintsugi-gold-aged)] bg-[var(--color-kintsugi-gold-aged)] px-8 py-3.5 font-stamp text-stamp-title text-[var(--color-bg-primary)] transition-all hover:bg-[var(--color-accent-gold)] hover:border-[var(--color-accent-gold)] hover:shadow-[0_0_24px_rgba(201,169,97,0.4)] hover:scale-[1.02] active:scale-[0.98]"
+          data-seal-react
+        >
+          {T('hero.contactClosingCta')}
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+        </a>
+
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-4 text-body-sm">
+          <a href={SOCIAL_LINKS.email} class="font-mono text-[var(--color-text-secondary)] hover:text-[var(--color-accent-gold)] transition-colors" data-seal-react>renymireles@outlook.com</a>
+          <span class="text-[var(--color-archive-kraft)]">·</span>
+          <a href={SOCIAL_LINKS.linkedin} class="font-mono text-[var(--color-text-secondary)] hover:text-[var(--color-accent-gold)] transition-colors" target="_blank" rel="noopener noreferrer" data-seal-react>LinkedIn</a>
+          <span class="text-[var(--color-archive-kraft)]">·</span>
+          <a href={SOCIAL_LINKS.whatsapp} class="font-mono text-[var(--color-text-secondary)] hover:text-[var(--color-accent-gold)] transition-colors" target="_blank" rel="noopener noreferrer" data-seal-react>WhatsApp</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
 </BaseLayout>
+
+<style>
+  .hero-folder {
+    transform: rotate(-3deg);
+    transition: transform var(--transition-base);
+    display: block;
+  }
+  @media (hover: hover) {
+    .hero-folder:hover {
+      transform: rotate(0deg) scale(1.02);
+    }
+  }
+  @media (hover: none) {
+    .hero-folder { transform: none; }
+  }
+</style>

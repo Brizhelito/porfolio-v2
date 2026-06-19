@@ -1,5 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { FRAG } from '../../../kintsugi-frag.js';
+// P3-09: moved shader source out of repo root into src/shaders/ — Astro
+// convention is to keep all source under src/. Renamed to .ts so tsc
+// parses the template-literal GLSL correctly (was .js which confused
+// the TS parser into trying to typecheck raw GLSL as JavaScript).
+import { FRAG } from '../../shaders/kintsugi-frag';
 
 const VERT = `
 attribute vec2 position;

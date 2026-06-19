@@ -45,36 +45,60 @@ function categorize(tech: string): string {
 <ExpedientLayout title={entry.data.title} description={entry.data.description} locale="en">
   <ExpedientCover client:visible title={entry.data.title} expedientNumber={entry.data.expedientNumber} classification={entry.data.classification} status={entry.data.status} refinementCount={entry.data.refinementCount} strings={{ refinements: T('common.refinements') }} />
 
-  <div class="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
-    {entry.data.metrics?.layers != null && (
-      <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
-        <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.layers}</p>
-        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">LAYERS</p>
-      </div>
-    )}
-    {entry.data.metrics?.packages != null && (
-      <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
-        <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.packages}</p>
-        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">PACKAGES</p>
-      </div>
-    )}
-    {entry.data.metrics?.plugins != null && (
-      <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
-        <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.plugins}</p>
-        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">PLUGINS</p>
-      </div>
-    )}
-    {entry.data.metrics?.tests != null && (
-      <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
-        <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.tests}</p>
-        <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">TESTS</p>
-      </div>
-    )}
-  </div>
+  {/* P3-05: only render the metrics grid when at least one metric exists;
+      auto-fit grid means 1-4 cards always look balanced (no holes). */}
+  {(entry.data.metrics?.layers != null ||
+    entry.data.metrics?.packages != null ||
+    entry.data.metrics?.plugins != null ||
+    entry.data.metrics?.tests != null) && (
+    <div class="mb-10 grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {entry.data.metrics?.layers != null && (
+        <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
+          <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.layers}</p>
+          <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">LAYERS</p>
+        </div>
+      )}
+      {entry.data.metrics?.packages != null && (
+        <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
+          <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.packages}</p>
+          <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">PACKAGES</p>
+        </div>
+      )}
+      {entry.data.metrics?.plugins != null && (
+        <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
+          <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.plugins}</p>
+          <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">PLUGINS</p>
+        </div>
+      )}
+      {entry.data.metrics?.tests != null && (
+        <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
+          <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.tests}</p>
+          <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">TESTS</p>
+        </div>
+      )}
+    </div>
+  )}
 
   <div class="prose-expedient mb-12">
     <Content />
   </div>
+
+  {/* P3-04: Next Steps CTAs moved up — right after MDX content where the
+      reader is most engaged, instead of after the metadata footer. */}
+  <section class="mt-4 mb-10">
+    <div class="h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30 mb-8" />
+    <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-4">{T('expedients.nextSteps')}</p>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <a href="/en/about" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30 group" data-seal-react>
+        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)] group-hover:text-[var(--color-accent-gold-bright)] transition-colors">{T('expedients.viewProfile')}</p>
+        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">{T('expedients.viewProfileDesc')}</p>
+      </a>
+      <a href="/en/contact" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30 group" data-seal-react>
+        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)] group-hover:text-[var(--color-accent-gold-bright)] transition-colors">{T('expedients.contactCta')}</p>
+        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">{T('expedients.contactCtaDesc')}</p>
+      </a>
+    </div>
+  </section>
 
   <div class="my-12 h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30" />
 
@@ -110,6 +134,7 @@ function categorize(tech: string): string {
     </section>
   )}
 
+  {/* Dates stamp — last thing on the page */}
   <footer class="border-t border-[var(--color-archive-kraft)]/20 pt-6 mt-12">
     <div class="flex flex-wrap items-center justify-between gap-4 text-caption text-[var(--color-text-secondary)]">
       <span class="font-mono">{T('expedients.published')}: {entry.data.publishDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
@@ -119,20 +144,4 @@ function categorize(tech: string): string {
       <Stamp label={T('common.verified')} variant="green" size="sm" />
     </div>
   </footer>
-
-  <!-- Next Steps CTAs -->
-  <section class="mt-10 mb-4">
-    <div class="h-px bg-gradient-to-r from-transparent via-[var(--color-accent-gold)] to-transparent opacity-30 mb-8" />
-    <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-4">{T('expedients.nextSteps')}</p>
-    <div class="grid gap-4 sm:grid-cols-2">
-      <a href="/en/about" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30 group" data-seal-react>
-        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)] group-hover:text-[var(--color-accent-gold-bright)] transition-colors">{T('expedients.viewProfile')}</p>
-        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">{T('expedients.viewProfileDesc')}</p>
-      </a>
-      <a href="/en/contact" class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-4 transition-all hover:shadow-paper hover:border-[var(--color-accent-gold)]/30 group" data-seal-react>
-        <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)] group-hover:text-[var(--color-accent-gold-bright)] transition-colors">{T('expedients.contactCta')}</p>
-        <p class="mt-1 text-body-sm text-[var(--color-text-secondary)]">{T('expedients.contactCtaDesc')}</p>
-      </a>
-    </div>
-  </section>
 </ExpedientLayout>

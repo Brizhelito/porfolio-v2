@@ -31,7 +31,15 @@ export default function Stamp({
   const px = SIZE_MAP[size];
 
   useEffect(() => {
-    if (!ref.current || !animate || prefersReducedMotion) return;
+    // P2-08: if reducedMotion is requested, skip the GSAP tween entirely
+    // AND ensure the element is visible (opacity 1). Previously, the inline
+    // `opacity: animate ? 0 : 1` left the stamp invisible when reducedMotion
+    // was true because the tween never ran to bring it to opacity 1.
+    if (!ref.current || !animate) return;
+    if (prefersReducedMotion) {
+      gsap.set(ref.current, { opacity: 1, scale: 1, rotate: 0 });
+      return;
+    }
 
     gsap.fromTo(
       ref.current,
@@ -65,7 +73,8 @@ export default function Stamp({
         textAlign: 'center',
         padding: '4px',
         lineHeight: 1.2,
-        opacity: animate ? 0 : 1,
+        // P2-08: only start invisible when we actually plan to animate in.
+        opacity: (animate && !prefersReducedMotion) ? 0 : 1,
       }}
     >
       {label}

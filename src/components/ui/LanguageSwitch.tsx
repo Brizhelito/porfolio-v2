@@ -17,25 +17,30 @@ export default function LanguageSwitch({ currentPath, locale, className = '' }: 
       return;
     }
 
-    // Stamp animation on click
+    e.preventDefault();
+    const href = targetLang === 'en'
+      ? getLocalizedHref(currentPath, 'en')
+      : getSpanishHref(currentPath);
+
+    // P0-03: navigate IMMEDIATELY by default; the stamp animation is purely
+    // decorative and runs in parallel ONLY when motion is allowed. If GSAP
+    // fails to load, the user still navigates — language switching is a
+    // core function and must never depend on an animation completing.
     if (stampRef.current && !prefersReducedMotion) {
-      e.preventDefault();
       gsap.fromTo(stampRef.current,
         { scale: 2, opacity: 0, rotate: -10 },
         {
           scale: 1,
           opacity: 1,
           rotate: 0,
-          duration: 0.4,
+          duration: 0.3,
           ease: 'back.out(1.7)',
-          onComplete: () => {
-            const href = targetLang === 'en'
-              ? getLocalizedHref(currentPath, 'en')
-              : getSpanishHref(currentPath);
-            window.location.href = href;
-          },
+          onComplete: () => { window.location.href = href; },
         },
       );
+    } else {
+      // Reduced-motion or GSAP unavailable: navigate straight away.
+      window.location.href = href;
     }
   }, [currentPath, locale]);
 

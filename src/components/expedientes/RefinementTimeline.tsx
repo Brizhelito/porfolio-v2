@@ -25,7 +25,20 @@ export default function RefinementTimeline({
     if (!containerRef.current || prefersReducedMotion) return;
 
     const items = containerRef.current.querySelectorAll('.refinement-item');
-    animations.staggerReveal(Array.from(items) as HTMLElement[], { stagger: 0.1 });
+    const tween = animations.staggerReveal(
+      Array.from(items) as HTMLElement[],
+      { stagger: 0.1 },
+    );
+
+    // P2-06: kill the ScrollTrigger created by staggerReveal when the
+    // component unmounts. Without this, navigating between expedientes
+    // accumulates stale triggers in the global ScrollTrigger registry.
+    return () => {
+      if (tween) {
+        tween.scrollTrigger?.kill();
+        tween.kill();
+      }
+    };
   }, []);
 
   return (

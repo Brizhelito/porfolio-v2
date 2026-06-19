@@ -47,11 +47,31 @@ const categories = categoryDefs.map((cat) => {
             {cat.name}
           </h2>
           <div class="flex flex-wrap gap-2">
-            {cat.tools.map((tool) => (
-              <span class="inline-block rounded-paper border border-[var(--color-archive-kraft)]/30 bg-[var(--color-bg-secondary)]/50 px-3 py-1 font-mono text-body-sm text-[var(--color-text-primary)]">
-                {tool}
-              </span>
-            ))}
+            {/* P2-13: chips are now links. If a tool was used in an expedient,
+                the chip links to the first related expedient; otherwise it
+                links to /expedientes (general browse). This matches the
+                "Usado en" links below and makes the chip affordance real. */}
+            {cat.tools.map((tool) => {
+              const relatedExp = cat.related.find((exp) =>
+                exp.data.stack.some((s) =>
+                  s.toLowerCase().includes(tool.toLowerCase()) ||
+                  tool.toLowerCase().includes(s.toLowerCase())
+                )
+              );
+              const href = relatedExp
+                ? `/expedientes/${relatedExp.id}`
+                : '/expedientes';
+              return (
+                <a
+                  href={href}
+                  class="inline-block rounded-paper border border-[var(--color-archive-kraft)]/30 bg-[var(--color-bg-secondary)]/50 px-3 py-1 font-mono text-body-sm text-[var(--color-text-primary)] transition-all hover:border-[var(--color-accent-gold)]/40 hover:text-[var(--color-accent-gold)] hover:shadow-paper"
+                  data-seal-react
+                  title={relatedExp ? `Ver expediente: ${relatedExp.data.title}` : 'Ver todos los expedientes'}
+                >
+                  {tool}
+                </a>
+              );
+            })}
           </div>
           {cat.related.length > 0 && (
             <div class="mt-3 pt-3 border-t border-[var(--color-archive-kraft)]/10">

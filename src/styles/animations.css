@@ -98,27 +98,23 @@
    Animation Utilities
    ============================================ */
 @layer components {
-  /* Staggered reveal (for lists) */
+  /* Staggered reveal (for lists) — P2-05: unlimited children via CSS custom property.
+     Usage: parent gets `stagger-reveal` class; each child gets
+     `style="--i: 0"`, `style="--i: 1"`, etc. Children without --i fall
+     back to 0s delay (still animate, just no stagger). */
   .stagger-reveal > * {
     opacity: 0;
     transform: translateY(15px);
     animation: reveal-up 0.4s ease-out forwards;
+    animation-delay: calc(var(--i, 0) * 0.05s);
   }
-
-  .stagger-reveal > *:nth-child(1) { animation-delay: 0.05s; }
-  .stagger-reveal > *:nth-child(2) { animation-delay: 0.1s; }
-  .stagger-reveal > *:nth-child(3) { animation-delay: 0.15s; }
-  .stagger-reveal > *:nth-child(4) { animation-delay: 0.2s; }
-  .stagger-reveal > *:nth-child(5) { animation-delay: 0.25s; }
-  .stagger-reveal > *:nth-child(6) { animation-delay: 0.3s; }
-  .stagger-reveal > *:nth-child(7) { animation-delay: 0.35s; }
-  .stagger-reveal > *:nth-child(8) { animation-delay: 0.4s; }
 
   .page-enter {
     animation: page-enter 0.5s ease-out;
   }
 
-  /* Gold underline for links */
+  /* Gold underline for links — P2-02: also animates on focus-visible,
+     not just hover, so keyboard navigators see the same affordance. */
   .gold-underline {
     position: relative;
     display: inline-block;
@@ -127,17 +123,24 @@
   .gold-underline::after {
     content: '';
     position: absolute;
-    bottom: -2px;
+    bottom: -4px;
     left: 0;
     width: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--color-accent-gold), var(--color-accent-gold-bright));
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-accent-gold), var(--color-accent-gold-bright), var(--color-accent-gold));
     transition: width var(--transition-base);
   }
 
-  .gold-underline:hover::after {
+  .gold-underline:hover::after,
+  .gold-underline:focus-visible::after {
     width: 100%;
   }
+}
+
+/* Kintsugi Gold Node Pulse */
+@keyframes kintsugi-pulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(201, 169, 97, 0.3); }
+  50% { box-shadow: 0 0 12px rgba(201, 169, 97, 0.6); }
 }
 
 /* Reduced motion: disable all custom animations */

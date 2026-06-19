@@ -30,6 +30,10 @@ const collaborations = [
       { label: 'PERIODO', value: '2024' },
       { label: 'MODALIDAD', value: 'Remoto / Presencial (Maracaibo)' },
     ],
+    // P3-03: moved the hardcoded sticky note text into the collab data so
+    // adding a new collaboration doesn't require editing the template.
+    anecdote:
+      'El equipo de Corpozulia fue excepcionalmente receptivo. La migración se completó en fases sin downtime.',
   },
 ];
 ---
@@ -116,9 +120,7 @@ const collaborations = [
           <div class="mt-4 ml-8">
             <StickyNote client:visible color="yellow" rotation={-1.5}>
               <p class="text-[var(--color-text-primary)]">
-                {collab.id === 'corpozulia-2024'
-                  ? 'El equipo de Corpozulia fue excepcionalmente receptivo. La migración se completó en fases sin downtime.'
-                  : 'Colaboración documentada.'}
+                {collab.anecdote ?? 'Colaboración documentada.'}
               </p>
             </StickyNote>
           </div>

@@ -1,25 +1,12 @@
 import { useEffect, useRef } from 'react';
+// P1-12: import color lookup from shared page-config (single source of truth)
+import { cursorColorForPath } from '@lib/page-config';
 
 const TRAIL_INTERVAL = 80;
 const MAX_TRAIL = 20;
 const RING_FOLLOW = 0.12;
 
 type CursorMode = 'default' | 'hovering' | 'nav' | 'reading' | 'expediente' | 'input';
-
-const PATH_COLORS: Record<string, string> = {
-  '/': '#C9A961',
-  '/about': '#2D4A5C',
-  '/tools': '#4A4640',
-  '/expedientes': '#5C7156',
-  '/colaboraciones': '#5C7156',
-  '/contacto': '#B23A28',
-  '/inspiraciones': '#4A4640',
-};
-
-function sectionColor(path: string): string {
-  const key = Object.keys(PATH_COLORS).find((p) => path === p || path.startsWith(p + '/'));
-  return key ? PATH_COLORS[key] : '#C9A961';
-}
 
 function setRingClass(ring: HTMLElement, mode: CursorMode) {
   ring.className = 'cursor-ring' +
@@ -36,7 +23,11 @@ export default function CustomCursor() {
   const mouse = useRef({ x: 0, y: 0 });
   const ring = useRef({ x: 0, y: 0 });
   const trailTimer = useRef<number>(0);
-  const trailCount = useRef(0);
+  // P1-02: pre-allocated particle pool. We recycle the same 20 divs instead
+  // of createElement / appendChild / removeChild on every spawn. This
+  // eliminates layout thrash and GC pressure during fast mouse motion.
+  const trailPool = useRef<HTMLDivElement[]>([]);
+  const trailNextIdx = useRef(0);
   const rafId = useRef(0);
   const lastScrollY = useRef(0);
   const scrollTimer = useRef<number>(0);
@@ -51,25 +42,41 @@ export default function CustomCursor() {
     const ringEl = ringRef.current;
     if (!dot || !ringEl) return;
 
-    // Section color detection
+    // P1-02: build the particle pool ONCE. Each particle starts hidden and
+    // is repositioned on spawn; opacity fades via CSS transition. After the
+    // transition completes the particle is hidden again, ready for reuse.
+    const poolParent = document.body;
+    for (let i = 0; i < MAX_TRAIL; i++) {
+      const p = document.createElement('div');
+      p.className = 'cursor-trail-particle';
+      p.style.opacity = '0';
+      p.style.left = '-100px';
+      p.style.top = '-100px';
+      poolParent.appendChild(p);
+      trailPool.current.push(p);
+    }
+
+    // Section color detection — P1-12: via page-config
     const applySectionColor = () => {
-      const color = sectionColor(window.location.pathname);
+      const color = cursorColorForPath(window.location.pathname);
       ringEl.style.setProperty('--cursor-ring-color', color);
     };
     applySectionColor();
 
-    // Trail spawner
+    // Trail spawner — recycles pool particles instead of allocating
     const spawnTrail = (x: number, y: number) => {
-      if (trailCount.current >= MAX_TRAIL) return;
-      const p = document.createElement('div');
-      p.className = 'cursor-trail-particle';
+      const p = trailPool.current[trailNextIdx.current];
+      trailNextIdx.current = (trailNextIdx.current + 1) % MAX_TRAIL;
+      if (!p) return;
+      // Reset transition by toggling display, then set new position + opacity
+      p.style.transition = 'none';
       p.style.left = x + 'px';
       p.style.top = y + 'px';
-      document.body.appendChild(p);
-      trailCount.current++;
-
-      requestAnimationFrame(() => { p.style.opacity = '0'; });
-      setTimeout(() => { p.remove(); trailCount.current--; }, 350);
+      p.style.opacity = '0.35';
+      // Force reflow so the next opacity change animates
+      void p.offsetWidth;
+      p.style.transition = 'opacity 0.35s ease';
+      p.style.opacity = '0';
     };
 
     // Element-type detection
@@ -166,7 +173,9 @@ export default function CustomCursor() {
       document.removeEventListener('mouseout', onMouseOut);
       window.removeEventListener('scroll', onScroll);
       if (scrollTimer.current) clearTimeout(scrollTimer.current);
-      document.querySelectorAll('.cursor-trail-particle').forEach((p) => p.remove());
+      // P1-02: remove pooled particles on unmount
+      trailPool.current.forEach((p) => p.remove());
+      trailPool.current = [];
     };
   }, []);
 

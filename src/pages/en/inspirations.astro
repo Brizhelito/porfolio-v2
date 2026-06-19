@@ -50,10 +50,12 @@ const categories = [
           <h2 class="font-stamp text-stamp-title text-[var(--color-accent-gold)] mb-8 text-center">{cat.section}</h2>
           <div class="space-y-8">
             {cat.entries.map((entry) => (
-              <div class="group text-center">
-                <p class="font-display text-display-sm text-[var(--color-text-primary)] group-hover:text-[var(--color-accent-gold)] transition-colors">{entry.name}</p>
+              // P2-12: removed group-hover affordance from non-interactive
+              // entries. Hovering suggested clickability that doesn't exist.
+              <div class="text-center">
+                <p class="font-display text-display-sm text-[var(--color-text-primary)]">{entry.name}</p>
                 <p class="mt-1 font-stamp text-stamp-label text-[var(--color-text-secondary)]">{entry.role}</p>
-                <p class="mt-2 text-body-sm text-[var(--color-text-secondary)] max-w-md mx-auto italic">"{entry.note}"</p>
+                <p class="mt-2 text-body-sm text-[var(--color-text-secondary)] max-w-md mx-auto italic">&ldquo;{entry.note}&rdquo;</p>
               </div>
             ))}
           </div>

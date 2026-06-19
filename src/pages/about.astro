@@ -5,6 +5,14 @@ import StickyNote from '@components/ui/StickyNote';
 import { t } from '@lib/i18n';
 
 const T = (key: string) => t('es', key);
+
+// P3-02: pull philosophy items from the i18n dictionary instead of
+// hardcoding Spanish strings in the template. The /en/about.astro mirror
+// uses the same key with the English dictionary.
+// `t()` returns a string; for arrays we look up the raw value via the
+// same path. We import the JSON directly to keep this simple.
+import es from '../i18n/es.json';
+const philosophyItems: string[] = (es.about as any).philosophy ?? [];
 ---
 
 <BaseLayout title={`${T('about.pageTitle')}`}>
@@ -56,10 +64,9 @@ const T = (key: string) => t('es', key);
       <h2 class="font-display text-display-md text-[var(--color-text-primary)] mb-4">{T('about.philosophyTitle')}</h2>
       <div class="prose-expedient">
         <ul>
-          <li><strong>Iteración sobre perfección:</strong> Cada refinamiento documentado añade valor medible.</li>
-          <li><strong>Arquitectura plugin-first:</strong> Extensibilidad como principio de diseño, no como afterthought.</li>
-          <li><strong>Documentación silenciosa:</strong> El código se explica solo, las notas de laboratorio capturan el por qué.</li>
-          <li><strong>Performance como feature:</strong> Cada decisión arquitectónica considera el impacto en el usuario final.</li>
+          {philosophyItems.map((item) => (
+            <li>{item}</li>
+          ))}
         </ul>
       </div>
     </div>

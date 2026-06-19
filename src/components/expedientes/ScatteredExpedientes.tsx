@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { animations, prefersReducedMotion } from '@lib/animations';
 import Stamp from '@components/ui/Stamp';
 
@@ -45,8 +45,19 @@ export default function ScatteredExpedientes({
 }: ScatteredExpedientesProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const folderRefs = useRef<(HTMLDivElement | null)[]>([]);
+  // P0-02: detect touch devices once on mount. On touch, hover events don't
+  // fire; we keep folders in their "open" visual state so the click hint is
+  // always visible, and skip GSAP open/close entirely.
+  const [isTouch, setIsTouch] = useState(false);
+  useEffect(() => {
+    setIsTouch(
+      window.matchMedia('(hover: none)').matches ||
+      window.matchMedia('(pointer: coarse)').matches
+    );
+  }, []);
 
   const handleMouseEnter = (index: number) => {
+    if (isTouch) return;
     setHoveredIndex(index);
     const el = folderRefs.current[index];
     if (el && !prefersReducedMotion) {
@@ -55,6 +66,7 @@ export default function ScatteredExpedientes({
   };
 
   const handleMouseLeave = (index: number) => {
+    if (isTouch) return;
     setHoveredIndex(null);
     const el = folderRefs.current[index];
     if (el && !prefersReducedMotion) {
@@ -77,15 +89,20 @@ export default function ScatteredExpedientes({
               className="scattered-item block w-full max-w-md"
               style={{
                 zIndex: isHovered ? 50 : scatter.z,
-                transition: prefersReducedMotion
+                transition: prefersReducedMotion || isTouch
                   ? 'none'
                   : 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease, margin 0.4s ease',
-                transform: isHovered
-                  ? 'rotate(0deg) translateX(0) translateY(0) scale(1.03)'
-                  : isOtherHovered
-                    ? `rotate(${scatter.rot * 0.3}deg) translateX(${scatter.x * 0.3}px) scale(0.97) translateY(0)`
-                    : `rotate(${scatter.rot}deg) translate(${scatter.x}px, ${scatter.y}px) scale(1)`,
-                opacity: isOtherHovered ? 0.6 : 1,
+                // P0-02: on touch devices, no scatter rotation — folders sit
+                // flat and stack vertically, easy to tap. Hover transforms are
+                // skipped entirely (isHovered stays null on touch).
+                transform: isTouch
+                  ? 'rotate(0deg) translate(0, 0) scale(1)'
+                  : isHovered
+                    ? 'rotate(0deg) translateX(0) translateY(0) scale(1.03)'
+                    : isOtherHovered
+                      ? `rotate(${scatter.rot * 0.3}deg) translateX(${scatter.x * 0.3}px) scale(0.97) translateY(0)`
+                      : `rotate(${scatter.rot}deg) translate(${scatter.x}px, ${scatter.y}px) scale(1)`,
+                opacity: isTouch ? 1 : (isOtherHovered ? 0.6 : 1),
                 marginTop: i === 0 ? 0 : isHovered ? '12px' : '-8px',
                 marginBottom: i === expedientes.length - 1 ? 0 : isHovered ? '12px' : '-8px',
               }}
@@ -150,9 +167,11 @@ export default function ScatteredExpedientes({
                   <div
                     className="folder-content border-t border-[var(--color-archive-kraft)]/20 px-5 py-4"
                     style={{
-                      opacity: isHovered ? 1 : 0,
-                      transform: isHovered ? 'none' : 'translateY(10px)',
-                      transition: prefersReducedMotion
+                      // P0-02: on touch, content is always visible so users
+                      // can see the "open expedient" hint and know it's tappable.
+                      opacity: isTouch ? 1 : (isHovered ? 1 : 0),
+                      transform: isTouch ? 'none' : (isHovered ? 'none' : 'translateY(10px)'),
+                      transition: prefersReducedMotion || isTouch
                         ? 'none'
                         : 'opacity 0.3s ease 0.15s, transform 0.3s ease 0.15s',
                     }}

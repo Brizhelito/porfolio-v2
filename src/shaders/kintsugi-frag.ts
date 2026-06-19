@@ -41,7 +41,7 @@ float vnoise(vec2 p) {
 }
 
 // ---------- Voronoi edge (F2 - F1), optimized ----------
-// `breathe` is the slow vein-breathing jitter, computed ONCE per pixel in
+// The "breathe" jitter is the slow vein-breathing, computed ONCE per pixel in
 // main() and passed in here, instead of once per cell.
 // OPTIMIZATION 1: loop is 2x2 (4 sites) instead of 3x3 (9 sites). Biasing the
 // sample point toward a cell's lower-left neighbourhood at the call site
@@ -144,3 +144,7 @@ void main() {
     gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
 }
 `;
+
+// Alias for legacy import path (KintsugiBackground.tsx imports { FRAG })
+export const FRAG = kintsugiFragmentShader;
+

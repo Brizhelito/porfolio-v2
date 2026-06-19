@@ -39,7 +39,7 @@ const archived = sorted.filter((e) => e.data.status === 'archived');
         <h2 class="font-stamp text-stamp-title text-[var(--color-accent-gold)] mb-4">
           {T('expedients.featured')}
         </h2>
-        <div class="grid gap-4 sm:grid-cols-2">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {featured.map((exp) => (
             <a href={`/expedientes/${exp.id}`} class="block" data-seal-react>
               <FileFolder
@@ -73,7 +73,7 @@ const archived = sorted.filter((e) => e.data.status === 'archived');
         <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-4">
           {T('expedients.active')}
         </h2>
-        <div class="grid gap-4 sm:grid-cols-2">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {active.map((exp) => (
             <a href={`/expedientes/${exp.id}`} class="block" data-seal-react>
               <FileFolder
@@ -100,7 +100,7 @@ const archived = sorted.filter((e) => e.data.status === 'archived');
         <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)]/60 mb-4">
           {T('expedients.archived')}
         </h2>
-        <div class="grid gap-4 sm:grid-cols-2 opacity-80">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 opacity-80">
           {archived.map((exp) => (
             <a href={`/expedientes/${exp.id}`} class="block" data-seal-react>
               <FileFolder
