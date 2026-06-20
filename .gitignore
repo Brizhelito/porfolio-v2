@@ -25,3 +25,13 @@ pnpm-debug.log*
 
 # build artifacts
 portfolio-v2.tar.gz
+
+# screenshots
+hero-*.png
+
+# backups / notes
+PORTFOLIO-COPY-*.md
+copy-portfolio.md
+
+# tooling
+.qoder/
