@@ -1,18 +1,18 @@
 {
   "nav": {
     "home": "Home",
-    "about": "Profile (About)",
-    "tools": "Catalog (Stack)",
-    "expedients": "Expedients (Projects)",
+    "about": "Profile",
+    "tools": "Catalog",
+    "expedients": "Expedients",
     "collaborations": "Collaborations",
     "inspirations": "Inspirations",
     "contact": "Contact"
   },
   "hero": {
     "title": "Archive",
-    "subtitle": "Distributed systems engineering.",
+    "subtitle": "Software development.",
     "subtitleDetail": "Each expedient documents engineer-level thinking.",
-    "status": "ACTIVE · AVAILABLE",
+    "status": "ACTIVE · LOOKING FOR MY FIRST FORMAL ROLE",
     "openExpedient": "OPEN MAIN EXPEDIENT →",
     "expedientsOpen": "open expedients",
     "totalRefinements": "total refinements",
@@ -23,11 +23,11 @@
     "quickLinkCatalogDesc": "Classified technical stack",
     "quickLinkContact": "CONTACT REQUEST",
     "quickLinkContactDesc": "Open a new expedient",
-    "ctaProjects": "VIEW PROJECTS",
+    "ctaProjects": "VIEW EXPEDIENTS",
     "ctaContact": "CONTACT",
     "ctaProjectsDesc": "Explore work expedients",
     "ctaContactDesc": "Open a new expedient",
-    "featuredProject": "FEATURED PROJECT",
+    "featuredProject": "FEATURED EXPEDIENT",
     "seeAll": "See all →",
     "fichaTitle": "IDENTIFICATION CARD",
     "fichaCta": "VIEW FULL PROFILE",
@@ -48,46 +48,61 @@
     "crossRefInspirations": "INSPIRATIONS",
     "crossRefInspirationsDesc": "Archive credits and philosophies",
     "crossRefTools": "TOOLS CATALOG",
-    "crossRefToolsDesc": "Technical stack classified by domain"
+    "crossRefToolsDesc": "Technical stack classified by domain",
+    "crossRefConnections": "connections between expedients"
   },
   "about": {
     "pageTitle": "Identification Card — Reny Mireles Archive",
     "header": "RENY MIRELES ARCHIVE",
     "title": "Identification Card",
     "titleValue": "Reny Mireles",
-    "classification": "Distributed Systems Engineer",
+    "classification": "Software Developer",
     "origin": "ORIGIN",
     "originValue": "Venezuela",
     "specialty": "SPECIALTY",
-    "specialtyValue": "Distributed systems, edge computing, mobile",
+    "specialtyValue": "Fullstack development, mobile apps, edge computing",
     "methodology": "METHODOLOGY",
-    "methodologyValue": "Documented iteration, plugin-first architecture",
+    "methodologyValue": "Learning by building — documented iteration",
     "languages": "LANGUAGES",
-    "languagesValue": "Spanish (native), English (professional)",
+    "languagesValue": "Spanish (native), English (intermediate B1-B2)",
     "availability": "AVAILABILITY",
-    "availabilityValue": "Open to opportunities",
+    "availabilityValue": "Looking for my first formal role",
+    "location": "LOCATION",
+    "locationValue": "Venezuela · Remote",
+    "bio": "My programming journey has been 100% self-taught. My curiosity to understand how things work has led me to explore everything from mobile development to distributed systems design. I don't have a traditional background, but I make up for it by building real projects, studying complex architectures, and writing code I can be proud of. I am currently looking for my first full-time professional role to add value and keep growing.",
     "capabilitiesTitle": "Demonstrated Capabilities",
     "capabilitiesSubtitle": "Technical domains verified in expedients",
     "capabilities": {
       "frontend": "FRONTEND",
-      "frontendValue": "React, Flutter, Astro, Tailwind",
+      "frontendValue": "React, Next.js, Astro, Tailwind, TypeScript",
+      "mobile": "MOBILE",
+      "mobileValue": "Flutter, Dart, Provider, Riverpod",
       "backend": "BACKEND",
-      "backendValue": "Go, Node.js, Fiber, Express",
-      "edge": "EDGE",
-      "edgeValue": "Cloudflare Workers, Durable Objects",
+      "backendValue": "Go (Fiber), Java (Spring Boot), Node.js",
       "database": "DATABASE",
-      "databaseValue": "PostgreSQL, Redis, SQLite, MongoDB",
+      "databaseValue": "PostgreSQL, SQLite, Drift, Redis (Upstash)",
+      "edge": "EDGE",
+      "edgeValue": "Cloudflare Workers, Durable Objects, Firebase FCM",
       "devops": "DEVOPS",
-      "devopsValue": "Docker, GitHub Actions, Sentry",
+      "devopsValue": "GitHub Actions, Docker, Vercel, Sentry",
       "auth": "AUTH",
-      "authValue": "WebAuthn, Passkeys, OAuth2"
+      "authValue": "WebAuthn/Passkeys, OAuth 2.0, Ed25519, JWT",
+      "architecture": "ARCHITECTURE",
+      "architectureValue": "Plugin-first, Layered, Repository Pattern, LWW CRDT"
     },
+    "softSkillsTitle": "Soft Skills",
+    "softSkills": [
+      "Self-taught learning",
+      "Problem solving",
+      "Technical adaptability",
+      "Effective communication"
+    ],
     "philosophyTitle": "Work Philosophy",
     "philosophy": [
-      "Iteration over perfection: Each documented refinement adds measurable value.",
-      "Plugin-first architecture: Extensibility as a design principle, not an afterthought.",
-      "Silent documentation: Code speaks for itself, lab notes capture the why.",
-      "Performance as feature: Every architectural decision considers end-user impact."
+      "Learn by building: every expedient is born from a real need — Kumoriya from content fragmentation, MyBookTrace from my own reading habit, POS from B2B needs, Matrixezz from a linear algebra class.",
+      "Architecture serves the problem, not the other way around: plugin-first when the domain changes frequently (Kumoriya), layered architecture when separation of concerns matters (Finwise, MyBookTrace, POS).",
+      "Local-first when offline matters: MyBookTrace with sqflite, Kumoriya with Drift + CRDT. The network is an enhancement, not a dependency.",
+      "Document the why, not just the what: Kumoriya's ADRs and dev-diary are the example. Code explains how; documentation captures decisions and dead ends."
     ],
     "note": "Each tool's context is detailed in the expedients. Only production-verified capabilities are listed here."
   },
@@ -97,7 +112,27 @@
     "title": "Tools Catalog",
     "subtitle": "Lateral classifiers by category. Context is detailed in the expedients.",
     "usedIn": "Used in",
-    "viewExpedients": "View expedients →"
+    "viewExpedients": "View expedients →",
+    "inventoryDocument": "INVENTORY DOCUMENT",
+    "inventoryRef": "REF: ARH-INV-001 · CLASSIFICATION: TECHNICAL TOOLS",
+    "inventoryFooter": "Tools verified in production. Context in expedients.",
+    "inventoryEnd": "END OF INVENTORY",
+    "inventory": "INVENTORY",
+    "tool": "TOOL",
+    "status": "STATUS",
+    "reference": "REFERENCE",
+    "viewExpedient": "View expedient",
+    "browseAll": "Browse all expedients",
+    "entries": "entries",
+    "toolsCount": "tools",
+    "descFrontend": "User Interface",
+    "descMobile": "Mobile Applications",
+    "descBackend": "Server & Logic",
+    "descDatabase": "Data Storage",
+    "descEdgeCloud": "Distributed Computing",
+    "descDevOps": "Infrastructure & Operations",
+    "descAuthSecurity": "Authentication & Security",
+    "descArchitecture": "Design Patterns"
   },
   "expedients": {
     "pageTitle": "Expedients — Reny Mireles Archive",
@@ -108,6 +143,7 @@
     "featured": "FEATURED",
     "active": "ACTIVE",
     "archived": "ARCHIVED",
+    "archiveHeader": "RENY MIRELES ARCHIVE — EXPEDIENT N°",
     "classification": "Classification",
     "status": "Status",
     "refinements": "Refinements",
@@ -117,6 +153,10 @@
     "decisionTree": "Decision Tree",
     "technicalStack": "CLASSIFIED TECHNICAL STACK",
     "links": "EXPEDIENT LINKS",
+    "layers": "LAYERS",
+    "packages": "PACKAGES",
+    "plugins": "PLUGINS",
+    "tests": "TESTS",
     "repository": "Repository",
     "demo": "Live demo",
     "website": "Website",
@@ -126,17 +166,24 @@
     "viewProfile": "VIEW FULL PROFILE",
     "viewProfileDesc": "Origin, methodology, and capabilities",
     "contactCta": "CONTACT",
-    "contactCtaDesc": "Open a collaboration expedient"
+    "contactCtaDesc": "Open a collaboration expedient",
+    "backToBoard": "BACK TO BOARD",
+    "featuredBadge": "★ FLAGSHIP EXPEDIENT",
+    "viewRepo": "View repository",
+    "viewDemo": "View demo",
+    "downloadApk": "Download APK",
+    "credentials": "Credentials",
+    "galleryNote": "Technical architecture and detailed documentation are available in the repository."
   },
   "collaborations": {
     "pageTitle": "Collaborations — Reny Mireles Archive",
-    "pageDescription": "Record of professional collaborations and consulting",
+    "pageDescription": "Record of professional collaborations and freelance projects",
     "header": "COLLABORATION RECORD",
     "title": "Collaborations",
-    "subtitle": "Collaborative projects, consulting, and technical advisory that left golden scars in the archive.",
+    "subtitle": "Freelance projects and collaborations that left golden scars in the archive.",
     "keyContributions": "KEY CONTRIBUTIONS",
     "interested": "INTERESTED IN COLLABORATING?",
-    "interestedText": "Open to consulting, engineering projects, and technical collaborations. Each collaboration is a new expedient in the archive.",
+    "interestedText": "Open to freelance projects, open source collaborations, and fullstack roles. Each collaboration is a new expedient in the archive.",
     "openRequest": "OPEN CONTACT REQUEST →"
   },
   "contact": {
@@ -160,31 +207,46 @@
     "whatsappPriority": "URGENT",
     "freelanceTip": "For freelance proposals, include: scope, estimated timeline, and available budget.",
     "timezoneTip": "Timezone: UTC-4 (Venezuela). Available for global remote work.",
-    "location": "BASE: MARACAIBO, ZULIA, VENEZUELA",
+    "location": "BASE: VENEZUELA · REMOTE",
     "responseEmail": "Email: 24-48h",
     "responseLinkedin": "LinkedIn: 3-5 days",
-    "responseWhatsapp": "WhatsApp: Immediate (business hours)"
+    "responseWhatsapp": "WhatsApp: Immediate (business hours)",
+    "remoteAvailable": "Available remote",
+    "form": {
+      "name": "Name",
+      "name_ph": "Your name",
+      "email": "Email",
+      "email_ph": "you@email.com",
+      "message": "Message",
+      "message_ph": "Tell me about your project...",
+      "submit": "Send message",
+      "sending": "Sending...",
+      "success": "Message ready! Opening your mail client.",
+      "error": "Something went wrong. Try again."
+    }
   },
   "inspirations": {
     "pageTitle": "Inspirations — Reny Mireles Archive",
-    "pageDescription": "Inspiration credits — the people, ideas, and resources that shaped this archive",
+    "pageDescription": "Inspiration credits — the philosophies that shape this archive",
     "header": "ARCHIVE CREDITS",
     "title": "Inspirations",
-    "subtitle": "The people, ideas, tools, and philosophies that shaped the way of thinking, building, and documenting in this archive.",
+    "subtitle": "The philosophies that shaped the way of thinking, building, and documenting in this archive.",
     "end": "END OF CREDITS",
     "epilogue": "Every archive is a conversation with those who came before.",
     "back": "RETURN TO ARCHIVE →"
   },
   "footer": {
     "archive": "RENY MIRELES ARCHIVE",
-    "tagline": "Distributed systems engineering",
+    "tagline": "Software development",
     "built": "Built with Astro · Each expedient documents engineer-level thinking",
-    "secondaryLinks": "ARCHIVE LINKS"
+    "secondaryLinks": "ARCHIVE LINKS",
+    "rights": "© 2026 Reny Mireles. All rights reserved."
   },
   "common": {
     "expedient": "EXP.",
     "active": "ACTIVE",
     "archived": "ARCHIVED",
+    "archivedPlural": "ARCHIVED",
     "featured": "FEATURED",
     "verified": "VERIFIED",
     "completed": "COMPLETED",
@@ -197,7 +259,14 @@
     "key": "KEY",
     "chosen": "CHOSEN",
     "available": "AVAILABLE",
-    "technicalCard": "Technical Card"
+    "technicalCard": "Technical Card",
+    "sealCurious": "CURIOUS",
+    "sealConcentrated": "CONCENTRATED",
+    "sealSatisfied": "SATISFIED",
+    "sealAlert": "ALERT",
+    "sealResting": "RESTING",
+    "expedientsCount": "EXPEDIENTS",
+    "recordsCount": "RECORDS"
   },
   "notFound": {
     "title": "404",
@@ -210,6 +279,15 @@
   },
   "cursor": {
     "custom": "CUSTOM",
-    "native": "NATIVE"
+    "native": "NATIVE",
+    "ariaCustom": "Switch to native cursor",
+    "ariaNative": "Switch to custom cursor"
+  },
+  "seal": {
+    "ariaInteractive": "Interactive seal",
+    "ariaBackToTop": "Back to top"
+  },
+  "crossRef": {
+    "exploreArchive": "explore archive"
   }
 }

@@ -1,18 +1,18 @@
 {
   "nav": {
     "home": "Inicio",
-    "about": "Ficha (About)",
-    "tools": "Catálogo (Stack)",
-    "expedients": "Expedientes (Projects)",
+    "about": "Ficha",
+    "tools": "Catálogo",
+    "expedients": "Expedientes",
     "collaborations": "Colaboraciones",
     "inspirations": "Inspiraciones",
     "contact": "Contacto"
   },
   "hero": {
     "title": "Archivo",
-    "subtitle": "Ingeniería de sistemas distribuidos.",
+    "subtitle": "Desarrollo de software.",
     "subtitleDetail": "Cada expediente documenta pensamiento de ingeniero.",
-    "status": "ACTIVO · DISPONIBLE",
+    "status": "ACTIVO · BUSCANDO MI PRIMER ROL FORMAL",
     "openExpedient": "ABRIR EXPEDIENTE PRINCIPAL →",
     "expedientsOpen": "expedientes abiertos",
     "totalRefinements": "refinamientos totales",
@@ -23,11 +23,11 @@
     "quickLinkCatalogDesc": "Stack técnico clasificado",
     "quickLinkContact": "SOLICITUD DE CONTACTO",
     "quickLinkContactDesc": "Abrir un nuevo expediente",
-    "ctaProjects": "VER PROYECTOS",
+    "ctaProjects": "VER EXPEDIENTES",
     "ctaContact": "CONTACTAR",
     "ctaProjectsDesc": "Explorar expedientes de trabajo",
     "ctaContactDesc": "Abrir un nuevo expediente",
-    "featuredProject": "PROYECTO DESTACADO",
+    "featuredProject": "EXPEDIENTE DESTACADO",
     "seeAll": "Ver todos →",
     "fichaTitle": "FICHA DE IDENTIFICACIÓN",
     "fichaCta": "VER FICHA COMPLETA",
@@ -48,46 +48,61 @@
     "crossRefInspirations": "INSPIRACIONES",
     "crossRefInspirationsDesc": "Créditos y filosofías del archivo",
     "crossRefTools": "CATÁLOGO DE HERRAMIENTAS",
-    "crossRefToolsDesc": "Stack técnico clasificado por dominio"
+    "crossRefToolsDesc": "Stack técnico clasificado por dominio",
+    "crossRefConnections": "conexiones entre expedientes"
   },
   "about": {
     "pageTitle": "Ficha de Identificación — Archivo Reny Mireles",
     "header": "ARCHIVO RENY MIRELES",
     "title": "Ficha de Identificación",
     "titleValue": "Reny Mireles",
-    "classification": "Ingeniero de Sistemas Distribuidos",
+    "classification": "Software Developer",
     "origin": "ORIGEN",
     "originValue": "Venezuela",
     "specialty": "ESPECIALIDAD",
-    "specialtyValue": "Sistemas distribuidos, edge computing, mobile",
+    "specialtyValue": "Desarrollo fullstack, aplicaciones móviles, edge computing",
     "methodology": "METODOLOGÍA",
-    "methodologyValue": "Iteración documentada, arquitectura plugin-first",
+    "methodologyValue": "Aprender construyendo — iteración documentada",
     "languages": "IDIOMAS",
-    "languagesValue": "Español (nativo), Inglés (profesional)",
+    "languagesValue": "Español (nativo), Inglés (intermedio B1-B2)",
     "availability": "DISPONIBILIDAD",
-    "availabilityValue": "Abierto a oportunidades",
+    "availabilityValue": "Buscando mi primer rol formal",
+    "location": "UBICACIÓN",
+    "locationValue": "Venezuela · Remoto",
+    "bio": "Mi camino en la programación ha sido 100% autodidacta. La curiosidad por entender cómo funcionan las cosas me ha llevado a explorar desde el desarrollo móvil hasta el diseño de sistemas distribuidos. No tengo un background tradicional, pero lo compenso construyendo proyectos reales, estudiando arquitecturas complejas y escribiendo código del que me pueda sentir orgulloso. Actualmente busco mi primera oportunidad profesional a tiempo completo para aportar valor y seguir creciendo.",
     "capabilitiesTitle": "Capacidades Demostradas",
     "capabilitiesSubtitle": "Dominios técnicos verificados en expedientes",
     "capabilities": {
       "frontend": "FRONTEND",
-      "frontendValue": "React, Flutter, Astro, Tailwind",
+      "frontendValue": "React, Next.js, Astro, Tailwind, TypeScript",
+      "mobile": "MOBILE",
+      "mobileValue": "Flutter, Dart, Provider, Riverpod",
       "backend": "BACKEND",
-      "backendValue": "Go, Node.js, Fiber, Express",
-      "edge": "EDGE",
-      "edgeValue": "Cloudflare Workers, Durable Objects",
+      "backendValue": "Go (Fiber), Java (Spring Boot), Node.js",
       "database": "DATABASE",
-      "databaseValue": "PostgreSQL, Redis, SQLite, MongoDB",
+      "databaseValue": "PostgreSQL, SQLite, Drift, Redis (Upstash)",
+      "edge": "EDGE",
+      "edgeValue": "Cloudflare Workers, Durable Objects, Firebase FCM",
       "devops": "DEVOPS",
-      "devopsValue": "Docker, GitHub Actions, Sentry",
+      "devopsValue": "GitHub Actions, Docker, Vercel, Sentry",
       "auth": "AUTH",
-      "authValue": "WebAuthn, Passkeys, OAuth2"
+      "authValue": "WebAuthn/Passkeys, OAuth 2.0, Ed25519, JWT",
+      "architecture": "ARCHITECTURE",
+      "architectureValue": "Plugin-first, Layered, Repository Pattern, LWW CRDT"
     },
+    "softSkillsTitle": "Soft Skills",
+    "softSkills": [
+      "Aprendizaje autodidacta",
+      "Resolución de problemas",
+      "Adaptabilidad técnica",
+      "Comunicación efectiva"
+    ],
     "philosophyTitle": "Filosofía de Trabajo",
     "philosophy": [
-      "Iteración sobre perfección: Cada refinamiento documentado añade valor medible.",
-      "Arquitectura plugin-first: Extensibilidad como principio de diseño, no como afterthought.",
-      "Documentación silenciosa: El código se explica solo, las notas de laboratorio capturan el por qué.",
-      "Performance como feature: Cada decisión arquitectónica considera el impacto en el usuario final."
+      "Aprender construyendo: cada expediente nace de una necesidad real — Kumoriya del problema de fragmentación de contenido, MyBookTrace de mi propio hábito de lectura, POS de necesidades B2B, Matrixezz de una clase de álgebra lineal.",
+      "Arquitectura al servicio del problema, no al revés: plugin-first cuando el dominio cambia frecuentemente (Kumoriya), arquitectura en capas cuando lo que importa es la separación de responsabilidades (Finwise, MyBookTrace, POS).",
+      "Local-first cuando el offline importa: MyBookTrace con sqflite, Kumoriya con Drift + CRDT. La red es una mejora, no una dependencia.",
+      "Documentar el por qué, no solo el qué: los ADRs y el dev-diary de Kumoriya son el ejemplo. El código explica el cómo; la documentación captura las decisiones y los callejones sin salida."
     ],
     "note": "El contexto de cada herramienta se detalla en los expedientes. Aquí solo se listan capacidades verificadas en producción."
   },
@@ -97,7 +112,27 @@
     "title": "Catálogo de Herramientas",
     "subtitle": "Clasificadores laterales por categoría. El contexto se detalla en los expedientes.",
     "usedIn": "Usado en",
-    "viewExpedients": "Ver expedientes →"
+    "viewExpedients": "Ver expedientes →",
+    "inventoryDocument": "DOCUMENTO DE INVENTARIO",
+    "inventoryRef": "REF: ARH-INV-001 · CLASIFICACIÓN: HERRAMIENTAS TÉCNICAS",
+    "inventoryFooter": "Herramientas verificadas en producción. Contexto en expedientes.",
+    "inventoryEnd": "FIN DE INVENTARIO",
+    "inventory": "INVENTARIO",
+    "tool": "HERRAMIENTA",
+    "status": "ESTADO",
+    "reference": "REFERENCIA",
+    "viewExpedient": "Ver expediente",
+    "browseAll": "Ver todos los expedientes",
+    "entries": "registros",
+    "toolsCount": "herramientas",
+    "descFrontend": "Interfaz de Usuario",
+    "descMobile": "Aplicaciones Móviles",
+    "descBackend": "Servidor y Lógica",
+    "descDatabase": "Almacenamiento de Datos",
+    "descEdgeCloud": "Computación Distribuida",
+    "descDevOps": "Infraestructura y Operaciones",
+    "descAuthSecurity": "Autenticación y Seguridad",
+    "descArchitecture": "Patrones de Diseño"
   },
   "expedients": {
     "pageTitle": "Expedientes — Archivo Reny Mireles",
@@ -108,6 +143,7 @@
     "featured": "DESTACADOS",
     "active": "ACTIVOS",
     "archived": "ARCHIVADOS",
+    "archiveHeader": "ARCHIVO RENY MIRELES — EXPEDIENTE N°",
     "classification": "Clasificación",
     "status": "Status",
     "refinements": "Refinamientos",
@@ -117,6 +153,10 @@
     "decisionTree": "Árbol de Decisiones",
     "technicalStack": "STACK TÉCNICO CLASIFICADO",
     "links": "ENLACES DEL EXPEDIENTE",
+    "layers": "CAPAS",
+    "packages": "PAQUETES",
+    "plugins": "PLUGINS",
+    "tests": "TESTS",
     "repository": "Repositorio",
     "demo": "Demo en vivo",
     "website": "Sitio web",
@@ -126,17 +166,24 @@
     "viewProfile": "VER PERFIL COMPLETO",
     "viewProfileDesc": "Origen, metodología y capacidades",
     "contactCta": "CONTACTAR",
-    "contactCtaDesc": "Abrir un expediente de colaboración"
+    "contactCtaDesc": "Abrir un expediente de colaboración",
+    "backToBoard": "VOLVER AL TABLERO",
+    "featuredBadge": "★ EXPEDIENTE PRINCIPAL",
+    "viewRepo": "Ver repositorio",
+    "viewDemo": "Ver demo",
+    "downloadApk": "Descargar APK",
+    "credentials": "Credenciales",
+    "galleryNote": "La arquitectura técnica y documentación detallada se encuentran en el repositorio."
   },
   "collaborations": {
     "pageTitle": "Colaboraciones — Archivo Reny Mireles",
-    "pageDescription": "Registro de colaboraciones profesionales y consultorías",
+    "pageDescription": "Registro de colaboraciones profesionales y proyectos freelance",
     "header": "REGISTRO DE COLABORACIONES",
     "title": "Colaboraciones",
-    "subtitle": "Proyectos colaborativos, consultorías y asesorías técnicas que han dejado cicatrices de oro en el archivo.",
+    "subtitle": "Proyectos freelance y colaboraciones que han dejado cicatrices de oro en el archivo.",
     "keyContributions": "CONTRIBUCIONES CLAVE",
     "interested": "¿INTERESADO EN COLABORAR?",
-    "interestedText": "Abierto a consultorías, proyectos de ingeniería y colaboraciones técnicas. Cada colaboración es un expediente nuevo en el archivo.",
+    "interestedText": "Abierto a proyectos freelance, colaboraciones open source y roles fullstack. Cada colaboración es un expediente nuevo en el archivo.",
     "openRequest": "ABRIR SOLICITUD DE CONTACTO →"
   },
   "contact": {
@@ -160,31 +207,46 @@
     "whatsappPriority": "URGENTE",
     "freelanceTip": "Para propuestas de freelance, incluir: alcance, timeline estimado y presupuesto disponible.",
     "timezoneTip": "Zona horaria: UTC-4 (Venezuela). Disponible para trabajo remoto global.",
-    "location": "BASE: MARACAIBO, ZULIA, VENEZUELA",
+    "location": "BASE: VENEZUELA · REMOTO",
     "responseEmail": "Correo: 24-48h",
     "responseLinkedin": "LinkedIn: 3-5 días",
-    "responseWhatsapp": "WhatsApp: Inmediato (horario)"
+    "responseWhatsapp": "WhatsApp: Inmediato (horario)",
+    "remoteAvailable": "Disponible remoto",
+    "form": {
+      "name": "Nombre",
+      "name_ph": "Tu nombre",
+      "email": "Email",
+      "email_ph": "tu@email.com",
+      "message": "Mensaje",
+      "message_ph": "Cuéntame sobre tu proyecto...",
+      "submit": "Enviar mensaje",
+      "sending": "Enviando...",
+      "success": "¡Mensaje listo! Abriendo tu cliente de correo.",
+      "error": "Ocurrió un error. Intenta de nuevo."
+    }
   },
   "inspirations": {
     "pageTitle": "Inspiraciones — Archivo Reny Mireles",
-    "pageDescription": "Créditos de inspiración — las personas, ideas y recursos que formaron este archivo",
+    "pageDescription": "Créditos de inspiración — las filosofías que dan forma a este archivo",
     "header": "CRÉDITOS DEL ARCHIVO",
     "title": "Inspiraciones",
-    "subtitle": "Las personas, ideas, herramientas y filosofías que dieron forma a la manera de pensar, construir y documentar de este archivo.",
+    "subtitle": "Las filosofías que dieron forma a la manera de pensar, construir y documentar de este archivo.",
     "end": "FIN DE CRÉDITOS",
     "epilogue": "Todo archivo es una conversación con quienes vinieron antes.",
     "back": "VOLVER AL ARCHIVO →"
   },
   "footer": {
     "archive": "ARCHIVO RENY MIRELES",
-    "tagline": "Ingeniería de sistemas distribuidos",
+    "tagline": "Desarrollo de software",
     "built": "Construido con Astro · Cada expediente documenta pensamiento de ingeniero",
-    "secondaryLinks": "ENLACES DEL ARCHIVO"
+    "secondaryLinks": "ENLACES DEL ARCHIVO",
+    "rights": "© 2026 Reny Mireles. Todos los derechos reservados."
   },
   "common": {
     "expedient": "EXP.",
     "active": "ACTIVO",
     "archived": "ARCHIVADO",
+    "archivedPlural": "ARCHIVADOS",
     "featured": "DESTACADO",
     "verified": "VERIFICADO",
     "completed": "COMPLETADO",
@@ -197,7 +259,14 @@
     "key": "CLAVE",
     "chosen": "ELEGIDO",
     "available": "DISPONIBLE",
-    "technicalCard": "Ficha Técnica"
+    "technicalCard": "Ficha Técnica",
+    "sealCurious": "CURIOSO",
+    "sealConcentrated": "CONCENTRADO",
+    "sealSatisfied": "SATISFECHO",
+    "sealAlert": "ALERTA",
+    "sealResting": "REPOSO",
+    "expedientsCount": "EXPEDIENTES",
+    "recordsCount": "REGISTROS"
   },
   "notFound": {
     "title": "404",
@@ -210,6 +279,15 @@
   },
   "cursor": {
     "custom": "CUSTOM",
-    "native": "NATIVO"
+    "native": "NATIVO",
+    "ariaCustom": "Cambiar a cursor nativo",
+    "ariaNative": "Cambiar a cursor personalizado"
+  },
+  "seal": {
+    "ariaInteractive": "Sello interactivo",
+    "ariaBackToTop": "Volver arriba"
+  },
+  "crossRef": {
+    "exploreArchive": "explorar archivo"
   }
 }
