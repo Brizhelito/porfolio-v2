@@ -43,35 +43,45 @@ function categorize(tech: string): string {
 ---
 
 <ExpedientLayout title={entry.data.title} description={entry.data.description} locale="en">
-  <ExpedientCover client:visible title={entry.data.title} expedientNumber={entry.data.expedientNumber} classification={entry.data.classification} status={entry.data.status} refinementCount={entry.data.refinementCount} strings={{ refinements: T('common.refinements') }} />
+  <!-- Back to board -->
+  <a
+    href="/en/expedientes"
+    class="inline-flex items-center gap-2 mb-6 font-stamp text-stamp-label text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-accent-gold)]"
+    data-seal-react
+  >
+    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+    </svg>
+    {T('expedients.backToBoard')}
+  </a>
 
-  {/* P3-05: only render the metrics grid when at least one metric exists;
-      auto-fit grid means 1-4 cards always look balanced (no holes). */}
+  <ExpedientCover client:visible title={entry.data.title} expedientNumber={entry.data.expedientNumber} classification={entry.data.classification} status={entry.data.status} refinementCount={entry.data.refinementCount} strings={{ refinements: T('common.refinements'), active: T('common.active'), archived: T('common.archived'), featured: T('common.featured'), archiveHeader: T('expedients.archiveHeader') }} />
+
   {(entry.data.metrics?.layers != null ||
     entry.data.metrics?.packages != null ||
     entry.data.metrics?.plugins != null ||
     entry.data.metrics?.tests != null) && (
     <div class="mb-10 grid grid-cols-2 sm:grid-cols-4 gap-3">
       {entry.data.metrics?.layers != null && (
-        <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
+        <div class="rounded-[2px] border border-l-2 border-l-[var(--color-accent-gold)] border-[var(--color-archive-kraft)]/20 p-4 text-center bg-[var(--color-bg-primary)]">
           <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.layers}</p>
-          <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">LAYERS</p>
+          <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">{T('expedients.layers')}</p>
         </div>
       )}
       {entry.data.metrics?.packages != null && (
-        <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
+        <div class="rounded-[2px] border border-l-2 border-l-[var(--color-accent-gold)] border-[var(--color-archive-kraft)]/20 p-4 text-center bg-[var(--color-bg-primary)]">
           <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.packages}</p>
-          <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">PACKAGES</p>
+          <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">{T('expedients.packages')}</p>
         </div>
       )}
       {entry.data.metrics?.plugins != null && (
-        <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
+        <div class="rounded-[2px] border border-l-2 border-l-[var(--color-accent-gold)] border-[var(--color-archive-kraft)]/20 p-4 text-center bg-[var(--color-bg-primary)]">
           <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.plugins}</p>
           <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">PLUGINS</p>
         </div>
       )}
       {entry.data.metrics?.tests != null && (
-        <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-3 text-center">
+        <div class="rounded-[2px] border border-l-2 border-l-[var(--color-accent-gold)] border-[var(--color-archive-kraft)]/20 p-4 text-center bg-[var(--color-bg-primary)]">
           <p class="font-display text-display-md text-[var(--color-accent-gold)]">{entry.data.metrics.tests}</p>
           <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">TESTS</p>
         </div>
@@ -106,7 +116,7 @@ function categorize(tech: string): string {
     <h2 class="font-stamp text-stamp-title text-[var(--color-text-secondary)] mb-6">{T('expedients.technicalStack')}</h2>
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {Object.entries(stackGroups).map(([category, techs]) => (
-        <TechnicalCard client:visible title={category} fields={techs.map((t) => ({ label: 'Technology', value: t }))} stampLabel={`${techs.length}`} stampVariant="blue" />
+        <TechnicalCard client:visible title={category} fields={techs.map((t) => ({ label: T('expedients.stack'), value: t }))} stampLabel={`${techs.length}`} stampVariant="blue" />
       ))}
     </div>
   </section>

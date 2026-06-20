@@ -8,6 +8,7 @@ import Stamp from '@components/ui/Stamp';
 import EvidenceBoard from '@components/expedientes/EvidenceBoard';
 import StackCatalog from '@components/expedientes/StackCatalog';
 import CrossReferences from '@components/ui/CrossReferences';
+import HeroIntro from '@components/ui/HeroIntro';
 import { getCollection } from 'astro:content';
 import { t, getLocalizedHref } from '@lib/i18n';
 import { SOCIAL_LINKS } from '@lib/constants';
@@ -56,10 +57,10 @@ const crossRefItems = [
   { href: inspirationsHref, label: T('hero.crossRefInspirations'), description: T('hero.crossRefInspirationsDesc'), variant: 'blue' as const },
 ];
 
-// Stack categories for landing preview (4 main, 3-4 chips each)
+// Stack categories for landing preview (verified)
 const stackCategories = [
-  { name: 'Frontend', tools: ['React', 'Astro', 'Tailwind CSS', 'TypeScript'] },
-  { name: 'Backend', tools: ['Go', 'Node.js', 'Fiber', 'Express'] },
+  { name: 'Frontend', tools: ['React', 'Next.js', 'Astro', 'Tailwind CSS', 'TypeScript'] },
+  { name: 'Backend', tools: ['Go (Fiber)', 'Java (Spring Boot)', 'Node.js'] },
   { name: 'Edge & Cloud', tools: ['Cloudflare Workers', 'Durable Objects', 'Vercel'] },
   { name: 'DevOps', tools: ['Docker', 'GitHub Actions', 'Sentry'] },
 ];
@@ -75,27 +76,34 @@ const stackCategories = [
     >
       <!-- Floating controls (always visible without scroll) -->
       <div class="flex items-center justify-end gap-2 pt-4">
-        <CursorToggle client:load />
-        <LanguageSwitch client:load currentPath={currentPath} locale={locale} />
+        <CursorToggle client:idle locale={locale} />
+        <LanguageSwitch client:idle currentPath={currentPath} locale={locale} />
       </div>
 
       <!-- Main hero content: centered vertically, split left/right on desktop -->
+      <HeroIntro client:load>
       <div class="flex flex-1 flex-col items-center justify-center gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
 
         <!-- Left: Seal + Name + CTAs -->
         <div class="flex flex-col items-center text-center lg:items-start lg:text-left lg:flex-1 lg:max-w-lg">
-          <Seal client:load size="xl" variant="hero" className="mb-6" />
+          <div data-hero-seal>
+            <Seal client:load size="xl" variant="hero" className="mb-6" locale="en" />
+          </div>
 
-          <h1 class="text-display-xl text-[var(--color-text-primary)]">
+          <h1 data-hero-name class="text-display-xl text-[var(--color-text-primary)]">
             Reny Mireles
           </h1>
 
-          <p class="mt-3 text-body-lg text-[var(--color-text-secondary)] max-w-md">
+          <p data-hero-caption class="mt-1 font-mono text-caption text-[var(--color-accent-gold)]">
+            // SOFTWARE DEVELOPER
+          </p>
+
+          <p data-hero-subtitle class="mt-3 text-body-lg text-[var(--color-text-secondary)] max-w-md">
             {T('hero.subtitle')}<br />
             {T('hero.subtitleDetail')}
           </p>
 
-          <div class="mt-5 flex flex-wrap items-center gap-4 text-caption">
+          <div data-hero-stats class="mt-5 flex flex-wrap items-center gap-4 text-caption">
             <span class="font-mono text-[var(--color-accent-gold)]">
               {expedientes.filter((e) => e.data.status !== 'archived').length} {T('hero.expedientsOpen')}
             </span>
@@ -105,11 +113,23 @@ const stackCategories = [
             </span>
           </div>
 
-          <div class="mt-2">
+          <div data-hero-status class="mt-2 flex flex-wrap items-center gap-2">
             <span class="font-stamp text-stamp-label text-stamp-green">{T('hero.status')}</span>
           </div>
 
-          <div class="mt-8 flex flex-wrap items-center gap-4">
+          <div data-hero-badges class="mt-4 flex flex-wrap gap-2">
+            <span class="inline-block rounded-paper border border-[var(--color-accent-gold)]/30 bg-[var(--color-accent-gold)]/5 px-3 py-1 font-mono text-caption text-[var(--color-accent-gold)]">
+              Flutter · Go · React
+            </span>
+            <span class="inline-block rounded-paper border border-[var(--color-archive-kraft)]/20 bg-[var(--color-bg-secondary)]/50 px-3 py-1 font-mono text-caption text-[var(--color-text-secondary)]">
+              Scalable Architectures
+            </span>
+            <span class="inline-block rounded-paper border border-[var(--color-stamp-green)]/20 bg-[var(--color-stamp-green)]/5 px-3 py-1 font-mono text-caption text-[var(--color-stamp-green)]">
+              Looking for my first formal role
+            </span>
+          </div>
+
+          <div data-hero-ctas class="mt-8 flex flex-wrap items-center gap-4">
             <a href={expedientesHref} class="inline-flex items-center gap-2 rounded-[3px] border border-[var(--color-accent-gold)] bg-[var(--color-accent-gold)]/10 px-5 py-2.5 font-stamp text-stamp-label text-[var(--color-accent-gold)] transition-all hover:bg-[var(--color-accent-gold)]/20 hover:border-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] hover:shadow-paper" data-seal-react>
               {T('hero.ctaProjects')}
               <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
@@ -123,12 +143,13 @@ const stackCategories = [
         <!-- Right: Kumoriya "thrown on desk" -->
         {kumoriya && (
           <div class="relative w-full max-w-md lg:flex-1 lg:max-w-lg">
-            <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)] mb-2 text-center lg:text-left">
+            <p data-hero-featured-label class="font-stamp text-stamp-label text-[var(--color-accent-gold)] mb-2 text-center lg:text-left">
               {T('hero.featuredProject')}
             </p>
             <a
               href={`/en/expedientes/${kumoriya.id}`}
               class="hero-folder block"
+              data-hero-folder
               data-seal-react
             >
               <FileFolder
@@ -141,12 +162,13 @@ const stackCategories = [
                 classification={kumoriya.data.classification}
                 stack={kumoriya.data.stack}
                 metrics={kumoriya.data.metrics}
-                strings={{ refinements: T('common.refinements'), clickToOpen: T('common.clickToOpen') }}
+                strings={{ refinements: T('common.refinements'), clickToOpen: T('common.clickToOpen'), active: T('common.active'), archived: T('common.archived'), featured: T('common.featured'), open: T('common.open') }}
               />
             </a>
           </div>
         )}
       </div>
+      </HeroIntro>
     </section>
 
     <!-- Gold divider -->
@@ -157,8 +179,8 @@ const stackCategories = [
       <div class="flex flex-1 flex-col items-center justify-center">
         <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2">{T('hero.fichaTitle')}</p>
 
-        <div class="relative w-full max-w-2xl rounded-paper texture-aged-paper texture-worn-edges border border-[var(--color-archive-kraft)]/30 p-6 sm:p-8 shadow-paper">
-          <div class="flex items-start justify-between mb-4">
+        <div class="relative w-full max-w-2xl rounded-paper texture-aged-paper texture-worn-edges border border-[var(--color-archive-kraft)]/30 border-l-4 border-l-[var(--color-accent-gold)] p-6 sm:p-8 shadow-paper">
+          <div class="flex items-start justify-between mb-5">
             <div>
               <h2 class="font-display text-display-md text-[var(--color-text-primary)]">{T('about.titleValue')}</h2>
               <p class="mt-1 text-body-md text-[var(--color-text-secondary)]">{T('about.classification')}</p>
@@ -166,9 +188,9 @@ const stackCategories = [
             <Stamp label={T('common.active')} variant="green" size="sm" animate={false} />
           </div>
 
-          <div class="mb-4 border-t border-dashed border-[var(--color-archive-kraft)]/40" />
+          <div class="mb-5 border-t border-dashed border-[var(--color-archive-kraft)]/40" />
 
-          <dl class="space-y-3 mb-6">
+          <dl class="space-y-3 mb-7">
             <div class="flex flex-col gap-1 sm:flex-row sm:gap-3">
               <dt class="font-stamp text-stamp-label text-[var(--color-text-secondary)] min-w-[120px]">{T('about.specialty')}</dt>
               <dd class="text-body-md text-[var(--color-text-primary)]">{T('about.specialtyValue')}</dd>
@@ -179,24 +201,29 @@ const stackCategories = [
             </div>
           </dl>
 
-          <div class="mb-6">
+          <div class="mb-7">
             <p class="font-stamp text-stamp-label text-[var(--color-accent-gold)] mb-3">{T('hero.fichaCapabilities')}</p>
             <div class="flex flex-wrap gap-2">
-              <span class="inline-block rounded-paper border border-[var(--color-archive-kraft)]/30 bg-[var(--color-bg-secondary)]/50 px-3 py-1 font-mono text-body-sm text-[var(--color-text-primary)]">
+              <span class="inline-block rounded-paper border border-[var(--color-archive-kraft)]/30 bg-[var(--color-bg-secondary)]/50 px-3 py-1.5 font-mono text-body-sm text-[var(--color-text-primary)]">
                 {T('about.capabilities.frontend')}: {T('about.capabilities.frontendValue')}
               </span>
-              <span class="inline-block rounded-paper border border-[var(--color-archive-kraft)]/30 bg-[var(--color-bg-secondary)]/50 px-3 py-1 font-mono text-body-sm text-[var(--color-text-primary)]">
+              <span class="inline-block rounded-paper border border-[var(--color-archive-kraft)]/30 bg-[var(--color-bg-secondary)]/50 px-3 py-1.5 font-mono text-body-sm text-[var(--color-text-primary)]">
                 {T('about.capabilities.backend')}: {T('about.capabilities.backendValue')}
               </span>
-              <span class="inline-block rounded-paper border border-[var(--color-archive-kraft)]/30 bg-[var(--color-bg-secondary)]/50 px-3 py-1 font-mono text-body-sm text-[var(--color-text-primary)]">
+              <span class="inline-block rounded-paper border border-[var(--color-archive-kraft)]/30 bg-[var(--color-bg-secondary)]/50 px-3 py-1.5 font-mono text-body-sm text-[var(--color-text-primary)]">
                 {T('about.capabilities.edge')}: {T('about.capabilities.edgeValue')}
               </span>
             </div>
           </div>
 
-          <a href={aboutHref} class="inline-flex items-center gap-2 font-stamp text-stamp-label text-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] transition-colors" data-seal-react>
-            {T('hero.fichaCta')}
-          </a>
+          <div class="pt-4 border-t border-dashed border-[var(--color-archive-kraft)]/40">
+            <a href={aboutHref} class="gold-underline group inline-flex items-center gap-2.5 py-1 font-stamp text-stamp-title tracking-widest text-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] transition-all duration-300" data-seal-react>
+              <span>{T('hero.fichaCta')}</span>
+              <svg class="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </a>
+          </div>
 
           <!-- Corner decorations -->
           <div class="absolute right-2 top-2 h-4 w-4 border-r border-t border-[var(--color-archive-kraft)]/30" />
@@ -230,7 +257,8 @@ const stackCategories = [
             client:visible
             items={otherExpedientes}
             basePath="/en/expedientes"
-            strings={{ refinements: T('common.refinements'), clickToOpen: T('common.clickToOpen') }}
+            variant="grid"
+            strings={{ refinements: T('common.refinements'), clickToOpen: T('common.clickToOpen'), active: T('common.active'), archived: T('common.archived'), featured: T('common.featured'), archivedPlural: T('common.archivedPlural') }}
           />
         </div>
       </section>
@@ -249,9 +277,10 @@ const stackCategories = [
           client:visible
           categories={stackCategories}
           toolUsage={toolUsage}
+          locale={locale}
         />
 
-        <a href={toolsHref} class="mt-8 inline-flex items-center gap-2 font-stamp text-stamp-label text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors" data-seal-react>
+        <a href={toolsHref} class="mt-8 inline-flex items-center gap-2 rounded-paper border border-[var(--color-accent-gold)]/40 px-5 py-2.5 font-stamp text-stamp-title text-[var(--color-accent-gold)] transition-all hover:border-[var(--color-accent-gold)] hover:bg-[var(--color-accent-gold)]/10 hover:shadow-paper" data-seal-react>
           {T('hero.stackCta')}
         </a>
       </div>
@@ -268,6 +297,7 @@ const stackCategories = [
           <CrossReferences
             client:visible
             items={crossRefItems}
+            locale={locale}
           />
         </div>
       </div>

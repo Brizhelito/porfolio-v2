@@ -10,6 +10,7 @@ const T = (key: string) => t('en', key);
 // hardcoding them in the template. Same pattern as /about.astro.
 import en from '../../i18n/en.json';
 const philosophyItems: string[] = (en.about as any).philosophy ?? [];
+const softSkillsItems: string[] = (en.about as any).softSkills ?? [];
 ---
 
 <BaseLayout title={T('about.pageTitle')} locale="en">
@@ -32,6 +33,7 @@ const philosophyItems: string[] = (en.about as any).philosophy ?? [];
           { label: T('about.methodology'), value: T('about.methodologyValue') },
           { label: T('about.languages'), value: T('about.languagesValue') },
           { label: T('about.availability'), value: T('about.availabilityValue') },
+          { label: T('about.location'), value: T('about.locationValue') },
         ]}
       />
 
@@ -42,11 +44,13 @@ const philosophyItems: string[] = (en.about as any).philosophy ?? [];
         stampVariant="blue"
         fields={[
           { label: T('about.capabilities.frontend'), value: T('about.capabilities.frontendValue') },
+          { label: T('about.capabilities.mobile'), value: T('about.capabilities.mobileValue') },
           { label: T('about.capabilities.backend'), value: T('about.capabilities.backendValue') },
           { label: T('about.capabilities.edge'), value: T('about.capabilities.edgeValue') },
           { label: T('about.capabilities.database'), value: T('about.capabilities.databaseValue') },
           { label: T('about.capabilities.devops'), value: T('about.capabilities.devopsValue') },
           { label: T('about.capabilities.auth'), value: T('about.capabilities.authValue') },
+          { label: T('about.capabilities.architecture'), value: T('about.capabilities.architectureValue') },
         ]}
       />
     </div>
@@ -65,6 +69,17 @@ const philosophyItems: string[] = (en.about as any).philosophy ?? [];
             <li>{item}</li>
           ))}
         </ul>
+      </div>
+    </div>
+
+    <div class="mt-8">
+      <h2 class="font-display text-display-md text-[var(--color-text-primary)] mb-4">{T('about.softSkillsTitle')}</h2>
+      <div class="flex flex-wrap gap-2">
+        {softSkillsItems.map((skill) => (
+          <span class="inline-block rounded-paper border border-[var(--color-archive-kraft)]/30 bg-[var(--color-bg-secondary)]/50 px-3 py-1.5 font-mono text-body-sm text-[var(--color-text-primary)]">
+            {skill}
+          </span>
+        ))}
       </div>
     </div>
   </section>

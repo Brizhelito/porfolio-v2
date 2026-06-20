@@ -7,107 +7,17 @@ const T = (key: string) => t('es', key);
 
 const categories = [
   {
-    section: 'INGENIERÍA DE SOFTWARE',
-    entries: [
-      {
-        name: 'Martin Fowler',
-        role: 'Arquitectura de Software',
-        note: 'Refactoring, patrones de empresa, y el concepto de deuda técnica como framework de decisión.',
-      },
-      {
-        name: 'Kent Beck',
-        role: 'Extreme Programming',
-        note: 'Simplicidad, comunicación, feedback. La base de cómo pienso sobre iteración.',
-      },
-      {
-        name: 'Rich Hickey',
-        role: 'Simplicidad como disciplina',
-        note: '"Simple Made Easy" cambió mi forma de evaluar complejidad incidental vs esencial.',
-      },
-      {
-        name: 'Gerard Meszaros',
-        role: 'Testing Patterns',
-        note: 'xUnit Test Patterns — el manual de referencia para tests que comunican intención.',
-      },
-    ],
-  },
-  {
-    section: 'SISTEMAS DISTRIBUIDOS',
-    entries: [
-      {
-        name: 'Leslie Lamport',
-        role: 'Fundamentos de consenso',
-        note: 'Paxos, relojes lógicos, y la base teórica de todo sistema distribuido moderno.',
-      },
-      {
-        name: 'Pat Helland',
-        role: 'Life beyond distributed transactions',
-        note: 'El paper que me hizo entender por qué los sagas patterns son inevitables.',
-      },
-      {
-        name: 'Marc Shapiro',
-        role: 'CRDTs',
-        note: 'Conflict-free Replicated Data Types — la base de Kumoriya sync layer.',
-      },
-    ],
-  },
-  {
-    section: 'DISEÑO DE INTERFACES',
-    entries: [
-      {
-        name: 'Edward Tufte',
-        role: 'Visualización de información',
-        note: 'Data-ink ratio. Cada pixel debe justificar su existencia.',
-      },
-      {
-        name: 'Dieter Rams',
-        role: 'Diseño industrial',
-        note: '"Weniger, aber besser" — menos, pero mejor. Filosofía aplicada a APIs y UIs.',
-      },
-      {
-        name: 'John Maeda',
-        role: 'Leyes de simplicidad',
-        note: 'Organizar, reducir, y saber cuándo el diseño ha alcanzado su forma final.',
-      },
-    ],
-  },
-  {
     section: 'FILOSOFÍA Y METODOLOGÍA',
     entries: [
       {
         name: 'Kintsugi (金継ぎ)',
         role: 'Filosofía de la reparación',
-        note: 'Las cicatrices no se ocultan — se celebran con oro. La base conceptual de todo este archivo.',
-      },
-      {
-        name: 'Nassim Taleb',
-        role: 'Antifragilidad',
-        note: 'Lo que se beneficia del caos. Los sistemas (y los ingenieros) deberían ser antifrágiles.',
+        note: 'Las cicatrices no se ocultan — se celebran con oro. La base conceptual de este archivo: cada error documentado, cada refactor y cada ADR es parte visible del proceso, no algo que ocultar. Los expedientes muestran las decisiones, los callejones sin salida y los refinamientos por igual.',
       },
       {
         name: 'Richard Feynman',
         role: 'Pensamiento de primer principio',
-        note: '"What I cannot create, I do not understand." La metodología de cada expediente.',
-      },
-    ],
-  },
-  {
-    section: 'HERRAMIENTAS QUE FORMARON ESTILO',
-    entries: [
-      {
-        name: 'Neovim',
-        role: 'Editor',
-        note: 'Modal editing como extensión del pensamiento. Configuración mínima, eficiencia máxima.',
-      },
-      {
-        name: 'Figma',
-        role: 'Diseño colaborativo',
-        note: 'Componentes, tokens, auto-layout. El puente entre diseño y código.',
-      },
-      {
-        name: 'Obsidian',
-        role: 'Segundo cerebro',
-        note: 'Zettelkasten + graph view. Así nacen las conexiones entre expedientes.',
+        note: '"What I cannot create, I do not understand." La metodología de cada expediente: aprender construyendo desde cero, no copiando patrones sin entenderlos.',
       },
     ],
   },

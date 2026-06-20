@@ -11,29 +11,26 @@ const collaborations = [
   {
     id: 'corpozulia-2024',
     organization: 'Corpozulia',
-    role: 'Consultor de Desarrollo',
+    role: 'Desarrollador Fullstack (Freelance)',
     period: '2024',
     status: 'green' as const,
     statusLabel: T('common.completed'),
     description:
-      'Asesoría técnica en la modernización de la plataforma de gestión institucional. Migración de arquitectura legacy a stack moderno con enfoque en rendimiento y mantenibilidad.',
+      'Desarrollo de una plataforma interna para la gestión de inventario y solicitudes operativas como proyecto independiente remunerado. Me encargué del diseño de la arquitectura y la implementación fullstack.',
     contributions: [
-      'Auditoría de arquitectura frontend existente',
-      'Propuesta de migración a componentes modulares',
-      'Capacitación del equipo interno en buenas prácticas',
-      'Documentación técnica y guías de estilo',
+      'Digitalización de procesos internos de inventario y solicitudes',
+      'Diseño e implementación de la arquitectura fullstack',
+      'Mejora de la eficiencia en la gestión de recursos institucionales',
     ],
-    stack: ['TypeScript', 'React', 'Node.js', 'PostgreSQL'],
+    stack: ['Java', 'Spring Boot', 'MySQL', 'React', 'Tailwind CSS'],
     fields: [
       { label: 'ORGANIZACIÓN', value: 'Corpozulia' },
-      { label: 'ROL', value: 'Consultor de Desarrollo' },
+      { label: 'ROL', value: 'Desarrollador Fullstack (Freelance)' },
       { label: 'PERIODO', value: '2024' },
-      { label: 'MODALIDAD', value: 'Remoto / Presencial (Maracaibo)' },
+      { label: 'MODALIDAD', value: 'Presencial (Machiques)' },
     ],
-    // P3-03: moved the hardcoded sticky note text into the collab data so
-    // adding a new collaboration doesn't require editing the template.
     anecdote:
-      'El equipo de Corpozulia fue excepcionalmente receptivo. La migración se completó en fases sin downtime.',
+      'El equipo de Corpozulia fue excepcionalmente receptivo. La plataforma se implementó en fases sin interrumpir las operaciones diarias.',
   },
 ];
 ---
@@ -46,7 +43,7 @@ const collaborations = [
         <span class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">
           {T('collaborations.header')}
         </span>
-        <Stamp label={`${collaborations.length} REGISTRO`} variant="green" size="md" />
+        <Stamp label={`${collaborations.length} ${T('common.recordsCount')}`} variant="green" size="md" />
       </div>
       <h1 class="font-display text-display-lg text-[var(--color-text-primary)]">
         {T('collaborations.title')}

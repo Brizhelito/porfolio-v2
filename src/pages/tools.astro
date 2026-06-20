@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@layouts/BaseLayout.astro';
+import StackCatalog from '@components/expedientes/StackCatalog';
 import { t } from '@lib/i18n';
 import { getCollection } from 'astro:content';
 
@@ -7,32 +8,29 @@ const T = (key: string) => t('es', key);
 
 const expedientes = await getCollection('expedientes');
 
-// Build category -> expedient mapping
 const categoryDefs = [
-  { name: 'Frontend', tools: ['React', 'Flutter', 'Astro', 'Tailwind CSS', 'TypeScript', 'Next.js'] },
-  { name: 'Mobile', tools: ['Flutter', 'Dart', 'Riverpod', 'Drift/SQLite', 'Firebase'] },
-  { name: 'Backend', tools: ['Go', 'Fiber', 'Node.js', 'Express', 'Python'] },
-  { name: 'Database', tools: ['PostgreSQL', 'Redis', 'SQLite', 'MongoDB', 'Drift'] },
-  { name: 'Edge & Cloud', tools: ['Cloudflare Workers', 'Durable Objects', 'Vercel', 'WebSocket'] },
-  { name: 'DevOps', tools: ['Docker', 'GitHub Actions', 'Sentry', 'Nginx'] },
-  { name: 'Auth & Security', tools: ['WebAuthn', 'Passkeys', 'OAuth2', 'JWT', 'CRDT'] },
-  { name: 'Architecture', tools: ['Plugin-first', 'Microservicios', 'Event-driven', 'CQRS'] },
+  { name: 'Frontend', tools: ['React', 'Next.js', 'Astro', 'Tailwind CSS', 'TypeScript', 'JavaScript'] },
+  { name: 'Mobile', tools: ['Flutter', 'Dart', 'Provider', 'Riverpod', 'sqflite', 'Go Router', 'FL Chart', 'mobile_scanner'] },
+  { name: 'Backend', tools: ['Go (Fiber)', 'Java (Spring Boot)', 'Node.js', 'Maven'] },
+  { name: 'Database', tools: ['PostgreSQL', 'Neon', 'SQLite', 'Drift', 'Redis (Upstash)'] },
+  { name: 'Edge & Cloud', tools: ['Cloudflare Workers', 'Durable Objects', 'Cloudflare R2', 'Vercel', 'Firebase FCM'] },
+  { name: 'DevOps', tools: ['GitHub Actions', 'Docker', 'Sentry'] },
+  { name: 'Auth & Security', tools: ['WebAuthn/Passkeys', 'OAuth 2.0', 'Ed25519', 'JWT', 'iron-session', 'bcrypt', 'Zod'] },
+  { name: 'Architecture', tools: ['Plugin-first', 'Layered Architecture', 'Repository Pattern', 'Provider Pattern', 'LWW CRDT Sync', 'REST API', 'MVC'] },
 ];
 
-// For each category, find expedientes whose stack contains any of its tools
-const categories = categoryDefs.map((cat) => {
-  const related = expedientes.filter((exp) =>
-    cat.tools.some((tool) =>
-      exp.data.stack.some((s) => s.toLowerCase().includes(tool.toLowerCase()) || tool.toLowerCase().includes(s.toLowerCase()))
-    )
-  );
-  return { ...cat, related };
-});
+const toolUsage: Record<string, string[]> = {};
+for (const exp of expedientes) {
+  for (const tool of (exp.data.stack ?? [])) {
+    if (!toolUsage[tool]) toolUsage[tool] = [];
+    toolUsage[tool].push(exp.data.title);
+  }
+}
 ---
 
 <BaseLayout title={T('tools.pageTitle')}>
-  <section class="page-enter mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-    <header class="mb-8">
+  <section class="page-enter mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+    <header class="mb-10">
       <p class="font-stamp text-stamp-label text-[var(--color-text-secondary)] mb-2">{T('tools.header')}</p>
       <h1 class="text-display-lg text-[var(--color-text-primary)]">{T('tools.title')}</h1>
       <p class="mt-2 text-body-lg text-[var(--color-text-secondary)]">
@@ -40,59 +38,11 @@ const categories = categoryDefs.map((cat) => {
       </p>
     </header>
 
-    <div class="space-y-6">
-      {categories.map((cat) => (
-        <div class="rounded-paper border border-[var(--color-archive-kraft)]/20 p-5 transition-shadow hover:shadow-paper">
-          <h2 class="font-stamp text-stamp-title text-[var(--color-accent-gold)] mb-3">
-            {cat.name}
-          </h2>
-          <div class="flex flex-wrap gap-2">
-            {/* P2-13: chips are now links. If a tool was used in an expedient,
-                the chip links to the first related expedient; otherwise it
-                links to /expedientes (general browse). This matches the
-                "Usado en" links below and makes the chip affordance real. */}
-            {cat.tools.map((tool) => {
-              const relatedExp = cat.related.find((exp) =>
-                exp.data.stack.some((s) =>
-                  s.toLowerCase().includes(tool.toLowerCase()) ||
-                  tool.toLowerCase().includes(s.toLowerCase())
-                )
-              );
-              const href = relatedExp
-                ? `/expedientes/${relatedExp.id}`
-                : '/expedientes';
-              return (
-                <a
-                  href={href}
-                  class="inline-block rounded-paper border border-[var(--color-archive-kraft)]/30 bg-[var(--color-bg-secondary)]/50 px-3 py-1 font-mono text-body-sm text-[var(--color-text-primary)] transition-all hover:border-[var(--color-accent-gold)]/40 hover:text-[var(--color-accent-gold)] hover:shadow-paper"
-                  data-seal-react
-                  title={relatedExp ? `Ver expediente: ${relatedExp.data.title}` : 'Ver todos los expedientes'}
-                >
-                  {tool}
-                </a>
-              );
-            })}
-          </div>
-          {cat.related.length > 0 && (
-            <div class="mt-3 pt-3 border-t border-[var(--color-archive-kraft)]/10">
-              <p class="font-stamp text-[10px] tracking-[0.1em] text-[var(--color-text-secondary)] mb-1.5">{T('tools.usedIn')}:</p>
-              <div class="flex flex-wrap gap-2">
-                {cat.related.map((exp) => (
-                  <a
-                    href={`/expedientes/${exp.id}`}
-                    class="inline-flex items-center gap-1 text-body-sm font-mono text-[var(--color-accent-gold)] hover:text-[var(--color-accent-gold-bright)] transition-colors"
-                    data-seal-react
-                  >
-                    <span class="text-[10px] opacity-60">{exp.data.expedientNumber}</span>
-                    {exp.data.title}
-                    <span class="text-[var(--color-accent-gold)] opacity-50">↗</span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
+    <StackCatalog
+      client:visible
+      categories={categoryDefs}
+      toolUsage={toolUsage}
+      locale="es"
+    />
   </section>
 </BaseLayout>

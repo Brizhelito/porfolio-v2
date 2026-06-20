@@ -11,27 +11,25 @@ const collaborations = [
   {
     id: 'corpozulia-2024',
     organization: 'Corpozulia',
-    role: 'Development Consultant',
+    role: 'Fullstack Developer (Freelance)',
     period: '2024',
     status: 'green' as const,
     statusLabel: T('common.completed'),
-    description: 'Technical advisory on modernizing the institutional management platform. Migration from legacy architecture to modern stack with focus on performance and maintainability.',
+    description: 'Developed an internal platform for inventory and operational request management as an independent paid project. I handled the architecture design and fullstack implementation.',
     contributions: [
-      'Audit of existing frontend architecture',
-      'Migration proposal to modular components',
-      'Internal team training on best practices',
-      'Technical documentation and style guides',
+      'Digitized internal inventory and request processes',
+      'Designed and implemented the fullstack architecture',
+      'Improved institutional resource management efficiency',
     ],
-    stack: ['TypeScript', 'React', 'Node.js', 'PostgreSQL'],
+    stack: ['Java', 'Spring Boot', 'MySQL', 'React', 'Tailwind CSS'],
     fields: [
       { label: 'ORGANIZATION', value: 'Corpozulia' },
-      { label: 'ROLE', value: 'Development Consultant' },
+      { label: 'ROLE', value: 'Fullstack Developer (Freelance)' },
       { label: 'PERIOD', value: '2024' },
-      { label: 'MODALITY', value: 'Remote / On-site (Maracaibo)' },
+      { label: 'MODALITY', value: 'On-site (Machiques)' },
     ],
-    // P3-03: anecdote moved into data array (no more template hardcoded text)
     anecdote:
-      'The Corpozulia team was exceptionally receptive. The migration was completed in phases with zero downtime.',
+      'The Corpozulia team was exceptionally receptive. The platform was implemented in phases without interrupting daily operations.',
   },
 ];
 ---
@@ -41,7 +39,7 @@ const collaborations = [
     <header class="mb-12">
       <div class="flex items-center justify-between mb-4">
         <span class="font-stamp text-stamp-label text-[var(--color-text-secondary)]">{T('collaborations.header')}</span>
-        <Stamp label={`${collaborations.length} RECORD`} variant="green" size="md" />
+        <Stamp label={`${collaborations.length} ${T('common.recordsCount')}`} variant="green" size="md" />
       </div>
       <h1 class="font-display text-display-lg text-[var(--color-text-primary)]">{T('collaborations.title')}</h1>
       <p class="mt-2 text-body-lg text-[var(--color-text-secondary)] max-w-2xl">{T('collaborations.subtitle')}</p>
