@@ -25,7 +25,7 @@ export default function DecisionTree({
   return (
     <section className={`decision-tree ${className}`}>
       <h2 className="font-display text-display-md text-[var(--color-text-primary)] mb-4">
-        {strings?.title ?? 'Árbol de Decisiones'}
+        {strings?.title ?? 'Decision Tree'}
       </h2>
 
       {/* Question */}
@@ -83,7 +83,7 @@ export default function DecisionTree({
                 </span>
                 {opt.chosen && (
                   <span className="font-stamp text-[9px] text-[var(--color-accent-gold)] border border-[var(--color-accent-gold)]/30 rounded px-1">
-                    {strings?.chosen ?? 'ELEGIDO'}
+                    {strings?.chosen ?? 'CHOSEN'}
                   </span>
                 )}
               </div>

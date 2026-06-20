@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import PinCard from './PinCard';
+import type { PinCardItem } from './PinCard';
 import Stamp from '@components/ui/Stamp';
 
 export interface EvidenceItem {
@@ -9,13 +11,27 @@ export interface EvidenceItem {
   refinementCount: number;
   description?: string;
   stack?: string[];
+  metrics?: Record<string, number>;
 }
 
 interface EvidenceBoardProps {
   items: EvidenceItem[];
   basePath?: string;
-  strings?: { refinements?: string; clickToOpen?: string };
+  variant?: 'grid' | 'corkboard';
+  strings?: {
+    refinements?: string;
+    clickToOpen?: string;
+    active?: string;
+    archived?: string;
+    featured?: string;
+    archivedPlural?: string;
+  };
 }
+
+// Deterministic rotations per index
+const FEATURED_ROTATIONS = [-1.5, 1.2];
+const ACTIVE_ROTATIONS = [-2.5, 1.8, -1.2, 2.5, -0.8, 1.5, -0.5, 2.0];
+const GRID_ROTATIONS = [-2.5, 1.8, -1.2, 2.5, -0.8, 1.5];
 
 const STATUS_VARIANT = {
   active: 'green' as const,
@@ -23,27 +39,49 @@ const STATUS_VARIANT = {
   featured: 'red' as const,
 };
 
-const STATUS_LABEL = {
-  active: 'ACTIVO',
-  archived: 'ARCHIVADO',
-  featured: 'DESTACADO',
-};
+const STATUS_LABEL = { active: 'ACTIVE', archived: 'ARCHIVED', featured: 'FEATURED' };
 
-// Deterministic scatter for visual variety
-const ROTATIONS = [-2.5, 1.8, -1.2, 2.5, -0.8, 1.5];
+interface Connection {
+  from: string;
+  to: string;
+  shared: string[];
+}
 
-export default function EvidenceBoard({
+function computeConnections(items: EvidenceItem[]): Connection[] {
+  const connections: Connection[] = [];
+  for (let i = 0; i < items.length; i++) {
+    for (let j = i + 1; j < items.length; j++) {
+      const stackA = items[i].stack ?? [];
+      const stackB = items[j].stack ?? [];
+      const shared = stackA.filter((t) => stackB.includes(t));
+      if (shared.length > 0) {
+        connections.push({ from: items[i].id, to: items[j].id, shared });
+      }
+    }
+  }
+  return connections;
+}
+
+/* ============================================
+   Grid variant — original homepage look
+   ============================================ */
+function GridVariant({
   items,
-  basePath = '/expedientes',
+  basePath,
   strings,
-}: EvidenceBoardProps) {
+}: {
+  items: EvidenceItem[];
+  basePath: string;
+  strings?: EvidenceBoardProps['strings'];
+}) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const statusLabel = (s: keyof typeof STATUS_LABEL) => strings?.[s] ?? STATUS_LABEL[s];
 
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item, i) => {
-          const rot = ROTATIONS[i % ROTATIONS.length];
+          const rot = GRID_ROTATIONS[i % GRID_ROTATIONS.length];
           const isHovered = hoveredId === item.id;
 
           return (
@@ -79,24 +117,20 @@ export default function EvidenceBoard({
 
                 {/* Card content */}
                 <div className="pt-6 px-5 pb-5">
-                  {/* Expedient number */}
                   <p className="font-stamp text-stamp-label text-[var(--color-archive-ink)]/60 mb-2">
                     EXP. {item.expedientNumber}
                   </p>
 
-                  {/* Title */}
                   <h3 className="font-display text-display-sm text-[var(--color-text-primary)] mb-1">
                     {item.title}
                   </h3>
 
-                  {/* Description (truncated) */}
                   {item.description && (
                     <p className="text-body-sm text-[var(--color-text-secondary)] line-clamp-2 mb-3">
                       {item.description}
                     </p>
                   )}
 
-                  {/* Stack preview */}
                   {item.stack && item.stack.length > 0 && (
                     <div className="flex flex-wrap gap-1 mb-3">
                       {item.stack.slice(0, 4).map((tool) => (
@@ -115,14 +149,13 @@ export default function EvidenceBoard({
                     </div>
                   )}
 
-                  {/* Bottom row: refinements + stamp */}
                   <div className="flex items-center justify-between">
                     <p className="font-mono text-body-sm text-[var(--color-accent-gold)]">
                       {item.refinementCount}{' '}
-                      {strings?.refinements ?? 'refinamientos'}
+                      {strings?.refinements ?? 'refinements'}
                     </p>
                     <Stamp
-                      label={STATUS_LABEL[item.status]}
+                      label={statusLabel(item.status)}
                       variant={STATUS_VARIANT[item.status]}
                       size="sm"
                       animate={false}
@@ -142,7 +175,7 @@ export default function EvidenceBoard({
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672zM12 2.25V4.5m5.834.166l-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243l-1.59-1.59" />
                     </svg>
                     <span className="font-mono text-[11px] text-[var(--color-text-secondary)]">
-                      {strings?.clickToOpen ?? 'Haz clic para abrir...'}
+                      {strings?.clickToOpen ?? 'Click to open the expedient...'}
                     </span>
                   </div>
                 </div>
@@ -165,4 +198,261 @@ export default function EvidenceBoard({
       </div>
     </div>
   );
+}
+
+/* ============================================
+   Corkboard variant — listing page
+   ============================================ */
+function CorkboardVariant({
+  items,
+  basePath,
+  strings,
+}: {
+  items: EvidenceItem[];
+  basePath: string;
+  strings?: EvidenceBoardProps['strings'];
+}) {
+  const boardRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+
+  const featured = useMemo(
+    () => items.filter((e) => e.status === 'featured'),
+    [items]
+  );
+  const active = useMemo(
+    () => items.filter((e) => e.status === 'active'),
+    [items]
+  );
+  const archived = useMemo(
+    () => items.filter((e) => e.status === 'archived'),
+    [items]
+  );
+
+  const connections = useMemo(() => computeConnections(items), [items]);
+
+  const setCardRef = useCallback((id: string, el: HTMLDivElement | null) => {
+    if (el) {
+      cardRefs.current.set(id, el);
+    } else {
+      cardRefs.current.delete(id);
+    }
+  }, []);
+
+  const connectedIds = useMemo(() => {
+    if (!hoveredId) return new Set<string>();
+    const ids = new Set<string>();
+    ids.add(hoveredId);
+    for (const conn of connections) {
+      if (conn.from === hoveredId) ids.add(conn.to);
+      if (conn.to === hoveredId) ids.add(conn.from);
+    }
+    return ids;
+  }, [hoveredId, connections]);
+
+  const [lines, setLines] = useState<{ from: { x: number; y: number }; to: { x: number; y: number }; shared: string[]; key: string }[]>([]);
+
+  useEffect(() => {
+    const board = boardRef.current;
+    if (!board || connections.length === 0) return;
+
+    const boardRect = board.getBoundingClientRect();
+    const newLines: typeof lines = [];
+
+    for (const conn of connections) {
+      const elFrom = cardRefs.current.get(conn.from);
+      const elTo = cardRefs.current.get(conn.to);
+      if (!elFrom || !elTo) continue;
+
+      const fromRect = elFrom.getBoundingClientRect();
+      const toRect = elTo.getBoundingClientRect();
+
+      newLines.push({
+        key: `${conn.from}-${conn.to}`,
+        from: {
+          x: fromRect.left + fromRect.width / 2 - boardRect.left,
+          y: fromRect.top + fromRect.height / 2 - boardRect.top,
+        },
+        to: {
+          x: toRect.left + toRect.width / 2 - boardRect.left,
+          y: toRect.top + toRect.height / 2 - boardRect.top,
+        },
+        shared: conn.shared,
+      });
+    }
+
+    setLines(newLines);
+  }, [connections, items]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const board = boardRef.current;
+      if (!board || connections.length === 0) return;
+
+      const boardRect = board.getBoundingClientRect();
+      const newLines: typeof lines = [];
+
+      for (const conn of connections) {
+        const elFrom = cardRefs.current.get(conn.from);
+        const elTo = cardRefs.current.get(conn.to);
+        if (!elFrom || !elTo) continue;
+
+        const fromRect = elFrom.getBoundingClientRect();
+        const toRect = elTo.getBoundingClientRect();
+
+        newLines.push({
+          key: `${conn.from}-${conn.to}`,
+          from: {
+            x: fromRect.left + fromRect.width / 2 - boardRect.left,
+            y: fromRect.top + fromRect.height / 2 - boardRect.top,
+          },
+          to: {
+            x: toRect.left + toRect.width / 2 - boardRect.left,
+            y: toRect.top + toRect.height / 2 - boardRect.top,
+          },
+          shared: conn.shared,
+        });
+      }
+
+      setLines(newLines);
+    };
+
+    window.addEventListener('resize', handleResize);
+    const timer = setTimeout(handleResize, 100);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timer);
+    };
+  }, [connections]);
+
+  const isAnyHovered = hoveredId !== null;
+
+  return (
+    <div ref={boardRef} className="corkboard relative w-full p-6 sm:p-8 lg:p-10">
+      <svg
+        className="absolute inset-0 w-full h-full pointer-events-none"
+        style={{ zIndex: 0 }}
+      >
+        {lines.map((line) => {
+          const isActive =
+            hoveredId !== null &&
+            connectedIds.has(line.key.split('-')[0]) &&
+            connectedIds.has(line.key.split('-')[1]);
+          const mx = (line.from.x + line.to.x) / 2;
+          const my = (line.from.y + line.to.y) / 2 - 20;
+          return (
+            <g key={line.key}>
+              <path
+                d={`M ${line.from.x} ${line.from.y} Q ${mx} ${my} ${line.to.x} ${line.to.y}`}
+                className={`evidence-string ${isActive ? 'active' : ''}`}
+                style={{
+                  transition: 'opacity 0.3s ease, stroke-width 0.3s ease',
+                }}
+              />
+              {line.shared.length <= 2 && (
+                <text
+                  x={mx}
+                  y={my - 6}
+                  className="fill-[var(--color-stamp-red)] opacity-60"
+                  fontSize="9"
+                  fontFamily="var(--font-family-mono)"
+                  textAnchor="middle"
+                >
+                  {line.shared.join(' · ')}
+                </text>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+
+      <div className="relative z-10">
+        {featured.length > 0 && (
+          <div className="mb-10">
+            <div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
+              {featured.map((item, i) => (
+                <div
+                  key={item.id}
+                  ref={(el) => setCardRef(item.id, el)}
+                  style={{ opacity: isAnyHovered && !connectedIds.has(item.id) && hoveredId !== item.id ? 0.5 : 1, transition: 'opacity 0.3s ease' }}
+                >
+                  <PinCard
+                    item={item}
+                    basePath={basePath}
+                    size="spotlight"
+                    rotation={FEATURED_ROTATIONS[i % FEATURED_ROTATIONS.length]}
+                    strings={strings}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {active.length > 0 && (
+          <div className="mb-10">
+            <div className="grid gap-6 sm:gap-8 sm:grid-cols-2">
+              {active.map((item, i) => (
+                <div
+                  key={item.id}
+                  ref={(el) => setCardRef(item.id, el)}
+                  style={{ opacity: isAnyHovered && !connectedIds.has(item.id) && hoveredId !== item.id ? 0.5 : 1, transition: 'opacity 0.3s ease' }}
+                >
+                  <PinCard
+                    item={item}
+                    basePath={basePath}
+                    size="default"
+                    rotation={ACTIVE_ROTATIONS[i % ACTIVE_ROTATIONS.length]}
+                    strings={strings}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {archived.length > 0 && (
+          <div>
+            <h3 className="font-stamp text-sm text-[var(--color-text-secondary)]/60 mb-4">
+              {strings?.archivedPlural ?? 'ARCHIVADOS'}
+            </h3>
+            <div className="archived-pile flex flex-col max-w-md">
+              {archived.map((item) => (
+                <div
+                  key={item.id}
+                  ref={(el) => setCardRef(item.id, el)}
+                  style={{
+                    opacity: isAnyHovered && !connectedIds.has(item.id) && hoveredId !== item.id ? 0.4 : 1,
+                    transition: 'opacity 0.3s ease',
+                  }}
+                >
+                  <PinCard
+                    item={item}
+                    basePath={basePath}
+                    size="compact"
+                    strings={strings}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================
+   Main component
+   ============================================ */
+export default function EvidenceBoard({
+  items,
+  basePath = '/expedientes',
+  variant = 'corkboard',
+  strings,
+}: EvidenceBoardProps) {
+  if (variant === 'grid') {
+    return <GridVariant items={items} basePath={basePath} strings={strings} />;
+  }
+  return <CorkboardVariant items={items} basePath={basePath} strings={strings} />;
 }

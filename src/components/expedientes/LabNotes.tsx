@@ -64,7 +64,7 @@ function LabNotesContainer({ children, className = '', strings }: LabNotesProps)
   return (
     <section className={`lab-notes ${className}`}>
       <h2 className="font-display text-display-md text-[var(--color-text-primary)] mb-4">
-        {strings?.title ?? 'Notas de Laboratorio'}
+        {strings?.title ?? 'Lab Notes'}
       </h2>
       <div className="space-y-3">
         {children}

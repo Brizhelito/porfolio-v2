@@ -44,7 +44,7 @@ export default function RefinementTimeline({
   return (
     <section className={`refinement-timeline ${className}`}>
       <h2 className="font-display text-display-md text-[var(--color-text-primary)] mb-6">
-        {strings?.title ?? 'Refinamientos'}
+        {strings?.title ?? 'Refinements'}
       </h2>
       <div ref={containerRef} className="relative pl-6 border-l-2 border-[var(--color-archive-kraft)]/30">
         {refinements.map((r) => (
@@ -74,7 +74,7 @@ export default function RefinementTimeline({
                 </h3>
                 {r.isKey && (
                   <span className="font-stamp text-[9px] text-[var(--color-accent-gold)] border border-[var(--color-accent-gold)]/30 rounded px-1">
-                    {strings?.key ?? 'CLAVE'}
+                    {strings?.key ?? 'KEY'}
                   </span>
                 )}
               </div>

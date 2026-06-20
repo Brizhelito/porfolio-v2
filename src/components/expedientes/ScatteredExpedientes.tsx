@@ -12,7 +12,7 @@ export interface Expediente {
 
 interface ScatteredExpedientesProps {
   expedientes: Expediente[];
-  strings?: { refinements?: string; openExpedient?: string };
+  strings?: { refinements?: string; openExpedient?: string; active?: string; archived?: string; featured?: string };
   /** Base path for links, e.g. '/expedientes' or '/en/expedientes' */
   basePath?: string;
 }
@@ -32,11 +32,7 @@ const STATUS_VARIANT = {
   featured: 'red' as const,
 };
 
-const STATUS_LABEL = {
-  active: 'ACTIVO',
-  archived: 'ARCHIVADO',
-  featured: 'DESTACADO',
-};
+const STATUS_LABEL_DEFAULT = { active: 'ACTIVE', archived: 'ARCHIVED', featured: 'FEATURED' };
 
 export default function ScatteredExpedientes({
   expedientes,
@@ -151,11 +147,12 @@ export default function ScatteredExpedientes({
                           {exp.title}
                         </h3>
                         <p className="mt-1 text-body-sm text-[var(--color-text-secondary)]">
-                          {exp.refinementCount} {strings?.refinements ?? 'refinamientos'}
+                          {exp.refinementCount}{' '}
+                          {strings?.refinements ?? 'refinements'}
                         </p>
                       </div>
                       <Stamp
-                        label={STATUS_LABEL[exp.status]}
+                        label={strings?.[exp.status] ?? STATUS_LABEL_DEFAULT[exp.status]}
                         variant={STATUS_VARIANT[exp.status]}
                         size="sm"
                         animate={false}
@@ -177,7 +174,7 @@ export default function ScatteredExpedientes({
                     }}
                   >
                     <p className="text-body-sm text-[var(--color-text-secondary)]">
-                      {strings?.openExpedient ?? 'Haz clic para abrir el expediente...'}
+                      {strings?.openExpedient ?? 'Click to open the expedient...'}
                     </p>
                   </div>
                 </div>
