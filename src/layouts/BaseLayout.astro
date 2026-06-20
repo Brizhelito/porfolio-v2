@@ -43,11 +43,11 @@ const jsonLd = {
   url: SITE.url,
   description: siteMeta.description,
   sameAs: [
-    'https://github.com/renymireles',
-    'https://linkedin.com/in/renymireles',
+    'https://github.com/Brizhelito',
+    'https://www.linkedin.com/in/reny-david-mireles-bozo-523147240',
   ],
-  jobTitle: 'Software Engineer',
-  knowsAbout: ['Distributed Systems', 'Flutter', 'Go', 'TypeScript', 'Cloud Architecture'],
+  jobTitle: 'Software Developer',
+  knowsAbout: ['Software Development', 'Flutter', 'Go', 'TypeScript', 'Cloud Architecture', 'Distributed Systems'],
 };
 ---
 
@@ -95,6 +95,13 @@ const jsonLd = {
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <!-- Critical CSS: hide hero intro elements until JS orchestrator is ready.
+         Inline to prevent FOUC in dev mode (Vite loads CSS via JS injection). -->
+    <style>
+      [data-hero-orchestrator]{visibility:hidden;opacity:0}
+      @media(prefers-reduced-motion:reduce){[data-hero-orchestrator]{visibility:visible!important;opacity:1!important}}
+    </style>
   </head>
   <body class:list={['min-h-screen bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] transition-colors duration-300', landing && 'overflow-hidden h-dvh']}>
     <Header locale={locale} />
@@ -111,7 +118,7 @@ const jsonLd = {
         <Footer locale={locale} />
       </>
     )}
-    <Seal client:load />
+    <Seal client:idle locale={locale} />
     <CustomCursor client:load />
   </body>
 </html>

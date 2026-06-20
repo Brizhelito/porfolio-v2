@@ -1,16 +1,22 @@
 import { useEffect, useRef, useState, useCallback, type CSSProperties } from 'react';
 import { gsap, prefersReducedMotion } from '@lib/animations';
 import { sealStateForPath, type SealState } from '@lib/page-config';
+import { t, type Locale } from '@lib/i18n';
 
 // P1-12: STATE_META stays here (it's Seal-specific display metadata).
 // The path→state mapping was extracted to @lib/page-config.ts so
 // CustomCursor and Seal share a single source of truth.
-const STATE_META: Record<SealState, { color: string; label: string }> = {
-  curiosity: { color: '#C9A961', label: 'curioso' },
-  concentration: { color: '#2D4A5C', label: 'concentrado' },
-  satisfaction: { color: '#5C7156', label: 'satisfecho' },
-  alert: { color: '#B23A28', label: 'alerta' },
-  resting: { color: '#4A4640', label: 'reposo' },
+const STATE_COLORS: Record<SealState, string> = {
+  curiosity: '#C9A961',
+  concentration: '#2D4A5C',
+  satisfaction: '#5C7156',
+  alert: '#B23A28',
+  resting: '#4A4640',
+};
+
+const STATE_LABELS: Record<string, Record<SealState, string>> = {
+  es: { curiosity: 'CURIOSO', concentration: 'CONCENTRADO', satisfaction: 'SATISFECHO', alert: 'ALERTA', resting: 'REPOSO' },
+  en: { curiosity: 'CURIOUS', concentration: 'CONCENTRATED', satisfaction: 'SATISFIED', alert: 'ALERT', resting: 'RESTING' },
 };
 
 const SIZE_PX: Record<string, number> = { sm: 36, md: 60, lg: 96, xl: 180 };
@@ -24,9 +30,10 @@ interface SealProps {
   className?: string;
   /** 'floating' = fixed bottom-right corner; 'hero' = inline, larger, scroll-fades */
   variant?: 'floating' | 'hero';
+  locale?: 'es' | 'en';
 }
 
-export default function Seal({ size = 'md', className = '', variant = 'floating' }: SealProps) {
+export default function Seal({ size = 'md', className = '', variant = 'floating', locale = 'es' }: SealProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const breatheTween = useRef<gsap.core.Tween | null>(null);
@@ -41,7 +48,8 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
   const [visible, setVisible] = useState(variant === 'hero'); // hero starts visible, floating hidden on landing
 
   const isHero = variant === 'hero';
-  const meta = STATE_META[state];
+  const sealColor = STATE_COLORS[state];
+  const sealLabel = STATE_LABELS[locale]?.[state] ?? STATE_LABELS.es[state];
   const px = SIZE_PX[size];
   const tiltMax = isHero ? HERO_TILT_MAX_DEG : TILT_MAX_DEG;
 
@@ -338,7 +346,7 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
   if (isMobile && !isHero) return null;
 
   // When hovering a react element, use gold color override
-  const displayColor = hoverBoost ? '#C9A961' : meta.color;
+  const displayColor = hoverBoost ? '#C9A961' : sealColor;
 
   if (isHero) {
     return (
@@ -347,7 +355,7 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
         onClick={handleClick}
         role="button"
         tabIndex={0}
-        aria-label="Seal interactivo"
+        aria-label={t(locale, 'seal.ariaInteractive')}
         className={`cursor-pointer select-none transition-opacity duration-500 ${visible ? 'opacity-100' : 'opacity-0 pointer-events-none'} ${className}`}
         style={{ perspective: '600px' } as CSSProperties}
       >
@@ -399,13 +407,13 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
             x="50" y="76"
             textAnchor="middle"
             fontFamily="'JetBrains Mono', monospace"
-            fontSize="5.5"
+            fontSize="7"
             letterSpacing="1.5"
             fill={displayColor}
-            opacity="0.65"
+            opacity="0.75"
             className="transition-all duration-500"
           >
-            {meta.label.toUpperCase()}
+            {sealLabel}
           </text>
         </svg>
       </div>
@@ -419,7 +427,7 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
       onClick={handleClick}
       role="button"
       tabIndex={0}
-      aria-label="Volver arriba"
+      aria-label={t(locale, 'seal.ariaBackToTop')}
       className={`fixed bottom-6 right-6 z-[var(--z-modal)] cursor-pointer select-none transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0 pointer-events-none'} ${className}`}
       style={{ perspective: '400px' } as CSSProperties}
     >
@@ -439,36 +447,26 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
           strokeWidth="2.5"
           className="transition-[stroke] duration-500"
         />
-        <circle
-          cx="50" cy="50" r="32"
+        <polyline
+          points="30,52 50,25 70,52"
           fill="none"
           stroke={displayColor}
-          strokeWidth="1.2"
-          opacity="0.45"
-          className="transition-all duration-500"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="transition-[stroke] duration-500"
         />
-        <text
-          x="50" y="55"
-          textAnchor="middle"
-          fontFamily="'IBM Plex Serif', serif"
-          fontSize="28"
-          fontWeight="700"
-          fill={displayColor}
-          className="transition-[fill] duration-500"
-        >
-          RM
-        </text>
         <text
           x="50" y="78"
           textAnchor="middle"
           fontFamily="'JetBrains Mono', monospace"
-          fontSize="6.5"
+          fontSize="8"
           letterSpacing="2"
           fill={displayColor}
-          opacity="0.6"
+          opacity="0.7"
           className="transition-all duration-500"
         >
-          {meta.label.toUpperCase()}
+          {sealLabel}
         </text>
       </svg>
     </div>

@@ -121,8 +121,8 @@ const contactLabel = t(locale, 'nav.contact');
             </svg>
             {contactLabel}
           </a>
-          <CursorToggle client:load />
-          <LanguageSwitch client:load currentPath={currentPath} locale={locale} />
+          <CursorToggle client:idle locale={locale} />
+          <LanguageSwitch client:idle currentPath={currentPath} locale={locale} />
           <!-- Mobile hamburger -->
           <button
             id="mobile-menu-btn"

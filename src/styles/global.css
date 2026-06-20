@@ -57,8 +57,8 @@
     --color-bg-secondary: #D9C9A8;
     --color-text-primary: #1A1814;
     --color-text-secondary: #4A4640;
-    --color-accent-gold: #C9A961;
-    --color-accent-gold-bright: #E5C158;
+    --color-accent-gold: #887038;
+    --color-accent-gold-bright: #A68847;
     --color-stamp-red: #B23A28;
     --color-stamp-blue: #2D4A5C;
     --color-stamp-green: #5C7156;
@@ -195,7 +195,7 @@
   /* Gold border shimmer */
   .border-gold-shimmer {
     border-color: var(--color-accent-gold);
-    box-shadow: 0 0 8px rgba(201, 169, 97, 0.3);
+    box-shadow: 0 0 8px rgba(136, 112, 56, 0.3);
   }
 
   /* Landing page: main is the single scroll container */
@@ -204,9 +204,128 @@
     overflow-y: auto;
   }
 
+  /* Below-fold sections: skip layout/paint until scrolled into view.
+     contain-intrinsic-size gives the browser a size estimate to avoid
+     layout shifts. The hero section is always visible so this is a no-op
+     for it. */
+  .landing-snap > section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 100dvh;
+  }
+
   /* Kintsugi gold node pulse for connection boards */
   .gold-node {
     animation: kintsugi-pulse 2.5s ease-in-out infinite;
+  }
+
+  /* ============================================
+     Evidence Board (Tablero de Evidencias)
+     ============================================ */
+
+  /* Corkboard background */
+  .corkboard {
+    background-color: #C4A265;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(180, 140, 70, 0.3) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(200, 160, 80, 0.2) 0%, transparent 40%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='6' seed='8' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0.15'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)' opacity='0.12'/%3E%3C/svg%3E");
+    border-radius: 4px;
+    position: relative;
+  }
+
+  /* Push pin (brass/gold) */
+  .push-pin {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #E5C158, #A68847 60%, #8B6914);
+    border: 1.5px solid #8B7340;
+    box-shadow:
+      0 2px 4px rgba(26, 24, 20, 0.3),
+      inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .push-pin::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(26, 24, 20, 0.15);
+    filter: blur(2px);
+  }
+
+  /* Red evidence string (SVG connections) */
+  .evidence-string {
+    stroke: #B23A28;
+    stroke-width: 1.5;
+    fill: none;
+    opacity: 0.5;
+    stroke-linecap: round;
+  }
+
+  .evidence-string.active {
+    opacity: 0.9;
+    stroke-width: 2;
+  }
+
+  /* Archived pile stacking */
+  .archived-pile {
+    position: relative;
+  }
+
+  .archived-pile > * {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity 0.3s ease,
+                box-shadow 0.3s ease;
+  }
+
+  .archived-pile > *:nth-child(1) { transform: translateY(0) rotate(-1.5deg); z-index: 3; }
+  .archived-pile > *:nth-child(2) { transform: translateY(-6px) rotate(1deg); z-index: 2; }
+  .archived-pile > *:nth-child(3) { transform: translateY(-12px) rotate(-0.8deg); z-index: 1; }
+  .archived-pile > *:nth-child(n+4) { transform: translateY(-18px) rotate(0.5deg); z-index: 0; }
+
+  .archived-pile:hover > *:nth-child(1) { transform: translateY(0) rotate(0deg) scale(1.02); z-index: 10; }
+  .archived-pile:hover > *:nth-child(2) { transform: translateY(calc(100% + 8px)) rotate(0deg) scale(1.02); z-index: 11; }
+  .archived-pile:hover > *:nth-child(3) { transform: translateY(calc(200% + 16px)) rotate(0deg) scale(1.02); z-index: 12; }
+  .archived-pile:hover > *:nth-child(n+4) { transform: translateY(calc(300% + 24px)) rotate(0deg) scale(1.02); z-index: 13; }
+
+  /* Tape decoration (washi tape) */
+  .tape-strip {
+    position: absolute;
+    width: 60px;
+    height: 20px;
+    background: linear-gradient(135deg, rgba(229, 193, 88, 0.4), rgba(201, 169, 97, 0.25));
+    border: 1px solid rgba(201, 169, 97, 0.3);
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .tape-strip--tl {
+    top: 8px;
+    left: 12px;
+    transform: rotate(-35deg);
+  }
+
+  .tape-strip--tr {
+    top: 8px;
+    right: 12px;
+    transform: rotate(35deg);
+  }
+
+  .tape-strip--br {
+    bottom: 8px;
+    right: 12px;
+    transform: rotate(-25deg);
   }
 }
 
@@ -215,10 +334,7 @@
   .gold-node {
     animation: none;
   }
-}
 
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {

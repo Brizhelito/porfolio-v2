@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { gsap, prefersReducedMotion } from '@lib/animations';
+import { t, type Locale } from '@lib/i18n';
 
 export interface CrossRefItem {
   href: string;
@@ -13,6 +14,7 @@ export interface CrossRefItem {
 
 interface CrossReferencesProps {
   items: CrossRefItem[];
+  locale?: Locale;
 }
 
 const VARIANT_STYLES = {
@@ -34,12 +36,12 @@ const VARIANT_STYLES = {
 };
 
 const STAMP_LABELS: Record<string, string> = {
-  green: 'COL',
-  blue: 'INS',
+  green: 'COLAB',
+  blue: 'INSP',
   red: 'REF',
 };
 
-export default function CrossReferences({ items }: CrossReferencesProps) {
+export default function CrossReferences({ items, locale = 'es' }: CrossReferencesProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -50,35 +52,35 @@ export default function CrossReferences({ items }: CrossReferencesProps) {
       gsap.fromTo(
         '.gold-axis-line',
         { scaleY: 0, transformOrigin: 'top' },
-        { scaleY: 1, duration: 0.8, ease: 'power2.out', stagger: 0.2 },
+        { scaleY: 1, duration: 0.9, ease: 'power2.out', stagger: 0.15 },
       );
 
       // Gold connectors extend
       gsap.fromTo(
         '.gold-connector',
         { scaleX: 0, transformOrigin: 'left' },
-        { scaleX: 1, duration: 0.5, ease: 'power2.out', delay: 0.3, stagger: 0.3 },
+        { scaleX: 1, duration: 0.6, ease: 'power2.out', delay: 0.25, stagger: 0.25 },
       );
 
-      // Cards slide in
+      // Cards fade + slide + scale in
       gsap.fromTo(
         '.cross-ref-card',
-        { opacity: 0, x: -20 },
-        { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out', delay: 0.5, stagger: 0.3 },
+        { opacity: 0, x: -15, scale: 0.97 },
+        { opacity: 1, x: 0, scale: 1, duration: 0.7, ease: 'power3.out', delay: 0.45, stagger: 0.25 },
       );
 
       // Stamps impact
       gsap.fromTo(
         '.card-stamp',
-        { scale: 1.4, rotate: -15, opacity: 0 },
-        { scale: 1, rotate: -12, opacity: 0.7, duration: 0.4, ease: 'back.out(1.7)', delay: 0.9, stagger: 0.3 },
+        { scale: 1.5, rotate: -20, opacity: 0 },
+        { scale: 1, rotate: -12, opacity: 0.75, duration: 0.5, ease: 'back.out(1.7)', delay: 0.85, stagger: 0.25 },
       );
 
-      // Gold nodes pulse
+      // Gold nodes pulse in
       gsap.fromTo(
         '.gold-node',
-        { scale: 0, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.3, ease: 'back.out(2)', delay: 0.1, stagger: 0.5 },
+        { scale: 0.5, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(2)', delay: 0.1, stagger: 0.4 },
       );
     }, containerRef);
 
@@ -96,7 +98,7 @@ export default function CrossReferences({ items }: CrossReferencesProps) {
             {/* Gold vertical axis */}
             <div className="flex flex-col items-center w-10 sm:w-14 shrink-0">
               {/* Top node */}
-              <div className="gold-node w-2.5 h-2.5 rotate-45 bg-[var(--color-accent-gold)] shadow-[0_0_8px_rgba(201,169,97,0.4)]" />
+              <div className="gold-node w-3 h-3 rotate-45 bg-[var(--color-accent-gold)] shadow-[0_0_10px_rgba(136,112,56,0.5)]" />
 
               {/* Vertical line */}
               <div className="gold-axis-line flex-1 w-px bg-gradient-to-b from-[var(--color-accent-gold)] via-[var(--color-accent-gold)]/60 to-transparent" />
@@ -124,12 +126,12 @@ export default function CrossReferences({ items }: CrossReferencesProps) {
                 {/* Stamp rotated */}
                 <div className={`card-stamp absolute top-3 right-3 sm:top-4 sm:right-4`}>
                   <div
-                    className="font-stamp text-[7px] sm:text-[8px] tracking-widest px-2 py-1 border border-current rounded-sm"
+                    className="font-stamp text-[10px] sm:text-[11px] tracking-widest px-2.5 py-1 border-2 border-current rounded-sm font-bold"
                     style={{
                       color: item.variant === 'green' ? 'var(--color-stamp-green)' :
                              item.variant === 'blue' ? 'var(--color-stamp-blue)' : 'var(--color-stamp-red)',
                       borderColor: 'currentColor',
-                      opacity: 0.7,
+                      opacity: 0.75,
                     }}
                   >
                     {STAMP_LABELS[item.variant ?? 'red']}
@@ -153,7 +155,7 @@ export default function CrossReferences({ items }: CrossReferencesProps) {
 
                 {/* CTA link */}
                 <div className={`flex items-center gap-2 ${v.text} font-stamp text-[10px] sm:text-xs tracking-widest`}>
-                  <span>explorar archivo</span>
+                  <span>{t(locale, 'crossRef.exploreArchive')}</span>
                   <svg
                     className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5"
                     fill="none"

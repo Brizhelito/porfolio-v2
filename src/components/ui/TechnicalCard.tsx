@@ -9,6 +9,7 @@ export interface TechnicalCardProps {
   stampLabel?: string;
   stampVariant?: 'red' | 'blue' | 'green';
   className?: string;
+  expPrefix?: string;
 }
 
 export default function TechnicalCard({
@@ -19,6 +20,7 @@ export default function TechnicalCard({
   stampLabel,
   stampVariant = 'blue',
   className = '',
+  expPrefix = 'EXP. N°',
 }: TechnicalCardProps) {
   return (
     <div
@@ -29,7 +31,7 @@ export default function TechnicalCard({
         <div>
           {expedientNumber && (
             <span className="font-stamp text-stamp-label text-[var(--color-text-secondary)]">
-              EXP. N° {expedientNumber}
+              {expPrefix} {expedientNumber}
             </span>
           )}
           <h3 className="font-display text-display-sm text-[var(--color-text-primary)]">

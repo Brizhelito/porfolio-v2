@@ -139,8 +139,35 @@
 
 /* Kintsugi Gold Node Pulse */
 @keyframes kintsugi-pulse {
-  0%, 100% { box-shadow: 0 0 4px rgba(201, 169, 97, 0.3); }
-  50% { box-shadow: 0 0 12px rgba(201, 169, 97, 0.6); }
+  0%, 100% { box-shadow: 0 0 4px rgba(136, 112, 56, 0.3); }
+  50% { box-shadow: 0 0 14px rgba(136, 112, 56, 0.6); }
+}
+
+/* Hero Intro: typewriter character base state */
+.hero-char {
+  display: inline-block;
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Defense-in-depth: hide individual hero elements from first paint.
+   The [data-hero-orchestrator] wrapper handles container-level hiding,
+   but if SSR ever renders children without the wrapper attribute,
+   this prevents a flash of unstyled content. */
+[data-hero-seal],
+[data-hero-name],
+[data-hero-subtitle],
+[data-hero-stats],
+[data-hero-status],
+[data-hero-ctas],
+[data-hero-featured-label],
+[data-hero-folder] {
+  visibility: hidden;
+}
+
+/* Hero folder: disable CSS transition while GSAP controls transform */
+.hero-folder[data-animating] {
+  transition: none !important;
 }
 
 /* Reduced motion: disable all custom animations */
@@ -157,5 +184,22 @@
 
   .gold-underline::after {
     transition: none;
+  }
+
+  .hero-char {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Show hero elements immediately when reduced motion is preferred */
+  [data-hero-seal],
+  [data-hero-name],
+  [data-hero-subtitle],
+  [data-hero-stats],
+  [data-hero-status],
+  [data-hero-ctas],
+  [data-hero-featured-label],
+  [data-hero-folder] {
+    visibility: visible !important;
   }
 }

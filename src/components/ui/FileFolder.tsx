@@ -10,7 +10,7 @@ export interface FileFolderProps {
   children?: ReactNode;
   onOpen?: () => void;
   className?: string;
-  strings?: { refinements?: string; clickToOpen?: string };
+  strings?: { refinements?: string; clickToOpen?: string; active?: string; archived?: string; featured?: string; open?: string };
   /** Hero variant: shows classification, stack highlights, and metrics */
   variant?: 'default' | 'hero';
   classification?: string;
@@ -24,11 +24,7 @@ const STATUS_VARIANT = {
   featured: 'red' as const,
 };
 
-const STATUS_LABEL = {
-  active: 'ACTIVO',
-  archived: 'ARCHIVADO',
-  featured: 'DESTACADO',
-};
+const STATUS_LABEL_DEFAULT = { active: 'ACTIVE', archived: 'ARCHIVED', featured: 'FEATURED' };
 
 export default function FileFolder({
   title,
@@ -123,11 +119,11 @@ export default function FileFolder({
                 </p>
               )}
               <p className={`text-[var(--color-text-secondary)] ${isHero ? 'mt-2 text-body-sm' : 'mt-1 text-body-sm'}`}>
-                {refinementCount} {strings?.refinements ?? 'refinamientos'}
+                {refinementCount}                 {strings?.refinements ?? 'refinements'}
               </p>
             </div>
             <Stamp
-              label={STATUS_LABEL[status]}
+              label={strings?.[status] ?? STATUS_LABEL_DEFAULT[status]}
               variant={STATUS_VARIANT[status]}
               size={isHero ? 'md' : 'sm'}
               animate={false}
@@ -173,7 +169,7 @@ export default function FileFolder({
         >
           {children ?? (
             <p className="text-body-md text-[var(--color-text-secondary)]">
-              {strings?.clickToOpen ?? 'Haz clic para abrir el expediente...'}
+              {strings?.clickToOpen ?? 'Click to open the expedient...'}
             </p>
           )}
         </div>
@@ -183,7 +179,7 @@ export default function FileFolder({
             be misleading; hide it entirely. */}
         {isHero && !isOpen && !isTouch && isHovered && (
           <div className="absolute bottom-2 right-3 flex items-center gap-1 text-[10px] font-mono text-[var(--color-accent-gold)]/50 uppercase tracking-widest">
-            <span>Abrir</span>
+            <span>{strings?.open ?? 'Open'}</span>
             <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>

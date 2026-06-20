@@ -79,11 +79,11 @@
   .texture-gold-shimmer {
     background: linear-gradient(
       135deg,
-      #C9A961 0%,
-      #D4AF37 25%,
-      #E5C158 50%,
-      #D4AF37 75%,
-      #C9A961 100%
+      #887038 0%,
+      #A68847 25%,
+      #C9A961 50%,
+      #A68847 75%,
+      #887038 100%
     );
     background-size: 200% 200%;
     animation: shimmer 3s ease-in-out infinite;

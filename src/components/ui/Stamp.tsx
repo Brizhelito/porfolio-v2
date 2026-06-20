@@ -11,12 +11,25 @@ export interface StampProps {
 }
 
 const VARIANT_COLORS = {
-  red: { border: '#B23A28', text: '#B23A28', bg: 'rgba(178, 58, 40, 0.05)' },
-  blue: { border: '#2D4A5C', text: '#2D4A5C', bg: 'rgba(45, 74, 92, 0.05)' },
-  green: { border: '#5C7156', text: '#5C7156', bg: 'rgba(92, 113, 86, 0.05)' },
+  red: { border: '#B23A28', text: '#B23A28', bg: 'rgba(178, 58, 40, 0.08)' },
+  blue: { border: '#2D4A5C', text: '#2D4A5C', bg: 'rgba(45, 74, 92, 0.08)' },
+  green: { border: '#5C7156', text: '#5C7156', bg: 'rgba(92, 113, 86, 0.08)' },
 };
 
-const SIZE_MAP = { sm: 60, md: 90, lg: 130 };
+const SIZE_MAP = { sm: 72, md: 110, lg: 156 };
+
+const FONT_SIZES = { sm: 11, md: 14, lg: 18 };
+
+// Shrink font when label is long relative to circle diameter
+function effectiveFontSize(shape: string, size: keyof typeof FONT_SIZES, labelLen: number): number {
+  const base = FONT_SIZES[size];
+  if (shape !== 'circle') return base;
+  const maxCharsPerLine = { sm: 5, md: 8, lg: 10 }[size];
+  if (labelLen <= maxCharsPerLine) return base;
+  // Scale down proportionally, floor at 60% of base
+  const ratio = maxCharsPerLine / Math.min(labelLen, maxCharsPerLine * 2.5);
+  return Math.max(Math.round(base * Math.max(ratio, 0.6)), 7);
+}
 
 export default function Stamp({
   label,
@@ -29,6 +42,7 @@ export default function Stamp({
   const ref = useRef<HTMLDivElement>(null);
   const colors = VARIANT_COLORS[variant];
   const px = SIZE_MAP[size];
+  const fontSize = effectiveFontSize(shape, size, label.length);
 
   useEffect(() => {
     // P2-08: if reducedMotion is requested, skip the GSAP tween entirely
@@ -62,22 +76,32 @@ export default function Stamp({
       className={`stamp inline-flex items-center justify-center font-stamp ${className}`}
       style={{
         width: px,
-        height: shape === 'rectangle' ? px * 0.5 : px,
+        height: shape === 'rectangle' ? px * 0.45 : px,
+        flexShrink: 0,
         borderRadius,
-        border: `2px solid ${colors.border}`,
+        border: `3px solid ${colors.border}`,
+        boxShadow: `inset 0 0 0 1px ${colors.border}40, 0 1px 3px rgba(0,0,0,0.08)`,
         color: colors.text,
         backgroundColor: colors.bg,
-        fontSize: size === 'sm' ? 8 : size === 'md' ? 10 : 14,
-        letterSpacing: '0.08em',
+        fontSize,
+        letterSpacing: '0.1em',
         textTransform: 'uppercase',
         textAlign: 'center',
-        padding: '4px',
-        lineHeight: 1.2,
+        padding: size === 'sm' ? '6px' : '8px',
+        lineHeight: 1.15,
+        fontWeight: 700,
+        overflow: 'hidden',
         // P2-08: only start invisible when we actually plan to animate in.
         opacity: (animate && !prefersReducedMotion) ? 0 : 1,
       }}
     >
-      {label}
+      <span style={{
+        maxWidth: shape === 'circle' ? '70%' : '100%',
+        overflowWrap: 'break-word',
+        display: 'block',
+      }}>
+        {label}
+      </span>
     </div>
   );
 }

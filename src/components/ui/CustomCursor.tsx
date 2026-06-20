@@ -1,10 +1,9 @@
-import { useEffect, useRef } from 'react';
-// P1-12: import color lookup from shared page-config (single source of truth)
+import { useEffect, useRef, useState } from 'react';
 import { cursorColorForPath } from '@lib/page-config';
 
 const TRAIL_INTERVAL = 80;
 const MAX_TRAIL = 20;
-const RING_FOLLOW = 0.12;
+const RING_FOLLOW = 0.18;
 
 type CursorMode = 'default' | 'hovering' | 'nav' | 'reading' | 'expediente' | 'input';
 
@@ -23,20 +22,25 @@ export default function CustomCursor() {
   const mouse = useRef({ x: 0, y: 0 });
   const ring = useRef({ x: 0, y: 0 });
   const trailTimer = useRef<number>(0);
-  // P1-02: pre-allocated particle pool. We recycle the same 20 divs instead
-  // of createElement / appendChild / removeChild on every spawn. This
-  // eliminates layout thrash and GC pressure during fast mouse motion.
   const trailPool = useRef<HTMLDivElement[]>([]);
   const trailNextIdx = useRef(0);
   const rafId = useRef(0);
   const lastScrollY = useRef(0);
   const scrollTimer = useRef<number>(0);
+  const [mode, setMode] = useState<'custom' | 'native'>('custom');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('cursor') as 'custom' | 'native' | null;
+    if (saved) setMode(saved);
+
+    const onCursorChange = (e: CustomEvent) => setMode(e.detail);
+    window.addEventListener('cursorchange', onCursorChange as EventListener);
+    return () => window.removeEventListener('cursorchange', onCursorChange as EventListener);
+  }, []);
 
   useEffect(() => {
     if (window.matchMedia('(pointer: coarse)').matches) return;
-    // Respect user's cursor preference
-    const saved = localStorage.getItem('cursor');
-    if (saved === 'native') return;
+    if (mode === 'native') return;
 
     const dot = dotRef.current;
     const ringEl = ringRef.current;
@@ -72,10 +76,10 @@ export default function CustomCursor() {
       p.style.transition = 'none';
       p.style.left = x + 'px';
       p.style.top = y + 'px';
-      p.style.opacity = '0.35';
+      p.style.opacity = '0.45';
       // Force reflow so the next opacity change animates
       void p.offsetWidth;
-      p.style.transition = 'opacity 0.35s ease';
+      p.style.transition = 'opacity 0.4s ease';
       p.style.opacity = '0';
     };
 
@@ -177,7 +181,7 @@ export default function CustomCursor() {
       trailPool.current.forEach((p) => p.remove());
       trailPool.current = [];
     };
-  }, []);
+  }, [mode]);
 
   return (
     <>
