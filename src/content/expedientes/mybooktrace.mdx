@@ -1,18 +1,19 @@
 ---
 title: MyBookTrace
 expedientNumber: '004'
-classification: Aplicación mobile local-first para seguimiento de lectura
+classification: Aplicación móvil local-first para seguimiento de lectura
 status: archived
 refinementCount: 15
 description: >
-  App móvil para registrar libros leídos, notas y citas favoritas.
-  Arquitectura local-first con sincronización opcional en la nube.
+  App móvil multiplataforma para el seguimiento de hábitos de lectura
+  con persistencia de datos local eficiente.
 stack:
   - Flutter
   - Dart
-  - Drift/SQLite
-  - Riverpod
-  - Firebase
+  - Provider
+  - Go Router
+  - sqflite
+  - FL Chart
 metrics:
   layers: 1
   packages: 8
@@ -26,13 +27,13 @@ import RefinementTimeline from '../../components/expedientes/RefinementTimeline'
 
 ## Resumen Técnico
 
-Aplicación de seguimiento de lectura con arquitectura local-first. Todos los datos residen en el dispositivo, con sincronización opcional vía Firebase para backup multi-dispositivo.
+Aplicación de seguimiento de lectura con arquitectura local-first. Todos los datos residen en el dispositivo con SQLite, garantizando rendimiento óptimo y disponibilidad offline. Biblioteca personal, sesiones de lectura, desafíos y estadísticas detalladas.
 
 ## Notas de Laboratorio
 
 <LabNotes>
-  <LabNotes.Note date="2023-01-10" topic="Local-first vs cloud-first">
-    **Decisión**: Local-first por privacidad y velocidad. Los datos de lectura son personales. Firebase solo para backup, nunca como requisito de funcionamiento.
+  <LabNotes.Note date="2023-01-10" topic="Local-first">
+    **Decisión**: Local-first por privacidad y velocidad. Los datos de lectura son personales y no requieren conexión. sqflite para persistencia robusta sin dependencias externas.
   </LabNotes.Note>
 </LabNotes>
 
@@ -40,9 +41,9 @@ Aplicación de seguimiento de lectura con arquitectura local-first. Todos los da
 
 <RefinementTimeline
   refinements={[
-    { id: 1, title: 'Offline database', description: 'Drift/SQLite con migraciones automáticas', isKey: true },
-    { id: 5, title: 'Book search', description: 'Integración con Google Books API + caché local' },
-    { id: 10, title: 'Reading stats', description: 'Estadísticas de lectura con gráficas locales', isKey: true },
-    { id: 15, title: 'Export system', description: 'Export a JSON/CSV para portabilidad de datos' },
+    { id: 1, title: 'Arquitectura limpia', description: 'Separación en presentación, repositorios y servicios con Provider pattern', isKey: true },
+    { id: 5, title: 'Persistencia local', description: 'sqflite con operaciones CRUD y caché de rendimiento' },
+    { id: 10, title: 'Estadísticas de lectura', description: 'Visualización de datos con FL Chart y análisis de velocidad', isKey: true },
+    { id: 15, title: 'Desafíos de lectura', description: 'Metas personales con seguimiento automático y recordatorios' },
   ]}
 />

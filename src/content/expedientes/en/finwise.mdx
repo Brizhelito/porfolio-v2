@@ -5,16 +5,15 @@ classification: Personal finance management platform
 status: active
 refinementCount: 18
 description: >
-  Web app for expense tracking, budgets, and financial goals.
-  Dashboard with interactive visualizations and report exports.
+  Personal finance platform with budget tracking, savings goals,
+  and metrics visualization.
 stack:
   - Next.js
   - TypeScript
   - Prisma
   - PostgreSQL
-  - Chart.js
+  - React Context
   - Tailwind CSS
-  - Vercel
 metrics:
   layers: 2
   packages: 12
@@ -27,15 +26,13 @@ import RefinementTimeline from '../../../components/expedientes/RefinementTimeli
 
 ## Technical Summary
 
-Personal finance platform focused on simplicity. Automatic transaction categorization, monthly budgets with alerts, and projections based on historical patterns.
+Personal finance platform focused on visual clarity and usability. Implements session management, budget tracking, and goal setting in a clean interface. Layered architecture (repositories, services, controllers, providers) for clear separation of concerns.
 
 ## Lab Notes
 
 <LabNotes>
-  <LabNotes.Note date="2023-10-15" topic="Auto-categorization">
-    **Problem**: Users don't want to manually categorize every expense.
-
-    **Decision**: Rule engine with text patterns (regex + keywords). 85% accuracy without ML. ML discarded due to complexity vs benefit ratio.
+  <LabNotes.Note date="2023-10-15" topic="Layered architecture">
+    **Decision**: Separation into repositories, services, controllers, and providers. Each layer with a single responsibility — easy to maintain and extend without unnecessary coupling.
   </LabNotes.Note>
 </LabNotes>
 
@@ -43,9 +40,9 @@ Personal finance platform focused on simplicity. Automatic transaction categoriz
 
 <RefinementTimeline
   refinements={[
-    { id: 1, title: 'Data schema', description: 'Transaction model with nested categories', isKey: true },
-    { id: 6, title: 'Budget alerts', description: 'Notification system with configurable thresholds' },
-    { id: 12, title: 'Report export', description: 'PDF/CSV generation with server-side rendering', isKey: true },
-    { id: 18, title: 'Multi-currency', description: 'Multi-currency support with real-time conversion' },
+    { id: 1, title: 'Layered architecture', description: 'Repositories, services, controllers, providers — clear separation of concerns', isKey: true },
+    { id: 6, title: 'Integrated modules', description: 'Seamless integration of transaction, budget, and financial goal modules' },
+    { id: 12, title: 'Relational schema', description: 'Normalized data model with Prisma ORM', isKey: true },
+    { id: 18, title: 'Auth with recovery', description: 'Registration, login, and password recovery via email' },
   ]}
 />

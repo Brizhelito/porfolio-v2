@@ -5,14 +5,15 @@ classification: Local-first mobile reading tracker app
 status: archived
 refinementCount: 15
 description: >
-  Mobile app for tracking books read, notes, and favorite quotes.
-  Local-first architecture with optional cloud sync.
+  Cross-platform mobile app for tracking reading habits
+  with efficient local data persistence.
 stack:
   - Flutter
   - Dart
-  - Drift/SQLite
-  - Riverpod
-  - Firebase
+  - Provider
+  - Go Router
+  - sqflite
+  - FL Chart
 metrics:
   layers: 1
   packages: 8
@@ -26,13 +27,13 @@ import RefinementTimeline from '../../../components/expedientes/RefinementTimeli
 
 ## Technical Summary
 
-Reading tracker app with local-first architecture. All data resides on the device, with optional Firebase sync for multi-device backup.
+Reading tracker app with local-first architecture. All data resides on the device using SQLite, ensuring optimal performance and offline availability. Personal library, reading sessions, challenges, and detailed statistics.
 
 ## Lab Notes
 
 <LabNotes>
-  <LabNotes.Note date="2023-01-10" topic="Local-first vs cloud-first">
-    **Decision**: Local-first for privacy and speed. Reading data is personal. Firebase only for backup, never as a runtime requirement.
+  <LabNotes.Note date="2023-01-10" topic="Local-first">
+    **Decision**: Local-first for privacy and speed. Reading data is personal and doesn't require connectivity. sqflite for robust persistence without external dependencies.
   </LabNotes.Note>
 </LabNotes>
 
@@ -40,9 +41,9 @@ Reading tracker app with local-first architecture. All data resides on the devic
 
 <RefinementTimeline
   refinements={[
-    { id: 1, title: 'Offline database', description: 'Drift/SQLite with automatic migrations', isKey: true },
-    { id: 5, title: 'Book search', description: 'Google Books API integration + local cache' },
-    { id: 10, title: 'Reading stats', description: 'Reading statistics with local charts', isKey: true },
-    { id: 15, title: 'Export system', description: 'JSON/CSV export for data portability' },
+    { id: 1, title: 'Clean architecture', description: 'Separation of presentation, repositories, and services with Provider pattern', isKey: true },
+    { id: 5, title: 'Local persistence', description: 'sqflite with CRUD operations and performance caching' },
+    { id: 10, title: 'Reading statistics', description: 'Data visualization with FL Chart and speed analysis', isKey: true },
+    { id: 15, title: 'Reading challenges', description: 'Personal goals with automatic tracking and reminders' },
   ]}
 />

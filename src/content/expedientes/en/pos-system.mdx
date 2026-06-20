@@ -1,21 +1,20 @@
 ---
 title: POS System
 expedientNumber: '002'
-classification: Fullstack point-of-sale dashboard
+classification: Comprehensive point-of-sale system with inventory management and analytical dashboards
 status: active
 refinementCount: 23
 description: >
-  Point-of-sale system with real-time administrative dashboard.
-  Inventory management, financial reports, and multi-branch support.
+  Fullstack point-of-sale web app with inventory management,
+  customer tracking, and role-based analytical dashboards.
 stack:
-  - React
+  - Next.js
   - TypeScript
-  - Node.js
-  - Express
-  - PostgreSQL
-  - Redis
-  - Docker
   - Tailwind CSS
+  - Prisma
+  - PostgreSQL
+  - Radix UI
+  - Zod
 metrics:
   layers: 2
   packages: 18
@@ -26,19 +25,16 @@ updatedDate: 2024-03-15
 
 import { LabNotes } from '../../../components/expedientes/LabNotes';
 import RefinementTimeline from '../../../components/expedientes/RefinementTimeline';
-import DecisionTree from '../../../components/expedientes/DecisionTree';
 
 ## Technical Summary
 
-Administrative dashboard for a POS system with multi-branch management. Client-server architecture with REST API, Redis caching for high-frequency reports, and PostgreSQL as the source of truth.
+Comprehensive platform that unifies sales, inventory, and customer management. Designed to streamline business operations through a fast interface, clear workflows, and a modular architecture with vertical feature slices.
 
 ## Lab Notes
 
 <LabNotes>
-  <LabNotes.Note date="2023-07-20" topic="Caching strategy">
-    **Problem**: Sales reports took 3+ seconds with 6 months of data.
-
-    **Decision**: Redis with event-based invalidation (new sale → invalidate daily report cache). Latency reduced to 50ms.
+  <LabNotes.Note date="2023-07-20" topic="Feature-based architecture">
+    **Decision**: Vertical feature slices (sales, inventory, customers, reports) over technical separation. Each feature contains its own components, logic, and types — scalable without over-engineering.
   </LabNotes.Note>
 </LabNotes>
 
@@ -46,19 +42,9 @@ Administrative dashboard for a POS system with multi-branch management. Client-s
 
 <RefinementTimeline
   refinements={[
-    { id: 1, title: 'REST architecture', description: 'Versioned API with OpenAPI spec', isKey: true },
-    { id: 8, title: 'Multi-tenancy', description: 'Branch isolation with row-level security in PostgreSQL' },
-    { id: 15, title: 'Real-time updates', description: 'WebSocket for low inventory notifications', isKey: true },
-    { id: 23, title: 'Report engine', description: 'Async PDF generation with worker queue' },
-  ]}
-/>
-
-## Decision Tree
-
-<DecisionTree
-  question="How to handle heavy reports without blocking the API?"
-  options={[
-    { label: 'Synchronous with pagination', path: 'simple', chosen: false, description: 'Easy but blocks the event loop' },
-    { label: 'Worker queue + Redis', path: 'async', chosen: true, description: 'Background jobs, cached results' },
+    { id: 1, title: 'RBAC', description: 'Role-based access control for administrators and sales staff', isKey: true },
+    { id: 8, title: 'Data export', description: 'ExcelJS/jsPDF export and keyboard shortcuts for mouse-less operation' },
+    { id: 15, title: 'Analytics dashboard', description: 'Data visualization with Nivo/Recharts for analytical reporting', isKey: true },
+    { id: 23, title: 'Schema validation', description: 'Form validation with Zod + React Hook Form' },
   ]}
 />

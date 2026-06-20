@@ -1,21 +1,20 @@
 ---
 title: POS System
 expedientNumber: '002'
-classification: Dashboard fullstack para punto de venta
+classification: Sistema integral de punto de venta con gestión de inventario y dashboards analíticos
 status: active
 refinementCount: 23
 description: >
-  Sistema de punto de venta con dashboard administrativo en tiempo real.
-  Gestión de inventario, reportes financieros y multi-sucursal.
+  Aplicación web fullstack de punto de venta con gestión de inventario,
+  clientes y reportes analíticos basados en roles.
 stack:
-  - React
+  - Next.js
   - TypeScript
-  - Node.js
-  - Express
-  - PostgreSQL
-  - Redis
-  - Docker
   - Tailwind CSS
+  - Prisma
+  - PostgreSQL
+  - Radix UI
+  - Zod
 metrics:
   layers: 2
   packages: 18
@@ -26,19 +25,16 @@ updatedDate: 2024-03-15
 
 import { LabNotes } from '../../components/expedientes/LabNotes';
 import RefinementTimeline from '../../components/expedientes/RefinementTimeline';
-import DecisionTree from '../../components/expedientes/DecisionTree';
 
 ## Resumen Técnico
 
-Dashboard administrativo para sistema POS con gestión multi-sucursal. Arquitectura cliente-servidor con API REST, caché en Redis para reportes de alta frecuencia, y PostgreSQL como fuente de verdad.
+Plataforma integral que unifica ventas, inventario y gestión de clientes. Diseñada para optimizar operaciones comerciales mediante una interfaz rápida, flujos de trabajo claros y una arquitectura modular con feature slices verticales.
 
 ## Notas de Laboratorio
 
 <LabNotes>
-  <LabNotes.Note date="2023-07-20" topic="Estrategia de caché">
-    **Problema**: Reportes de ventas tomaban 3+ segundos con datos de 6 meses.
-
-    **Decisión**: Redis con invalidación por evento (nueva venta → invalidate cache de reportes del día). Latencia reducida a 50ms.
+  <LabNotes.Note date="2023-07-20" topic="Arquitectura por features">
+    **Decisión**: Feature slices verticales (sales, inventory, customers, reports) sobre separación técnica. Cada feature contiene sus propios componentes, lógica y tipos — escalabilidad sin sobre-ingeniería.
   </LabNotes.Note>
 </LabNotes>
 
@@ -46,19 +42,9 @@ Dashboard administrativo para sistema POS con gestión multi-sucursal. Arquitect
 
 <RefinementTimeline
   refinements={[
-    { id: 1, title: 'Arquitectura REST', description: 'API versionada con OpenAPI spec', isKey: true },
-    { id: 8, title: 'Multi-tenancy', description: 'Isolación por sucursal con row-level security en PostgreSQL' },
-    { id: 15, title: 'Real-time updates', description: 'WebSocket para notificaciones de inventario bajo', isKey: true },
-    { id: 23, title: 'Report engine', description: 'Generación async de PDFs con worker queue' },
-  ]}
-/>
-
-## Árbol de Decisiones
-
-<DecisionTree
-  question="¿Cómo manejar reportes pesados sin bloquear la API?"
-  options={[
-    { label: 'Síncrono con paginación', path: 'simple', chosen: false, description: 'Fácil pero bloquea el event loop' },
-    { label: 'Worker queue + Redis', path: 'async', chosen: true, description: 'Jobs en background, resultados en caché' },
+    { id: 1, title: 'RBAC', description: 'Control de acceso basado en roles para administradores y vendedores', isKey: true },
+    { id: 8, title: 'Data export', description: 'Exportación con ExcelJS/jsPDF y atajos de teclado para operación sin mouse' },
+    { id: 15, title: 'Analytics dashboard', description: 'Visualización de datos con Nivo/Recharts para reportes analíticos', isKey: true },
+    { id: 23, title: 'Schema validation', description: 'Validación de formularios con Zod + React Hook Form' },
   ]}
 />

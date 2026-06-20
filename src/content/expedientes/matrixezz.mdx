@@ -1,24 +1,23 @@
 ---
 title: Matrixezz
 expedientNumber: '005'
-classification: Plataforma EdTech colaborativa para educación matemática
+classification: Herramienta educativa para resolución de teoremas de matrices
 status: active
 refinementCount: 31
 description: >
-  Plataforma educativa con editor de matrices interactivo,
-  ejercicios colaborativos en tiempo real y sistema de evaluación automática.
+  Herramienta educativa para la resolución de teoremas de matrices complejos
+  delegando el cálculo algorítmico al servidor. Desarrollada en colaboración
+  para una clase de álgebra lineal.
 stack:
-  - React
-  - TypeScript
-  - Node.js
-  - Socket.io
-  - MongoDB
-  - KaTeX
-  - Docker
+  - Java
+  - Spring Boot
+  - Maven
+  - HTML
+  - SCSS
+  - JavaScript
 metrics:
   layers: 2
   packages: 14
-  plugins: 6
   tests: 35
 publishDate: 2023-03-01
 updatedDate: 2024-06-01
@@ -26,23 +25,16 @@ updatedDate: 2024-06-01
 
 import { LabNotes } from '../../components/expedientes/LabNotes';
 import RefinementTimeline from '../../components/expedientes/RefinementTimeline';
-import DecisionTree from '../../components/expedientes/DecisionTree';
 
 ## Resumen Técnico
 
-Plataforma educativa para enseñanza de álgebra lineal con énfasis en matrices. Editor visual interactivo, modo colaborativo con presencia en tiempo real vía Socket.io, y evaluación automática de ejercicios.
+Herramienta desarrollada para un entorno académico real, capaz de resolver teoremas matemáticos avanzados (Gauss, Gauss-Jordan, determinantes, inversa). Delega el cálculo algorítmico al backend Java para garantizar precisión numérica, manteniendo el cliente ligero con HTML, SCSS y JavaScript vanilla.
 
 ## Notas de Laboratorio
 
 <LabNotes>
-  <LabNotes.Note date="2023-04-15" topic="Rendering matemático">
-    **Decisión**: KaTeX sobre MathJax. 10x más rápido en render, suficiente para nuestro subset de LaTeX. MathJax añadido como fallback para expresiones complejas.
-  </LabNotes.Note>
-
-  <LabNotes.Note date="2023-08-20" topic="Colaboración en tiempo real">
-    **Problema**: Múltiples usuarios editando la misma matriz simultáneamente.
-
-    **Decisión**: Operational Transform simplificado para operaciones de matriz (celda única). Conflict resolution por posición de celda — dos usuarios pueden editar celdas diferentes sin conflicto.
+  <LabNotes.Note date="2023-04-15" topic="Cálculo en el servidor">
+    **Decisión**: Delegar toda la lógica matemática al backend Java. El cliente solo envía las matrices y renderiza resultados paso a paso. Precisión numérica garantizada en el servidor, cliente ligero.
   </LabNotes.Note>
 </LabNotes>
 
@@ -50,21 +42,10 @@ Plataforma educativa para enseñanza de álgebra lineal con énfasis en matrices
 
 <RefinementTimeline
   refinements={[
-    { id: 1, title: 'Matrix editor', description: 'Grid interactivo con soporte para fracciones y símbolos', isKey: true },
-    { id: 9, title: 'KaTeX integration', description: 'Renderizado matemático de alto rendimiento' },
-    { id: 17, title: 'Real-time collaboration', description: 'Socket.io + OT simplificado para edición concurrente', isKey: true },
-    { id: 24, title: 'Auto-grading engine', description: 'Evaluación automática con verificación paso a paso', isKey: true },
-    { id: 31, title: 'Progress tracking', description: 'Dashboard del estudiante con analytics de aprendizaje' },
-  ]}
-/>
-
-## Árbol de Decisiones
-
-<DecisionTree
-  question="¿Cómo implementar el editor de matrices interactivo?"
-  options={[
-    { label: 'HTML table + contentEditable', path: 'simple', chosen: false, description: 'Limitado, problemas con mobile' },
-    { label: 'Canvas rendering', path: 'complex', chosen: false, description: 'Potente pero dificulta accesibilidad' },
-    { label: 'Grid de divs + KaTeX', path: 'balanced', chosen: true, description: 'Accesible, performante, fácil de extender' },
+    { id: 1, title: 'Algoritmos matriciales', description: 'Gauss, Gauss-Jordan, determinantes, inversa y transpuesta en el servidor', isKey: true },
+    { id: 9, title: 'Sistema de flags', description: 'Locked, Process Inclusion, Fatal Error, Warning — UX/DX para reglas de matrices' },
+    { id: 17, title: 'Resolución paso a paso', description: 'Pasos detallados opcionales para Gauss, Gauss-Jordan e inversa clásica', isKey: true },
+    { id: 24, title: 'Arquitectura MVC', description: 'Frontend-Backend clásico con API REST y validación en ambos lados' },
+    { id: 31, title: 'Desarrollo colaborativo', description: 'Frontend especializado + Backend especializado, necesidad educativa real' },
   ]}
 />

@@ -25,14 +25,15 @@ stack:
   - CRDT
   - GitHub Actions
   - Sentry
+  - Docker
 metrics:
   layers: 3
   packages: 45
   plugins: 28
   tests: 65
 links:
-  repository: https://github.com/renymireles/kumoriya
-  website: https://kumoriya.app
+  repository: https://github.com/Brizhelito/kumoriya
+  website: https://kumoriya.online
 publishDate: 2024-01-15
 updatedDate: 2024-12-01
 ---
@@ -75,8 +76,8 @@ El sistema implementa una arquitectura **plugin-first** donde cada fuente de con
   <LabNotes.Note date="2024-08-10" topic="Autenticación sin contraseñas">
     **Contexto**: Usuarios target son tech-savvy, fricción de contraseñas es inaceptable.
 
-    **Implementación**: WebAuthn + Passkeys como método primario. Fallback a magic links.
-    Zero-knowledge proof para verificación de identidad.
+    **Implementación**: WebAuthn + Passkeys como método primario. OAuth 2.0 como login social.
+    Ed25519 para firma de JWT y tokens de sesión.
   </LabNotes.Note>
 </LabNotes>
 
@@ -87,7 +88,7 @@ El sistema implementa una arquitectura **plugin-first** donde cada fuente de con
     { id: 1, title: 'Arquitectura plugin-first', description: '10+ source plugins, 18+ resolver plugins independientes', isKey: true },
     { id: 8, title: 'Sincronización CRDT', description: 'LWW CRDT + WebSockets para tiempo real multi-dispositivo', isKey: true },
     { id: 15, title: 'Edge caching strategy', description: 'Cloudflare Workers + Durable Objects para sesiones persistentes' },
-    { id: 23, title: 'Passkeys integration', description: 'WebAuthn con fallback graceful a magic links', isKey: true },
+    { id: 23, title: 'Passkeys integration', description: 'WebAuthn con OAuth 2.0 como login social', isKey: true },
     { id: 31, title: 'Offline-first storage', description: 'Drift/SQLite con sync queue y conflict resolution' },
     { id: 47, title: 'Observability pipeline', description: 'Sentry + custom metrics en Cloudflare Analytics' },
   ]}

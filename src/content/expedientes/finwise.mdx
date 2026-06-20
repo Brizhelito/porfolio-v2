@@ -5,16 +5,15 @@ classification: Plataforma de gestión financiera personal
 status: active
 refinementCount: 18
 description: >
-  Aplicación web para tracking de gastos, presupuestos y metas financieras.
-  Dashboard con visualizaciones interactivas y exportación de reportes.
+  Plataforma de gestión financiera personal con seguimiento de presupuestos,
+  metas de ahorro y visualización de métricas.
 stack:
   - Next.js
   - TypeScript
   - Prisma
   - PostgreSQL
-  - Chart.js
+  - React Context
   - Tailwind CSS
-  - Vercel
 metrics:
   layers: 2
   packages: 12
@@ -27,15 +26,13 @@ import RefinementTimeline from '../../components/expedientes/RefinementTimeline'
 
 ## Resumen Técnico
 
-Plataforma de finanzas personales con enfoque en simplicidad. Categorización automática de transacciones, presupuestos mensuales con alertas, y proyecciones basadas en patrones históricos.
+Plataforma de finanzas personales con enfoque en claridad visual y usabilidad. Implementa gestión de sesiones, presupuestos y seguimiento de metas en una interfaz limpia. Arquitectura en capas (repositories, services, controllers, providers) para clara separación de responsabilidades.
 
 ## Notas de Laboratorio
 
 <LabNotes>
-  <LabNotes.Note date="2023-10-15" topic="Categorización automática">
-    **Problema**: Usuarios no quieren categorizar manualmente cada gasto.
-
-    **Decisión**: Rule engine con patrones de texto (regex + keywords). 85% de precisión sin ML. ML descartado por complejidad vs beneficio.
+  <LabNotes.Note date="2023-10-15" topic="Arquitectura en capas">
+    **Decisión**: Separación en repositories, services, controllers y providers. Cada capa con responsabilidad única — fácil de mantener y extender sin acoplamiento innecesario.
   </LabNotes.Note>
 </LabNotes>
 
@@ -43,9 +40,9 @@ Plataforma de finanzas personales con enfoque en simplicidad. Categorización au
 
 <RefinementTimeline
   refinements={[
-    { id: 1, title: 'Schema de datos', description: 'Modelo de transacciones con categorías anidadas', isKey: true },
-    { id: 6, title: 'Budget alerts', description: 'Sistema de notificaciones con umbrales configurables' },
-    { id: 12, title: 'Report export', description: 'PDF/CSV generation con server-side rendering', isKey: true },
-    { id: 18, title: 'Multi-currency', description: 'Soporte para múltiples monedas con conversión en tiempo real' },
+    { id: 1, title: 'Arquitectura en capas', description: 'Repositories, services, controllers, providers — separación clara de responsabilidades', isKey: true },
+    { id: 6, title: 'Módulos integrados', description: 'Transacciones, presupuestos y metas financieras con integración fluida' },
+    { id: 12, title: 'Schema relacional', description: 'Modelo de datos normalizado con Prisma ORM', isKey: true },
+    { id: 18, title: 'Auth con recuperación', description: 'Registro, login y recuperación de contraseña por email' },
   ]}
 />
