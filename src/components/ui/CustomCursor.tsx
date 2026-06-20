@@ -28,6 +28,12 @@ export default function CustomCursor() {
   const lastScrollY = useRef(0);
   const scrollTimer = useRef<number>(0);
   const [mode, setMode] = useState<'custom' | 'native'>('custom');
+  // Mobile adaptation: track coarse pointer detection so we can skip
+  // rendering the cursor DOM entirely on touch devices. The CSS already
+  // hides .cursor-dot/.cursor-ring on coarse pointers, but the React tree
+  // was still mounting empty divs + allocating refs on every page. Now the
+  // entire component is a no-op on mobile, matching the existing CSS rule.
+  const [isCoarse, setIsCoarse] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem('cursor') as 'custom' | 'native' | null;
@@ -35,7 +41,18 @@ export default function CustomCursor() {
 
     const onCursorChange = (e: CustomEvent) => setMode(e.detail);
     window.addEventListener('cursorchange', onCursorChange as EventListener);
-    return () => window.removeEventListener('cursorchange', onCursorChange as EventListener);
+
+    // Detect coarse pointer (touch). Also react to device orientation
+    // changes (e.g., a tablet docking/un-docking a keyboard).
+    const mq = window.matchMedia('(pointer: coarse)');
+    setIsCoarse(mq.matches);
+    const onMqChange = (e: MediaQueryListEvent) => setIsCoarse(e.matches);
+    mq.addEventListener('change', onMqChange);
+
+    return () => {
+      window.removeEventListener('cursorchange', onCursorChange as EventListener);
+      mq.removeEventListener('change', onMqChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -182,6 +199,11 @@ export default function CustomCursor() {
       trailPool.current = [];
     };
   }, [mode]);
+
+  // Skip rendering entirely on touch devices — no DOM, no refs, no listeners.
+  // Native browser touch feedback (and the existing :active press scale in
+  // global.css) handles the interaction affordance on mobile.
+  if (isCoarse) return null;
 
   return (
     <>

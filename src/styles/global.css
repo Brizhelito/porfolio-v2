@@ -204,14 +204,12 @@
     overflow-y: auto;
   }
 
-  /* Below-fold sections: skip layout/paint until scrolled into view.
-     contain-intrinsic-size gives the browser a size estimate to avoid
-     layout shifts. The hero section is always visible so this is a no-op
-     for it. */
-  .landing-snap > section {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 100dvh;
-  }
+  /* Note: an earlier version used `content-visibility: auto` +
+     `contain-intrinsic-size: auto 100dvh` here to skip below-fold layout.
+     That optimization caused sections to "pop" into view on scroll,
+     which the user perceived as an auto-centering snap. Reverted to a
+     normal scroll — the sections are simple enough that the perf cost
+     is negligible. */
 
   /* Kintsugi gold node pulse for connection boards */
   .gold-node {

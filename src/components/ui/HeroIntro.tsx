@@ -85,7 +85,10 @@ export default function HeroIntro({ children }: HeroIntroProps) {
     if (featuredLabel) gsap.set(featuredLabel, { opacity: 0, y: -10 });
     if (folder) {
       folder.setAttribute('data-animating', '');
-      gsap.set(folder, { opacity: 0, y: -300, x: 80, rotate: -15, scale: 0.9 });
+      // Cap initial throw so the folder stays within the viewport during
+      // the entrance — y:-300 used to push it visibly above the fold and
+      // make it look like it "landed off-screen".
+      gsap.set(folder, { opacity: 0, y: -120, x: 40, rotate: -10, scale: 0.95 });
     }
     if (ctas) {
       const ctaChildren = Array.from(ctas.children) as HTMLElement[];
