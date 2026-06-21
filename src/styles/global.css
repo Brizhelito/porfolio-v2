@@ -198,9 +198,14 @@
     box-shadow: 0 0 8px rgba(136, 112, 56, 0.3);
   }
 
-  /* Landing page: main is the single scroll container */
+  /* Landing page: main is the single scroll container.
+     Use 100svh (small viewport height) — not 100dvh — so the container
+     doesn't reflow when the mobile URL bar shows/hides on scroll.
+     Sections and content stay locked at the size they had when the
+     URL bar was visible, eliminating the jump. The visible tradeoff is
+     a bit of extra space at the bottom when the URL bar is hidden. */
   .landing-scroll {
-    height: 100dvh;
+    height: 100svh;
     overflow-y: auto;
   }
 
