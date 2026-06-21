@@ -154,9 +154,9 @@ export default function PinCard({
           />
         </div>
 
-        {/* Hover hint */}
+        {/* Hover hint — touch-hint class makes it visible on touch via CSS */}
         <div
-          className="mt-2 pt-2 border-t border-dashed border-[var(--color-archive-kraft)]/25 flex items-center gap-1.5"
+          className="touch-hint mt-2 pt-2 border-t border-dashed border-[var(--color-archive-kraft)]/25 flex items-center gap-1.5"
           style={{
             opacity: isHovered ? 1 : 0,
             transform: isHovered ? 'translateY(0)' : 'translateY(4px)',

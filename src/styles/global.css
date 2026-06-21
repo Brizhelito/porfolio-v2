@@ -105,6 +105,27 @@
     border-radius: 2px;
   }
 
+  /* Skip-to-content link — visually hidden until keyboard focused */
+  .skip-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: var(--z-cursor);
+    padding: 0.5rem 1rem;
+    background: var(--color-accent-gold);
+    color: var(--color-bg-primary);
+    font-family: var(--font-family-stamp);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transform: translateY(-100%);
+    transition: transform 0.2s ease;
+  }
+
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+
   a:focus-visible,
   button:focus-visible,
   [role="button"]:focus-visible,
@@ -207,6 +228,9 @@
   .landing-scroll {
     height: 100svh;
     overflow-y: auto;
+    /* Prevent pull-to-refresh / overscroll bounce on mobile — the landing
+       page is a self-contained scroll container, not the document body. */
+    overscroll-behavior: contain;
   }
 
   /* Note: an earlier version used `content-visibility: auto` +
@@ -329,6 +353,63 @@
     bottom: 8px;
     right: 12px;
     transform: rotate(-25deg);
+  }
+}
+
+/* ============================================
+   Touch / Mobile Enhancements
+   ============================================ */
+
+/* Show hover-only hints on touch devices. Components use inline
+   opacity:0 for desktop hover reveal; this overrides on hover:none. */
+@media (hover: none) {
+  .touch-hint {
+    opacity: 0.55 !important;
+    transform: none !important;
+  }
+}
+
+/* Enforce minimum 44px tap targets on touch devices */
+@media (pointer: coarse) {
+  /* Header hamburger */
+  .mobile-menu-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Footer / header social icon links — expand the hit area without
+     changing the visual icon size. */
+  a[aria-label="GitHub"],
+  a[aria-label="LinkedIn"],
+  a[aria-label="Email"] {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Floating seal: ensure it meets minimum tap target */
+  .seal-floating-btn {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Language switch buttons — expand hit area on touch */
+  [data-cursor-skip="nav"] a {
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Archived pile: flatten the overlapping stack into a simple vertical
+     list on touch. The hover fan-out doesn't work on touch, and the
+     stacked transforms make lower cards untappable. */
+  .archived-pile > * {
+    transform: none !important;
   }
 }
 

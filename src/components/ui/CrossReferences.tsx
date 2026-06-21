@@ -1,5 +1,3 @@
-import { useEffect, useRef } from 'react';
-import { gsap, prefersReducedMotion } from '@lib/animations';
 import { t, type Locale } from '@lib/i18n';
 
 export interface CrossRefItem {
@@ -42,53 +40,8 @@ const STAMP_LABELS: Record<string, string> = {
 };
 
 export default function CrossReferences({ items, locale = 'es' }: CrossReferencesProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!containerRef.current || prefersReducedMotion) return;
-
-    const ctx = gsap.context(() => {
-      // Gold axis lines draw in
-      gsap.fromTo(
-        '.gold-axis-line',
-        { scaleY: 0, transformOrigin: 'top' },
-        { scaleY: 1, duration: 0.9, ease: 'power2.out', stagger: 0.15 },
-      );
-
-      // Gold connectors extend
-      gsap.fromTo(
-        '.gold-connector',
-        { scaleX: 0, transformOrigin: 'left' },
-        { scaleX: 1, duration: 0.6, ease: 'power2.out', delay: 0.25, stagger: 0.25 },
-      );
-
-      // Cards fade + slide + scale in
-      gsap.fromTo(
-        '.cross-ref-card',
-        { opacity: 0, x: -15, scale: 0.97 },
-        { opacity: 1, x: 0, scale: 1, duration: 0.7, ease: 'power3.out', delay: 0.45, stagger: 0.25 },
-      );
-
-      // Stamps impact
-      gsap.fromTo(
-        '.card-stamp',
-        { scale: 1.5, rotate: -20, opacity: 0 },
-        { scale: 1, rotate: -12, opacity: 0.75, duration: 0.5, ease: 'back.out(1.7)', delay: 0.85, stagger: 0.25 },
-      );
-
-      // Gold nodes pulse in
-      gsap.fromTo(
-        '.gold-node',
-        { scale: 0.5, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.4, ease: 'back.out(2)', delay: 0.1, stagger: 0.4 },
-      );
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <div ref={containerRef} className="w-full max-w-2xl mx-auto">
+    <div className="w-full max-w-2xl mx-auto">
       {items.map((item, index) => {
         const v = VARIANT_STYLES[item.variant ?? 'red'];
         const isLast = index === items.length - 1;

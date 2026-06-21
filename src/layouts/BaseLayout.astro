@@ -104,15 +104,16 @@ const jsonLd = {
     </style>
   </head>
   <body class:list={['min-h-screen bg-[var(--color-bg-primary)] text-[var(--color-text-primary)] transition-colors duration-300', landing && 'overflow-hidden h-svh']}>
+    <a href="#main-content" class="skip-link">{locale === 'en' ? 'Skip to content' : 'Saltar al contenido'}</a>
     <Header locale={locale} />
     {landing ? (
-      <main class:list={['relative z-[var(--z-content)]', landingScroll]}>
+      <main id="main-content" class:list={['relative z-[var(--z-content)]', landingScroll]}>
         <slot />
         <Footer locale={locale} />
       </main>
     ) : (
       <>
-        <main class="relative z-[var(--z-content)]">
+        <main id="main-content" class="relative z-[var(--z-content)]">
           <slot />
         </main>
         <Footer locale={locale} />

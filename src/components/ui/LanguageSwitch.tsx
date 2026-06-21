@@ -48,7 +48,7 @@ export default function LanguageSwitch({ currentPath, locale, className = '' }: 
   const enHref = locale === 'en' ? currentPath : getLocalizedHref(currentPath, 'en');
 
   return (
-    <div className={`relative inline-flex items-center ${className}`}>
+    <div data-cursor-skip="nav" className={`relative inline-flex items-center ${className}`}>
       {/* Stamp overlay animation */}
       <div
         ref={stampRef}

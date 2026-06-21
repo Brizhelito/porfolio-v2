@@ -140,8 +140,11 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
   // N listeners on N [data-seal-react] elements. No MutationObserver needed
   // — dynamically added elements are caught automatically by the closest()
   // check inside the delegated handler.
+  // Skip on touch — mouseover/mouseout fire on tap but are janky and the
+  // hoverBoost GSAP tween fights with touch scroll.
   useEffect(() => {
     if (!mounted) return;
+    if (window.matchMedia('(pointer: coarse)').matches) return;
 
     const onOver = (e: MouseEvent) => {
       const t = e.target as HTMLElement;
@@ -241,11 +244,15 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
     };
   }, [isHero, tiltMax, mounted]);
 
-  // Idle → resting after 15s inactivity (floating only)
+  // Idle → resting after 15s inactivity (floating only).
+  // Listen to mouse, keyboard, touch, and scroll so the seal stays awake
+  // for keyboard-only navigators and touch users too.
   useEffect(() => {
     if (isHero) return;
     const onActivity = () => { lastActive.current = Date.now(); };
     window.addEventListener('mousemove', onActivity);
+    window.addEventListener('keydown', onActivity);
+    window.addEventListener('touchstart', onActivity, { passive: true });
     window.addEventListener('scroll', onActivity, { passive: true });
 
     const interval = setInterval(() => {
@@ -256,26 +263,36 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
 
     return () => {
       window.removeEventListener('mousemove', onActivity);
+      window.removeEventListener('keydown', onActivity);
+      window.removeEventListener('touchstart', onActivity);
       window.removeEventListener('scroll', onActivity);
       clearInterval(interval);
     };
   }, [goToState, isHero]);
 
-  // Re-awaken on activity
+  // Re-awaken on activity (mouse, keyboard, or touch)
   useEffect(() => {
     if (state !== 'resting') return;
-    const onMove = () => {
+    const onActivity = () => {
       if (Date.now() - lastActive.current < 1000) {
         goToState(sealStateForPath(window.location.pathname));
       }
     };
-    window.addEventListener('mousemove', onMove);
-    return () => window.removeEventListener('mousemove', onMove);
+    window.addEventListener('mousemove', onActivity);
+    window.addEventListener('keydown', onActivity);
+    window.addEventListener('touchstart', onActivity, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', onActivity);
+      window.removeEventListener('keydown', onActivity);
+      window.removeEventListener('touchstart', onActivity);
+    };
   }, [state, goToState]);
 
-  // Breathe loop
+  // Breathe loop — skip on touch (decorative animation wastes battery
+  // and the subtle scale is barely visible on small screens)
   useEffect(() => {
     if (prefersReducedMotion || !svgRef.current) return;
+    if (window.matchMedia('(pointer: coarse)').matches) return;
     breatheTween.current?.kill();
     breatheTween.current = gsap.to(svgRef.current, {
       scale: 1.04, duration: 2.5, repeat: -1, yoyo: true, ease: 'sine.inOut',
@@ -283,9 +300,10 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
     return () => { breatheTween.current?.kill(); };
   }, [mounted]);
 
-  // Idle wander — random shift every 30s (floating only)
+  // Idle wander — random shift every 30s (floating only, desktop only)
   useEffect(() => {
     if (isHero || prefersReducedMotion || !containerRef.current) return;
+    if (window.matchMedia('(pointer: coarse)').matches) return;
 
     const wander = () => {
       const angle = Math.random() * Math.PI * 2;
@@ -336,14 +354,11 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
     }
   }, [isHero, state, goToState]);
 
-  // P0-04: distinguish floating (hide on mobile — FAB over content) from
-  // hero (always visible — it's part of the visual composition). Hero seal
-  // has no tilt/click-cycle on touch but still renders decoratively.
-  const isMobile = typeof window !== 'undefined' &&
-    window.matchMedia('(pointer: coarse)').matches;
-
+  // The floating seal now renders on ALL devices. On touch it acts as a
+  // static "back to top" button — no tilt, breathe, wander, or hover boost
+  // (all guarded by pointer: coarse checks in their effects above). The
+  // click handler already does scrollTo({ top: 0 }).
   if (!mounted) return null;
-  if (isMobile && !isHero) return null;
 
   // When hovering a react element, use gold color override
   const displayColor = hoverBoost ? '#C9A961' : sealColor;
@@ -428,7 +443,7 @@ export default function Seal({ size = 'md', className = '', variant = 'floating'
       role="button"
       tabIndex={0}
       aria-label={t(locale, 'seal.ariaBackToTop')}
-      className={`fixed bottom-6 right-6 z-[var(--z-modal)] cursor-pointer select-none transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0 pointer-events-none'} ${className}`}
+      className={`seal-floating-btn fixed bottom-6 right-6 z-[var(--z-modal)] cursor-pointer select-none transition-opacity duration-300 ${visible ? 'opacity-100' : 'opacity-0 pointer-events-none'} ${className}`}
       style={{ perspective: '400px' } as CSSProperties}
     >
       <svg

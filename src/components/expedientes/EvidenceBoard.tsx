@@ -162,9 +162,9 @@ function GridVariant({
                     />
                   </div>
 
-                  {/* Click-to-open hint */}
+                  {/* Click-to-open hint — touch-hint makes it visible on touch */}
                   <div
-                    className="mt-3 pt-3 border-t border-dashed border-[var(--color-archive-kraft)]/25 flex items-center gap-1.5"
+                    className="touch-hint mt-3 pt-3 border-t border-dashed border-[var(--color-archive-kraft)]/25 flex items-center gap-1.5"
                     style={{
                       opacity: isHovered ? 1 : 0,
                       transform: isHovered ? 'translateY(0)' : 'translateY(4px)',
@@ -252,12 +252,13 @@ function CorkboardVariant({
 
   const [lines, setLines] = useState<{ from: { x: number; y: number }; to: { x: number; y: number }; shared: string[]; key: string }[]>([]);
 
-  useEffect(() => {
+  // Shared line recomputation — used on mount, resize, and scroll.
+  const recomputeLines = useCallback(() => {
     const board = boardRef.current;
     if (!board || connections.length === 0) return;
 
     const boardRect = board.getBoundingClientRect();
-    const newLines: typeof lines = [];
+    const newLines: { from: { x: number; y: number }; to: { x: number; y: number }; shared: string[]; key: string }[] = [];
 
     for (const conn of connections) {
       const elFrom = cardRefs.current.get(conn.from);
@@ -282,48 +283,33 @@ function CorkboardVariant({
     }
 
     setLines(newLines);
-  }, [connections, items]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const board = boardRef.current;
-      if (!board || connections.length === 0) return;
-
-      const boardRect = board.getBoundingClientRect();
-      const newLines: typeof lines = [];
-
-      for (const conn of connections) {
-        const elFrom = cardRefs.current.get(conn.from);
-        const elTo = cardRefs.current.get(conn.to);
-        if (!elFrom || !elTo) continue;
-
-        const fromRect = elFrom.getBoundingClientRect();
-        const toRect = elTo.getBoundingClientRect();
-
-        newLines.push({
-          key: `${conn.from}-${conn.to}`,
-          from: {
-            x: fromRect.left + fromRect.width / 2 - boardRect.left,
-            y: fromRect.top + fromRect.height / 2 - boardRect.top,
-          },
-          to: {
-            x: toRect.left + toRect.width / 2 - boardRect.left,
-            y: toRect.top + toRect.height / 2 - boardRect.top,
-          },
-          shared: conn.shared,
-        });
-      }
-
-      setLines(newLines);
-    };
-
-    window.addEventListener('resize', handleResize);
-    const timer = setTimeout(handleResize, 100);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      clearTimeout(timer);
-    };
   }, [connections]);
+
+  // Initial computation + delayed recompute (waits for layout settle)
+  useEffect(() => {
+    recomputeLines();
+    const timer = setTimeout(recomputeLines, 100);
+    return () => clearTimeout(timer);
+  }, [recomputeLines]);
+
+  // Recompute on resize and scroll (rAF-throttled for scroll performance)
+  useEffect(() => {
+    let ticking = false;
+    const onScrollResize = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        recomputeLines();
+      });
+    };
+    window.addEventListener('resize', onScrollResize);
+    window.addEventListener('scroll', onScrollResize, { passive: true });
+    return () => {
+      window.removeEventListener('resize', onScrollResize);
+      window.removeEventListener('scroll', onScrollResize);
+    };
+  }, [recomputeLines]);
 
   const isAnyHovered = hoveredId !== null;
 

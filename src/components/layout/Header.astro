@@ -30,6 +30,12 @@ function getNavKey(href: string): string {
 
 const contactHref = getLocalizedHref('/contacto', locale);
 const contactLabel = t(locale, 'nav.contact');
+
+const CONVENTIONAL_LABELS: Record<string, string> = {
+  'about': 'About',
+  'tools': 'Stack',
+  'expedients': 'Projects',
+};
 ---
 
 <header
@@ -87,6 +93,8 @@ const contactLabel = t(locale, 'nav.contact');
             const localizedHref = getLocalizedHref(href, locale);
             const navKey = getNavKey(href);
             const navLabel = t(locale, `nav.${navKey}`);
+            const conventionalLabel = CONVENTIONAL_LABELS[navKey];
+            const displayLabel = conventionalLabel ? `${navLabel} (${conventionalLabel})` : navLabel;
             const isActive = currentPath === localizedHref || (localizedHref !== getLocalizedHref('/', locale) && currentPath.startsWith(localizedHref));
             return (
               <a
@@ -99,7 +107,7 @@ const contactLabel = t(locale, 'nav.contact');
                 ]}
                 data-seal-react
               >
-                {navLabel}
+                {displayLabel}
                 {isActive && (
                   <span class="absolute bottom-0 left-3 right-3 h-[2px] bg-[var(--color-accent-gold)] rounded-full"></span>
                 )}
@@ -150,6 +158,8 @@ const contactLabel = t(locale, 'nav.contact');
           const localizedHref = getLocalizedHref(href, locale);
           const navKey = getNavKey(href);
           const navLabel = t(locale, `nav.${navKey}`);
+          const conventionalLabel = CONVENTIONAL_LABELS[navKey];
+          const displayLabel = conventionalLabel ? `${navLabel} (${conventionalLabel})` : navLabel;
           const isActive = currentPath === localizedHref || (localizedHref !== getLocalizedHref('/', locale) && currentPath.startsWith(localizedHref));
           return (
             <a
@@ -165,7 +175,7 @@ const contactLabel = t(locale, 'nav.contact');
                 <span class="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-gold)]"></span>
               )}
               <span class:list={[!isActive && 'ml-[18px]']}>
-                {navLabel}
+                {displayLabel}
               </span>
             </a>
           );

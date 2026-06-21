@@ -107,6 +107,10 @@ export default function CustomCursor() {
 
       const link = closest('a');
       if (link) {
+        if (link.closest('[data-cursor-skip="nav"]')) {
+          setRingClass(ringEl, 'hovering');
+          return;
+        }
         if (link.closest('nav, header') || link.classList.contains('nav-link')) {
           setRingClass(ringEl, 'nav');
           return;
@@ -172,6 +176,23 @@ export default function CustomCursor() {
       }
     };
 
+    // Click ripple — single soft wave on press.
+    const spawnRipple = (x: number, y: number) => {
+      const r = document.createElement('div');
+      r.className = 'cursor-click-ripple';
+      r.style.left = x + 'px';
+      r.style.top = y + 'px';
+      document.body.appendChild(r);
+      r.addEventListener('animationend', () => r.remove(), { once: true });
+    };
+    const onMouseDown = (e: MouseEvent) => {
+      spawnRipple(e.clientX, e.clientY);
+      dot.classList.add('is-pressed');
+    };
+    const onMouseUp = () => {
+      dot.classList.remove('is-pressed');
+    };
+
     // Smooth ring follower
     const tick = () => {
       ring.current.x += (mouse.current.x - ring.current.x) * RING_FOLLOW;
@@ -185,6 +206,8 @@ export default function CustomCursor() {
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseover', onMouseOver);
     document.addEventListener('mouseout', onMouseOut);
+    document.addEventListener('mousedown', onMouseDown);
+    document.addEventListener('mouseup', onMouseUp);
     window.addEventListener('scroll', onScroll, { passive: true });
 
     return () => {
@@ -192,6 +215,8 @@ export default function CustomCursor() {
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseover', onMouseOver);
       document.removeEventListener('mouseout', onMouseOut);
+      document.removeEventListener('mousedown', onMouseDown);
+      document.removeEventListener('mouseup', onMouseUp);
       window.removeEventListener('scroll', onScroll);
       if (scrollTimer.current) clearTimeout(scrollTimer.current);
       // P1-02: remove pooled particles on unmount
